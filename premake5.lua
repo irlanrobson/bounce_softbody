@@ -78,8 +78,8 @@ workspace(solution_name)
 		filter { "system:linux" } 
 			files 
 			{ 
-				external_dir .. "/glad/glad_glx.h", 
-				external_dir .. "/glad/glad_glx.c",
+				external_dir .. "/glad/include/glad_glx.h", 
+				external_dir .. "/glad/src/glad_glx.c",
 			}
 			
 	project "glfw"
