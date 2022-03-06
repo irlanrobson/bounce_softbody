@@ -50,11 +50,11 @@ public:
 	// displacement = dt * velocity
 	void MoveProxy(u32 proxyId, const b3AABB& aabb, const b3Vec3& displacement);
 
-	// Force move the proxy
+	// Force move the proxy.
 	void TouchProxy(u32 proxyId);
 
-	// Get the AABB of a given proxy.
-	const b3AABB& GetAABB(u32 proxyId) const;
+	// Get the fat AABB of a given proxy.
+	const b3AABB& GetFatAABB(u32 proxyId) const;
 
 	// Get the user data attached to a proxy.
 	void* GetUserData(u32 proxyId) const;
@@ -113,9 +113,9 @@ private :
 	u32 m_pairCount;
 };
 
-inline const b3AABB& b3BroadPhase::GetAABB(u32 proxyId) const 
+inline const b3AABB& b3BroadPhase::GetFatAABB(u32 proxyId) const 
 {
-	return m_tree.GetAABB(proxyId);
+	return m_tree.GetFatAABB(proxyId);
 }
 
 inline void* b3BroadPhase::GetUserData(u32 proxyId) const 

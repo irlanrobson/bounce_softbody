@@ -32,8 +32,6 @@ public:
 		m_count = 0;
 	}
 
-	~b3List() { }
-	
 	void PushFront(T* link)
 	{
 		link->m_prev = nullptr;
@@ -46,25 +44,6 @@ public:
 		++m_count;
 	}
 
-	void PushAfter(T* prev, T* link)
-	{
-		link->m_prev = prev;
-		
-		if (prev->m_next == nullptr)
-		{
-			link->m_next = nullptr;
-		}
-		else
-		{
-			link->m_next = prev->m_next;
-			prev->m_next->m_prev = link;
-		}
-
-		prev->m_next = link;
-		
-		++m_count;
-	}
-	
 	void Remove(T* link)
 	{
 		if (link->m_prev)
@@ -81,6 +60,11 @@ public:
 		}
 		--m_count;
 	}
+
+	const T* Begin() const { return m_head; }
+	T* Begin() { return m_head; }
+
+	u32 Count() const { return m_count; }
 
 	T* m_head;
 	u32 m_count;

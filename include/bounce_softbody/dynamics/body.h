@@ -73,6 +73,7 @@ public:
 
 	// Return the list of particles in this body.
 	const b3List<b3Particle>& GetParticleList() const;
+	b3List<b3Particle>& GetParticleList();
 
 	// Create a force.
 	b3Force* CreateForce(const b3ForceDef& def);
@@ -82,6 +83,7 @@ public:
 
 	// Return the list of forces in this body.
 	const b3List<b3Force>& GetForceList() const;
+	b3List<b3Force>& GetForceList();
 
 	// Create a sphere fixture.
 	b3SphereFixture* CreateSphere(const b3SphereFixtureDef& def);
@@ -91,7 +93,8 @@ public:
 	
 	// Return the list of spheres in this body.
 	const b3List<b3SphereFixture>& GetSphereList() const;
-	
+	b3List<b3SphereFixture>& GetSphereList();
+
 	// Create a triangle fixture.
 	b3TriangleFixture* CreateTriangle(const b3TriangleFixtureDef& def);
 
@@ -100,6 +103,7 @@ public:
 
 	// Return the list of triangles in this body.
 	const b3List<b3TriangleFixture>& GetTriangleList() const;
+	b3List<b3TriangleFixture>& GetTriangleList();
 
 	// Create a tetrahedron fixture.
 	b3TetrahedronFixture* CreateTetrahedron(const b3TetrahedronFixtureDef& def);
@@ -109,6 +113,7 @@ public:
 
 	// Return the list of tetrahedrons in this body.
 	const b3List<b3TetrahedronFixture>& GetTetrahedronList() const;
+	b3List<b3TetrahedronFixture>& GetTetrahedronList();
 
 	// Create a new world fixture.
 	b3WorldFixture* CreateFixture(const b3WorldFixtureDef& def);
@@ -118,6 +123,7 @@ public:
 
 	// Return the list of world fixtures in this body.
 	const b3List<b3WorldFixture>& GetFixtureList() const;
+	b3List<b3WorldFixture>& GetFixtureList();
 
 	// Set the acceleration of gravity.
 	void SetGravity(const b3Vec3& gravity);
@@ -125,8 +131,8 @@ public:
 	// Get the acceleration of gravity.
 	b3Vec3 GetGravity() const;
 
-	// Perform a time step given the number of force solver iterations. 
-	// Use 1 force iteration for reasonable performance. 
+	// Perform a time step given the number of force solver and subsolver iterations. 
+	// Use one force iteration for reasonable performance. 
 	void Step(scalar dt, u32 forceIterations, u32 forceSubIterations);
 
 	// Perform a ray cast with the body.
@@ -200,7 +206,17 @@ inline const b3List<b3Force>& b3Body::GetForceList() const
 	return m_forceList;
 }
 
+inline b3List<b3Force>& b3Body::GetForceList() 
+{
+	return m_forceList;
+}
+
 inline const b3List<b3Particle>& b3Body::GetParticleList() const
+{
+	return m_particleList;
+}
+
+inline b3List<b3Particle>& b3Body::GetParticleList() 
 {
 	return m_particleList;
 }
@@ -210,7 +226,17 @@ inline const b3List<b3SphereFixture>& b3Body::GetSphereList() const
 	return m_sphereList;
 }
 
+inline b3List<b3SphereFixture>& b3Body::GetSphereList() 
+{
+	return m_sphereList;
+}
+
 inline const b3List<b3TriangleFixture>& b3Body::GetTriangleList() const
+{
+	return m_triangleList;
+}
+
+inline b3List<b3TriangleFixture>& b3Body::GetTriangleList() 
 {
 	return m_triangleList;
 }
@@ -220,7 +246,17 @@ inline const b3List<b3TetrahedronFixture>& b3Body::GetTetrahedronList() const
 	return m_tetrahedronList;
 }
 
+inline b3List<b3TetrahedronFixture>& b3Body::GetTetrahedronList() 
+{
+	return m_tetrahedronList;
+}
+
 inline const b3List<b3WorldFixture>& b3Body::GetFixtureList() const
+{
+	return m_fixtureList;
+}
+
+inline b3List<b3WorldFixture>& b3Body::GetFixtureList() 
 {
 	return m_fixtureList;
 }
