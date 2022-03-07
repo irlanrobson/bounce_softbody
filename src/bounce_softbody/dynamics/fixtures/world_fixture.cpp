@@ -18,21 +18,60 @@
 
 #include <bounce_softbody/dynamics/fixtures/world_fixture.h>
 #include <bounce_softbody/dynamics/body.h>
+#include <bounce_softbody/collision/shapes/sphere_shape.h>
+#include <bounce_softbody/collision/shapes/capsule_shape.h>
+#include <bounce_softbody/collision/shapes/box_shape.h>
+#include <bounce_softbody/common/memory/block_allocator.h>
 
 b3WorldFixture::b3WorldFixture()
 {
+	m_shape = nullptr;
+	m_body = nullptr;
+	m_prev = nullptr;
+	m_next = nullptr;
+	m_friction = scalar(0);
 }
 
 void b3WorldFixture::Create(b3BlockAllocator* allocator, b3Body* body, const b3WorldFixtureDef& def)
 {
-	m_shape = def.shape->Clone(allocator);
 	m_body = body;
 	m_friction = def.friction;
+	m_shape = def.shape->Clone(allocator);
 }
 
 void b3WorldFixture::Destroy(b3BlockAllocator* allocator)
 {
-	b3Shape::Destroy(m_shape, allocator);
+	switch (m_shape->m_type)
+	{
+	case b3Shape::e_sphere:
+	{
+		b3SphereShape* s = (b3SphereShape*)m_shape;
+		s->~b3SphereShape();
+		allocator->Free(s, sizeof(b3SphereShape));
+		break;
+	}
+	case b3Shape::e_capsule:
+	{
+		b3CapsuleShape* s = (b3CapsuleShape*)m_shape;
+		s->~b3CapsuleShape();
+		allocator->Free(s, sizeof(b3CapsuleShape));
+		break;
+	}
+	case b3Shape::e_box:
+	{
+		b3BoxShape* s = (b3BoxShape*)m_shape;
+		s->~b3BoxShape();
+		allocator->Free(s, sizeof(b3BoxShape));
+		break;
+	}
+	default:
+	{
+		B3_ASSERT(false);
+		break;
+	}
+	}
+
+	m_shape = nullptr;
 }
 
 void b3WorldFixture::DestroyContacts()

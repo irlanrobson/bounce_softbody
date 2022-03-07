@@ -24,6 +24,8 @@ b3SphereFixture::b3SphereFixture(const b3SphereFixtureDef& def, b3Body* body) : 
 {
 	m_type = e_sphereFixture;
 	m_p = def.p;
+	m_prev = nullptr;
+	m_next = nullptr;
 }
 
 b3AABB b3SphereFixture::ComputeAABB() const

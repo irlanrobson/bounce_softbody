@@ -49,6 +49,9 @@ b3Particle::b3Particle(const b3ParticleDef& def, b3Body* body)
 
 	m_meshIndex = def.meshIndex;
 	m_userData = def.userData;
+	
+	m_prev = nullptr;
+	m_next = nullptr;
 }
 
 void b3Particle::SetType(b3ParticleType type)

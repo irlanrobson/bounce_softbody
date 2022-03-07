@@ -131,3 +131,11 @@ void b3Force::Destroy(b3Force* force, b3BlockAllocator* allocator)
 	}
 	};
 }
+
+b3Force::b3Force()
+{
+	m_type = e_unknownForce;
+	m_meshIndex = B3_MAX_U32;
+	m_prev = nullptr;
+	m_next = nullptr;
+}

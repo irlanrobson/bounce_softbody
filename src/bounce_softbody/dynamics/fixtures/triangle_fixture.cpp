@@ -34,6 +34,9 @@ b3TriangleFixture::b3TriangleFixture(const b3TriangleFixtureDef& def, b3Body* bo
 	b3Vec3 N = b3Cross(B - A, C - A);
 	
 	m_area = scalar(0.5) * b3Length(N);
+
+	m_prev = nullptr;
+	m_next = nullptr;
 }
 
 b3AABB b3TriangleFixture::ComputeAABB() const

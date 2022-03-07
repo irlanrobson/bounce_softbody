@@ -44,6 +44,8 @@ b3SphereAndShapeContact::b3SphereAndShapeContact(b3SphereFixture* f1, b3WorldFix
 	m_f2 = f2;
 	m_normalForce = scalar(0);
 	m_active = false;
+	m_prev = nullptr;
+	m_next = nullptr;
 }
 
 void b3SphereAndShapeContact::Update()

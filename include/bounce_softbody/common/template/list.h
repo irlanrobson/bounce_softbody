@@ -58,6 +58,8 @@ public:
 		{
 			m_head = link->m_next;
 		}
+		
+		B3_ASSERT(m_count > 0);
 		--m_count;
 	}
 

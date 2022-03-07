@@ -66,9 +66,6 @@ public:
 	// Debug draw this shape.
 	virtual void Draw(b3Draw* draw) const = 0;
 
-	// Factory destroy.
-	static void Destroy(b3Shape* shape, b3BlockAllocator* allocator);
-
 	// Shape type.
 	Type m_type;
 

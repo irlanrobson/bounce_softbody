@@ -29,6 +29,7 @@ struct b3SparseForceSolverData;
 // Force types
 enum b3ForceType
 {
+	e_unknownForce,
 	e_stretchForce,
 	e_shearForce,
 	e_springForce,
@@ -42,6 +43,7 @@ struct b3ForceDef
 {
 	b3ForceDef()
 	{
+		type = e_unknownForce;
 		meshIndex = B3_MAX_U32;
 	}
 	
@@ -79,6 +81,7 @@ protected:
 	static b3Force* Create(const b3ForceDef* def, b3BlockAllocator* allocator);
 	static void Destroy(b3Force* force, b3BlockAllocator* allocator);
 
+	b3Force();
 	virtual ~b3Force() { }
 
 	// Clear internal forces stored for the user.

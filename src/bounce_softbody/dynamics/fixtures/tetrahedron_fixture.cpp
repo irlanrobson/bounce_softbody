@@ -43,4 +43,7 @@ b3TetrahedronFixture::b3TetrahedronFixture(const b3TetrahedronFixtureDef& def, b
 	scalar det = b3Det(E1, E2, E3);
 	scalar sign = b3Sign(det);
 	m_volume = inv6 * sign * det;
+
+	m_prev = nullptr;
+	m_next = nullptr;
 }
