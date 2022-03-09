@@ -70,10 +70,10 @@ static inline b3Vec3 b3MakeVec3(int vertexStride, const void* vertexBase, int vt
 }
 
 // Draw a polygon.
-inline void b3DrawPolygon(b3DebugDrawData* data, const void* vertices, u32 vertexStride, u32 count, const b3Color& color, bool depthEnabled = true)
+inline void b3DrawPolygon(b3DebugDrawData* data, const void* vertices, uint32 vertexStride, uint32 count, const b3Color& color, bool depthEnabled = true)
 {
 	b3Vec3 p1 = b3MakeVec3(vertexStride, vertices, count - 1);
-	for (u32 i = 0; i < count; ++i)
+	for (uint32 i = 0; i < count; ++i)
 	{
 		b3Vec3 p2 = b3MakeVec3(vertexStride, vertices, i);
 
@@ -84,10 +84,10 @@ inline void b3DrawPolygon(b3DebugDrawData* data, const void* vertices, u32 verte
 }
 
 // Draw a solid polygon with vertices ordered CCW.
-inline void b3DrawSolidPolygon(b3DebugDrawData* data, const b3Vec3& normal, const void* vertices, u32 vertexStride, u32 count, const b3Color& color, bool depthEnabled = true)
+inline void b3DrawSolidPolygon(b3DebugDrawData* data, const b3Vec3& normal, const void* vertices, uint32 vertexStride, uint32 count, const b3Color& color, bool depthEnabled = true)
 {
 	b3Vec3 p1 = b3MakeVec3(vertexStride, vertices, 0);
-	for (u32 i = 1; i < count - 1; ++i)
+	for (uint32 i = 1; i < count - 1; ++i)
 	{
 		b3Vec3 p2 = b3MakeVec3(vertexStride, vertices, i);
 		b3Vec3 p3 = b3MakeVec3(vertexStride, vertices, i + 1);
@@ -97,7 +97,7 @@ inline void b3DrawSolidPolygon(b3DebugDrawData* data, const b3Vec3& normal, cons
 }
 
 // Draw a circle.
-template <u32 E = 20>
+template <uint32 E = 20>
 inline void b3DrawCircle(b3DebugDrawData* data, const b3Vec3& normal, const b3Vec3& center, scalar radius, const b3Color& color, bool depthEnabled = true)
 {
 	b3Vec3 n1, n3;
@@ -109,7 +109,7 @@ inline void b3DrawCircle(b3DebugDrawData* data, const b3Vec3& normal, const b3Ve
 	q.SetAxisAngle(normal, kAngleInc);
 
 	b3Vec3 p1 = center + radius * n1;
-	for (u32 i = 0; i < E; ++i)
+	for (uint32 i = 0; i < E; ++i)
 	{
 		b3Vec3 n2 = b3Mul(q, n1);
 		b3Vec3 p2 = center + radius * n2;
@@ -122,7 +122,7 @@ inline void b3DrawCircle(b3DebugDrawData* data, const b3Vec3& normal, const b3Ve
 }
 
 // Draw a solid circle.
-template<u32 E = 20>
+template<uint32 E = 20>
 void b3DrawSolidCircle(b3DebugDrawData* data, const b3Vec3& normal, const b3Vec3& center, scalar radius, const b3Color& color, bool depthEnabled = true)
 {
 	b3Vec3 n1, n3;
@@ -134,7 +134,7 @@ void b3DrawSolidCircle(b3DebugDrawData* data, const b3Vec3& normal, const b3Vec3
 	q.SetAxisAngle(normal, kAngleInc);
 
 	b3Vec3 p1 = center + radius * n1;
-	for (u32 i = 0; i < E; ++i)
+	for (uint32 i = 0; i < E; ++i)
 	{
 		b3Vec3 n2 = b3Mul(q, n1);
 		b3Vec3 p2 = center + radius * n2;
@@ -148,13 +148,13 @@ void b3DrawSolidCircle(b3DebugDrawData* data, const b3Vec3& normal, const b3Vec3
 
 // A (H + 1) x (W + 1) UV sphere mesh stored in row-major order.
 // v(i, j) = i * (W + 1) + j
-template<u32 H = 1, u32 W = 1>
+template<uint32 H = 1, uint32 W = 1>
 struct b3SphereMesh
 {
-	u32 vertexCount;
+	uint32 vertexCount;
 	b3Vec3 vertices[(H + 1) * (W + 1)];
-	u32 indexCount;
-	u32 indices[3 * 2 * H * W];
+	uint32 indexCount;
+	uint32 indices[3 * 2 * H * W];
 	
 	b3SphereMesh()
 	{
@@ -167,14 +167,14 @@ struct b3SphereMesh
 		scalar kPhiInc = scalar(2) * B3_PI / scalar(W);
 		
 		vertexCount = 0;
-		for (u32 i = 0; i < H + 1; ++i)
+		for (uint32 i = 0; i < H + 1; ++i)
 		{
 			// Plane to spherical coordinates
 			scalar theta = scalar(i) * kThetaInc;
 			scalar cos_theta = cos(theta);
 			scalar sin_theta = sin(theta);
 				
-			for (u32 j = 0; j < W + 1; ++j)
+			for (uint32 j = 0; j < W + 1; ++j)
 			{
 				scalar phi = scalar(j) * kPhiInc;	
 				scalar cos_phi = cos(phi);
@@ -186,7 +186,7 @@ struct b3SphereMesh
 				p.y = cos_theta;
 				p.z = sin_theta * cos_phi;
 				
-				u32 vertex = GetVertex(i, j);
+				uint32 vertex = GetVertex(i, j);
 				vertices[vertex] = p;
 				++vertexCount;
 			}
@@ -196,17 +196,17 @@ struct b3SphereMesh
 		
 		// Build triangles
 		indexCount = 0;
-		for (u32 i = 0; i < H; ++i)
+		for (uint32 i = 0; i < H; ++i)
 		{
-			for (u32 j = 0; j < W; ++j)
+			for (uint32 j = 0; j < W; ++j)
 			{
 				// 1*|----|*4
 				//   |----|
 				// 2*|----|*3
-				u32 v1 = GetVertex(i, j);
-				u32 v2 = GetVertex(i + 1, j);
-				u32 v3 = GetVertex(i + 1, j + 1);
-				u32 v4 = GetVertex(i, j + 1);
+				uint32 v1 = GetVertex(i, j);
+				uint32 v2 = GetVertex(i + 1, j);
+				uint32 v3 = GetVertex(i + 1, j + 1);
+				uint32 v4 = GetVertex(i, j + 1);
 
 				indices[indexCount++] = v1;
 				indices[indexCount++] = v2;
@@ -221,7 +221,7 @@ struct b3SphereMesh
 		B3_ASSERT(indexCount == 3 * 2 * H * W);
 	}
 
-	u32 GetVertex(u32 i, u32 j)
+	uint32 GetVertex(uint32 i, uint32 j)
 	{
 		B3_ASSERT(i < H + 1);
 		B3_ASSERT(j < W + 1);
@@ -230,16 +230,16 @@ struct b3SphereMesh
 };
 
 // Draw a sphere.
-template<u32 H = 20, u32 W = 20>
+template<uint32 H = 20, uint32 W = 20>
 inline void b3DrawSphere(b3DebugDrawData* data, const b3Vec3& center, scalar radius, const b3Color& color, bool depthEnabled = true)
 {
 	b3SphereMesh<H, W> sphere;
 	
-	for (u32 i = 0; i < sphere.indexCount / 3; ++i)
+	for (uint32 i = 0; i < sphere.indexCount / 3; ++i)
 	{
-		u32 v1 = sphere.indices[3 * i];
-		u32 v2 = sphere.indices[3 * i + 1];
-		u32 v3 = sphere.indices[3 * i + 2];
+		uint32 v1 = sphere.indices[3 * i];
+		uint32 v2 = sphere.indices[3 * i + 1];
+		uint32 v3 = sphere.indices[3 * i + 2];
 
 		b3Vec3 p1 = sphere.vertices[v1];
 		p1 *= radius;
@@ -258,7 +258,7 @@ inline void b3DrawSphere(b3DebugDrawData* data, const b3Vec3& center, scalar rad
 }
 
 // Draw a solid sphere.
-template<u32 H = 20, u32 W = 20>
+template<uint32 H = 20, uint32 W = 20>
 inline void b3DrawSolidSphere(b3DebugDrawData* data, const b3Vec3& yAxis, const b3Vec3& center, scalar radius, const b3Color& color, bool depthEnabled = true)
 {
 	b3SphereMesh<H, W> sphere;
@@ -267,11 +267,11 @@ inline void b3DrawSolidSphere(b3DebugDrawData* data, const b3Vec3& yAxis, const 
 	xf.rotation = b3QuatRotationBetween(b3Vec3_y, yAxis);
 	xf.translation = center;
 
-	for (u32 i = 0; i < sphere.indexCount / 3; ++i)
+	for (uint32 i = 0; i < sphere.indexCount / 3; ++i)
 	{
-		u32 v1 = sphere.indices[3 * i];
-		u32 v2 = sphere.indices[3 * i + 1];
-		u32 v3 = sphere.indices[3 * i + 2];
+		uint32 v1 = sphere.indices[3 * i];
+		uint32 v2 = sphere.indices[3 * i + 1];
+		uint32 v3 = sphere.indices[3 * i + 2];
 
 		b3Vec3 p1 = sphere.vertices[v1];
 		
@@ -302,13 +302,13 @@ inline void b3DrawSolidSphere(b3DebugDrawData* data, const b3Vec3& yAxis, const 
 }
 
 // A cylinder mesh.
-template<u32 H = 1, u32 W = 1>
+template<uint32 H = 1, uint32 W = 1>
 struct b3CylinderMesh
 {
-	u32 vertexCount;
+	uint32 vertexCount;
 	b3Vec3 vertices[(H + 1) * (W + 1)];
-	u32 indexCount;
-	u32 indices[3 * 2 * H * W + 3 * 2 * (((W + 1) - 1) - 1)];
+	uint32 indexCount;
+	uint32 indices[3 * 2 * H * W + 3 * 2 * (((W + 1) - 1) - 1)];
 	
 	b3CylinderMesh()
 	{
@@ -321,12 +321,12 @@ struct b3CylinderMesh
 		scalar kYInc = scalar(1) / scalar(H);
 		
 		vertexCount = 0;
-		for (u32 i = 0; i < H + 1; ++i)
+		for (uint32 i = 0; i < H + 1; ++i)
 		{
 			// Plane to cylindrical coordinates
 			scalar y = scalar(i) * kYInc;
 				
-			for (u32 j = 0; j < W + 1; ++j)
+			for (uint32 j = 0; j < W + 1; ++j)
 			{
 				// Plane to cylindrical coordinates
 				scalar phi = scalar(j) * kPhiInc;	
@@ -339,7 +339,7 @@ struct b3CylinderMesh
 				p.y = y - scalar(0.5); // Centralize
 				p.z = sin_phi;
 				
-				u32 vertex = GetVertex(i, j);
+				uint32 vertex = GetVertex(i, j);
 				vertices[vertex] = p;
 				++vertexCount;
 			}
@@ -349,17 +349,17 @@ struct b3CylinderMesh
 		
 		// Build triangles
 		indexCount = 0;
-		for (u32 i = 0; i < H; ++i)
+		for (uint32 i = 0; i < H; ++i)
 		{
-			for (u32 j = 0; j < W; ++j)
+			for (uint32 j = 0; j < W; ++j)
 			{
 				// 1*|----|*4
 				//   |----|
 				// 2*|----|*3
-				u32 v1 = GetVertex(i, j);
-				u32 v2 = GetVertex(i + 1, j);
-				u32 v3 = GetVertex(i + 1, j + 1);
-				u32 v4 = GetVertex(i, j + 1);
+				uint32 v1 = GetVertex(i, j);
+				uint32 v2 = GetVertex(i + 1, j);
+				uint32 v3 = GetVertex(i + 1, j + 1);
+				uint32 v4 = GetVertex(i, j + 1);
 
 				indices[indexCount++] = v1;
 				indices[indexCount++] = v2;
@@ -374,14 +374,14 @@ struct b3CylinderMesh
 		B3_ASSERT(indexCount == 3 * 2 * H * W);
 		
 		// Lower circle
-		u32 i1 = 0;
-		for (u32 i2 = i1 + 1; i2 < (W + 1) - 1; ++i2)
+		uint32 i1 = 0;
+		for (uint32 i2 = i1 + 1; i2 < (W + 1) - 1; ++i2)
 		{
-			u32 i3 = i2 + 1;
+			uint32 i3 = i2 + 1;
 			
-			u32 v1 = GetVertex(0, i1);
-			u32 v2 = GetVertex(0, i2);
-			u32 v3 = GetVertex(0, i3);
+			uint32 v1 = GetVertex(0, i1);
+			uint32 v2 = GetVertex(0, i2);
+			uint32 v3 = GetVertex(0, i3);
 			
 			indices[indexCount++] = v1;
 			indices[indexCount++] = v2;
@@ -390,13 +390,13 @@ struct b3CylinderMesh
 		
 		// Upper circle
 		i1 = 0;
-		for (u32 i2 = i1 + 1; i2 < (W + 1) - 1; ++i2)
+		for (uint32 i2 = i1 + 1; i2 < (W + 1) - 1; ++i2)
 		{
-			u32 i3 = i2 + 1;
+			uint32 i3 = i2 + 1;
 			
-			u32 v1 = GetVertex(H, i1);
-			u32 v2 = GetVertex(H, i2);
-			u32 v3 = GetVertex(H, i3);
+			uint32 v1 = GetVertex(H, i1);
+			uint32 v2 = GetVertex(H, i2);
+			uint32 v3 = GetVertex(H, i3);
 			
 			// Flip order to ensure CCW
 			indices[indexCount++] = v3;
@@ -407,7 +407,7 @@ struct b3CylinderMesh
 		B3_ASSERT(indexCount == 3 * 2 * H * W + 3 * 2 * (((W + 1) - 1) - 1));
 	}
 	
-	u32 GetVertex(u32 i, u32 j)
+	uint32 GetVertex(uint32 i, uint32 j)
 	{
 		B3_ASSERT(i < H + 1);
 		B3_ASSERT(j < W + 1);
@@ -416,7 +416,7 @@ struct b3CylinderMesh
 };
 
 // Draw a cylinder.
-template<u32 H = 20, u32 W = 20>
+template<uint32 H = 20, uint32 W = 20>
 inline void b3DrawCylinder(b3DebugDrawData* data, const b3Vec3& yAxis, const b3Vec3& center, scalar radius, scalar height, const b3Color& color, bool depthEnabled = true)
 {
 	b3CylinderMesh<H, W> cylinder;
@@ -425,11 +425,11 @@ inline void b3DrawCylinder(b3DebugDrawData* data, const b3Vec3& yAxis, const b3V
 	xf.rotation = b3QuatRotationBetween(b3Vec3_y, yAxis);
 	xf.translation = center;
 
-	for (u32 i = 0; i < cylinder.indexCount / 3; ++i)
+	for (uint32 i = 0; i < cylinder.indexCount / 3; ++i)
 	{
-		u32 v1 = cylinder.indices[3 * i];
-		u32 v2 = cylinder.indices[3 * i + 1];
-		u32 v3 = cylinder.indices[3 * i + 2];
+		uint32 v1 = cylinder.indices[3 * i];
+		uint32 v2 = cylinder.indices[3 * i + 1];
+		uint32 v3 = cylinder.indices[3 * i + 2];
 
 		b3Vec3 p1 = cylinder.vertices[v1];
 		
@@ -457,7 +457,7 @@ inline void b3DrawCylinder(b3DebugDrawData* data, const b3Vec3& yAxis, const b3V
 }
 
 // Draw a solid cylinder.
-template<u32 H = 20, u32 W = 20>
+template<uint32 H = 20, uint32 W = 20>
 inline void b3DrawSolidCylinder(b3DebugDrawData* data, const b3Vec3& yAxis, const b3Vec3& center, scalar radius, scalar height, const b3Color& color, bool depthEnabled = true)
 {
 	b3CylinderMesh<H, W> cylinder;
@@ -466,11 +466,11 @@ inline void b3DrawSolidCylinder(b3DebugDrawData* data, const b3Vec3& yAxis, cons
 	xf.rotation = b3QuatRotationBetween(b3Vec3_y, yAxis);
 	xf.translation = center;
 
-	for (u32 i = 0; i < cylinder.indexCount / 3; ++i)
+	for (uint32 i = 0; i < cylinder.indexCount / 3; ++i)
 	{
-		u32 v1 = cylinder.indices[3 * i];
-		u32 v2 = cylinder.indices[3 * i + 1];
-		u32 v3 = cylinder.indices[3 * i + 2];
+		uint32 v1 = cylinder.indices[3 * i];
+		uint32 v2 = cylinder.indices[3 * i + 1];
+		uint32 v3 = cylinder.indices[3 * i + 2];
 
 		b3Vec3 p1 = cylinder.vertices[v1];
 		b3Vec3 p2 = cylinder.vertices[v2];
@@ -501,7 +501,7 @@ inline void b3DrawSolidCylinder(b3DebugDrawData* data, const b3Vec3& yAxis, cons
 }
 
 // Draw a capsule.
-template<u32 H = 20, u32 W = 20>
+template<uint32 H = 20, uint32 W = 20>
 inline void b3DrawCapsule(b3DebugDrawData* data, const b3Vec3& c1, const b3Vec3& c2, scalar radius, const b3Color& color, bool depthEnabled = true)
 {
 	b3DrawSphere<H, W>(data, c1, radius, color);
@@ -520,7 +520,7 @@ inline void b3DrawCapsule(b3DebugDrawData* data, const b3Vec3& c1, const b3Vec3&
 }
 
 // Draw a capsule in solid rendering mode.
-template<u32 H = 20, u32 W = 20>
+template<uint32 H = 20, uint32 W = 20>
 inline void b3DrawSolidCapsule(b3DebugDrawData* data, const b3Vec3& yAxis, const b3Vec3& c1, const b3Vec3& c2, scalar radius, const b3Color& color, bool depthEnabled = true)
 {
 	b3DrawSolidSphere<H, W>(data, yAxis, c1, radius, color, depthEnabled);
@@ -588,24 +588,24 @@ inline void b3DrawAABB(b3DebugDrawData* data, const b3Vec3& lowerBound, const b3
 }
 
 // Draw a grid.
-template<u32 H = 32, u32 W = 32>
-inline void b3DrawGrid(b3DebugDrawData* data, const b3Vec3& normal, const b3Vec3& center, u32 width, u32 height, const b3Color& color, bool depthEnabled = true)
+template<uint32 H = 32, uint32 W = 32>
+inline void b3DrawGrid(b3DebugDrawData* data, const b3Vec3& normal, const b3Vec3& center, uint32 width, uint32 height, const b3Color& color, bool depthEnabled = true)
 {
 	b3Vec3 vs[(H + 1) * (W + 1)];
 	
-	u32 h = b3Min(H + 1, height + 1);
-	u32 w = b3Min(W + 1, width + 1);
+	uint32 h = b3Min(H + 1, height + 1);
+	uint32 w = b3Min(W + 1, width + 1);
 	
 	b3Vec3 grid_center;
 	grid_center.x = scalar(0.5) * scalar(width);
 	grid_center.y = scalar(0);
 	grid_center.z = scalar(0.5) * scalar(height);
 	
-	for (u32 i = 0; i < h; ++i)
+	for (uint32 i = 0; i < h; ++i)
 	{
-		for (u32 j = 0; j < w; ++j)
+		for (uint32 j = 0; j < w; ++j)
 		{
-			u32 index = i * w + j;
+			uint32 index = i * w + j;
 
 			b3Vec3 v;
 			v.x = scalar(j);
@@ -624,10 +624,10 @@ inline void b3DrawGrid(b3DebugDrawData* data, const b3Vec3& normal, const b3Vec3
 	b3Color centerColor(scalar(0.8), scalar(0.8), scalar(0.8), scalar(1));
 	
 	// Left to right lines
-	for (u32 i = 0; i < h; ++i)
+	for (uint32 i = 0; i < h; ++i)
 	{
-		u32 iv1 = i * w + 0;
-		u32 iv2 = i * w + (w - 1);
+		uint32 iv1 = i * w + 0;
+		uint32 iv2 = i * w + (w - 1);
 
 		b3Vec3 v1 = b3Mul(q, vs[iv1]) + center;
 		b3Vec3 v2 = b3Mul(q, vs[iv2]) + center;
@@ -648,10 +648,10 @@ inline void b3DrawGrid(b3DebugDrawData* data, const b3Vec3& normal, const b3Vec3
 	}
 
 	// Up to bottom lines
-	for (u32 j = 0; j < w; ++j)
+	for (uint32 j = 0; j < w; ++j)
 	{
-		u32 iv1 = 0 * w + j;
-		u32 iv2 = (h - 1) * w + j;
+		uint32 iv1 = 0 * w + j;
+		uint32 iv2 = (h - 1) * w + j;
 
 		b3Vec3 v1 = b3Mul(q, vs[iv1]) + center;
 		b3Vec3 v2 = b3Mul(q, vs[iv2]) + center;

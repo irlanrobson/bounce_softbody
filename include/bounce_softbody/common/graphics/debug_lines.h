@@ -41,7 +41,7 @@ struct b3DebugLine
 class b3DebugLines
 {
 public:
-	b3DebugLines(u32 capacity)
+	b3DebugLines(uint32 capacity)
 	{
 		m_capacity = capacity;
 		m_count = 0;
@@ -89,7 +89,7 @@ public:
 		}
 
 		// First pass: Depth test enabled.
-		for (u32 i = 0; i < m_count; ++i)
+		for (uint32 i = 0; i < m_count; ++i)
 		{
 			b3DebugLine line = m_lines[i];
 			if (line.depthEnabled == true)
@@ -101,7 +101,7 @@ public:
 		m_renderer->FlushLines(true);
 
 		// Second pass: Depth test disabled.
-		for (u32 i = 0; i < m_count; ++i)
+		for (uint32 i = 0; i < m_count; ++i)
 		{
 			b3DebugLine line = m_lines[i];
 			if (line.depthEnabled == false)
@@ -128,8 +128,8 @@ public:
 	// Is drawing enabled?
 	bool IsDrawEnabled() const { return m_drawEnabled; }
 private:
-	u32 m_capacity;
-	u32 m_count;
+	uint32 m_capacity;
+	uint32 m_count;
 	b3DebugLine* m_lines;
 	b3DebugLinesRenderer* m_renderer;
 	bool m_drawEnabled;

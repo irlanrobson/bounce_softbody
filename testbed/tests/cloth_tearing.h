@@ -194,7 +194,7 @@ public:
 	bool HasSpring(const b3Array<b3TriangleFixture*>& triangles,
 		b3Particle* pSplit, b3Particle* pOther)
 	{
-		for (u32 i = 0; i < triangles.Count(); ++i)
+		for (uint32 i = 0; i < triangles.Count(); ++i)
 		{
 			b3TriangleFixture* triangle = triangles[i];
 
@@ -260,7 +260,7 @@ public:
 
 		b3Particle* pNew = m_body->CreateParticle(pdNew);
 
-		for (u32 i = 0; i < trianglesBelow.Count(); ++i)
+		for (uint32 i = 0; i < trianglesBelow.Count(); ++i)
 		{
 			b3TriangleFixture* triangle = trianglesBelow[i];
 

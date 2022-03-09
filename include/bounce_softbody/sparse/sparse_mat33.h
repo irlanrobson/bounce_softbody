@@ -26,7 +26,7 @@
 // Sparse matrix row element.
 struct b3RowEntry
 {
-	u32 column;
+	uint32 column;
 	b3Mat33 value;
 	b3RowEntry* prev;
 	b3RowEntry* next;
@@ -41,10 +41,10 @@ struct b3RowEntryList
 
 	void Remove(b3RowEntry* entry);
 
-	b3RowEntry* Search(u32 column);
+	b3RowEntry* Search(uint32 column);
 
 	b3RowEntry* head;
-	u32 count;
+	uint32 count;
 };
 
 inline void b3RowEntryList::Insert(b3RowEntry* entry)
@@ -76,7 +76,7 @@ inline void b3RowEntryList::Remove(b3RowEntry* entry)
 	--count;
 }
 
-inline b3RowEntry* b3RowEntryList::Search(u32 column)
+inline b3RowEntry* b3RowEntryList::Search(uint32 column)
 {
 	// Make O(log).
 	for (b3RowEntry* e = head; e; e = e->next)
@@ -93,7 +93,7 @@ inline b3RowEntry* b3RowEntryList::Search(u32 column)
 // Each row is a list of non-zero elements in the row.
 struct b3SparseMat33
 {
-	b3SparseMat33(u32 m);
+	b3SparseMat33(uint32 m);
 
 	b3SparseMat33(const b3SparseMat33& _m);
 
@@ -105,19 +105,19 @@ struct b3SparseMat33
 
 	void Destroy();
 
-	void SetZero(u32 i, u32 j);
+	void SetZero(uint32 i, uint32 j);
 
-	void SetZeroRow(u32 i);
+	void SetZeroRow(uint32 i);
 
-	void SetZeroColumn(u32 j);
+	void SetZeroColumn(uint32 j);
 
-	b3Mat33* Search(u32 i, u32 j);
+	b3Mat33* Search(uint32 i, uint32 j);
 
-	const b3Mat33* Search(u32 i, u32 j) const;
+	const b3Mat33* Search(uint32 i, uint32 j) const;
 
-	b3Mat33& operator()(u32 i, u32 j);
+	b3Mat33& operator()(uint32 i, uint32 j);
 
-	b3Mat33 operator()(u32 i, u32 j) const;
+	b3Mat33 operator()(uint32 i, uint32 j) const;
 
 	void operator+=(const b3SparseMat33& m);
 
@@ -127,23 +127,23 @@ struct b3SparseMat33
 
 	void operator-=(const b3DiagMat33& m);
 
-	u32 GetElementCount() const { return 3 * rowCount * 3 * rowCount; }
+	uint32 GetElementCount() const { return 3 * rowCount * 3 * rowCount; }
 
-	scalar& GetElement(u32 i, u32 j);
+	scalar& GetElement(uint32 i, uint32 j);
 
-	scalar GetElement(u32 i, u32 j) const;
+	scalar GetElement(uint32 i, uint32 j) const;
 
 	void CreateMatrix(scalar* out) const;
 
-	u32 rowCount;
+	uint32 rowCount;
 	b3RowEntryList* rows;
 };
 
-inline b3SparseMat33::b3SparseMat33(u32 m)
+inline b3SparseMat33::b3SparseMat33(uint32 m)
 {
 	rowCount = m;
 	rows = (b3RowEntryList*)b3Alloc(rowCount * sizeof(b3RowEntryList));
-	for (u32 i = 0; i < rowCount; ++i)
+	for (uint32 i = 0; i < rowCount; ++i)
 	{
 		rows[i].head = nullptr;
 		rows[i].count = 0;
@@ -154,7 +154,7 @@ inline b3SparseMat33::b3SparseMat33(const b3SparseMat33& m)
 {
 	rowCount = m.rowCount;
 	rows = (b3RowEntryList*)b3Alloc(rowCount * sizeof(b3RowEntryList));
-	for (u32 i = 0; i < rowCount; ++i)
+	for (uint32 i = 0; i < rowCount; ++i)
 	{
 		rows[i].head = nullptr;
 		rows[i].count = 0;
@@ -170,7 +170,7 @@ inline b3SparseMat33::~b3SparseMat33()
 
 inline void b3SparseMat33::Destroy()
 {
-	for (u32 i = 0; i < rowCount; ++i)
+	for (uint32 i = 0; i < rowCount; ++i)
 	{
 		b3RowEntryList* list = rows + i;
 
@@ -196,7 +196,7 @@ inline b3SparseMat33& b3SparseMat33::operator=(const b3SparseMat33& _m)
 
 	rowCount = _m.rowCount;
 	rows = (b3RowEntryList*)b3Alloc(rowCount * sizeof(b3RowEntryList));
-	for (u32 i = 0; i < rowCount; ++i)
+	for (uint32 i = 0; i < rowCount; ++i)
 	{
 		rows[i].head = nullptr;
 		rows[i].count = 0;
@@ -211,7 +211,7 @@ inline void b3SparseMat33::Copy(const b3SparseMat33& _m)
 {
 	B3_ASSERT(rowCount == _m.rowCount);
 
-	for (u32 i = 0; i < rowCount; ++i)
+	for (uint32 i = 0; i < rowCount; ++i)
 	{
 		b3RowEntryList* list1 = _m.rows + i;
 		b3RowEntryList* list2 = rows + i;
@@ -229,7 +229,7 @@ inline void b3SparseMat33::Copy(const b3SparseMat33& _m)
 	}
 }
 
-inline b3Mat33* b3SparseMat33::Search(u32 i, u32 j)
+inline b3Mat33* b3SparseMat33::Search(uint32 i, uint32 j)
 {
 	B3_ASSERT(i < rowCount);
 	B3_ASSERT(j < rowCount);
@@ -242,7 +242,7 @@ inline b3Mat33* b3SparseMat33::Search(u32 i, u32 j)
 	return nullptr;
 }
 
-inline const b3Mat33* b3SparseMat33::Search(u32 i, u32 j) const
+inline const b3Mat33* b3SparseMat33::Search(uint32 i, uint32 j) const
 {
 	B3_ASSERT(i < rowCount);
 	B3_ASSERT(j < rowCount);
@@ -255,7 +255,7 @@ inline const b3Mat33* b3SparseMat33::Search(u32 i, u32 j) const
 	return nullptr;
 }
 
-inline b3Mat33 b3SparseMat33::operator()(u32 i, u32 j) const
+inline b3Mat33 b3SparseMat33::operator()(uint32 i, uint32 j) const
 {
 	const b3Mat33* v = ((b3SparseMat33*)this)->Search(i, j);
 	if (v)
@@ -265,7 +265,7 @@ inline b3Mat33 b3SparseMat33::operator()(u32 i, u32 j) const
 	return b3Mat33_zero;
 }
 
-inline b3Mat33& b3SparseMat33::operator()(u32 i, u32 j)
+inline b3Mat33& b3SparseMat33::operator()(uint32 i, uint32 j)
 {
 	B3_ASSERT(i < rowCount);
 	B3_ASSERT(j < rowCount);
@@ -287,7 +287,7 @@ inline b3Mat33& b3SparseMat33::operator()(u32 i, u32 j)
 	return e->value;
 }
 
-inline void b3SparseMat33::SetZero(u32 i, u32 j)
+inline void b3SparseMat33::SetZero(uint32 i, uint32 j)
 {
 	B3_ASSERT(i < rowCount);
 	B3_ASSERT(j < rowCount);
@@ -302,7 +302,7 @@ inline void b3SparseMat33::SetZero(u32 i, u32 j)
 	}
 }
 
-inline void b3SparseMat33::SetZeroRow(u32 i)
+inline void b3SparseMat33::SetZeroRow(uint32 i)
 {
 	B3_ASSERT(i < rowCount);
 	b3RowEntryList* list = rows + i;
@@ -316,10 +316,10 @@ inline void b3SparseMat33::SetZeroRow(u32 i)
 	}
 }
 
-inline void b3SparseMat33::SetZeroColumn(u32 j)
+inline void b3SparseMat33::SetZeroColumn(uint32 j)
 {
 	B3_ASSERT(j < rowCount);
-	for (u32 i = 0; i < rowCount; ++i)
+	for (uint32 i = 0; i < rowCount; ++i)
 	{
 		b3RowEntryList* list = rows + i;
 		b3RowEntry* e = list->Search(j);
@@ -335,13 +335,13 @@ inline void b3SparseMat33::operator+=(const b3SparseMat33& m)
 {
 	B3_ASSERT(rowCount == m.rowCount);
 
-	for (u32 i = 0; i < m.rowCount; ++i)
+	for (uint32 i = 0; i < m.rowCount; ++i)
 	{
 		b3RowEntryList* list = m.rows + i;
 
 		for (b3RowEntry* e = list->head; e; e = e->next)
 		{
-			u32 j = e->column;
+			uint32 j = e->column;
 
 			(*this)(i, j) += e->value;
 		}
@@ -352,13 +352,13 @@ inline void b3SparseMat33::operator-=(const b3SparseMat33& m)
 {
 	B3_ASSERT(rowCount == m.rowCount);
 
-	for (u32 i = 0; i < m.rowCount; ++i)
+	for (uint32 i = 0; i < m.rowCount; ++i)
 	{
 		b3RowEntryList* list = m.rows + i;
 
 		for (b3RowEntry* e = list->head; e; e = e->next)
 		{
-			u32 j = e->column;
+			uint32 j = e->column;
 
 			(*this)(i, j) -= e->value;
 		}
@@ -368,7 +368,7 @@ inline void b3SparseMat33::operator-=(const b3SparseMat33& m)
 inline void b3SparseMat33::operator+=(const b3DiagMat33& m)
 {
 	B3_ASSERT(rowCount == m.n);
-	for (u32 i = 0; i < m.n; ++i)
+	for (uint32 i = 0; i < m.n; ++i)
 	{
 		(*this)(i, i) += m[i];
 	}
@@ -377,70 +377,70 @@ inline void b3SparseMat33::operator+=(const b3DiagMat33& m)
 inline void b3SparseMat33::operator-=(const b3DiagMat33& m)
 {
 	B3_ASSERT(rowCount == m.n);
-	for (u32 i = 0; i < m.n; ++i)
+	for (uint32 i = 0; i < m.n; ++i)
 	{
 		(*this)(i, i) -= m[i];
 	}
 }
 
-inline scalar& b3SparseMat33::GetElement(u32 i, u32 j)
+inline scalar& b3SparseMat33::GetElement(uint32 i, uint32 j)
 {
 	B3_ASSERT(i < 3 * rowCount);
 	B3_ASSERT(j < 3 * rowCount);
 
-	u32 i0 = i / 3;
-	u32 j0 = j / 3;
+	uint32 i0 = i / 3;
+	uint32 j0 = j / 3;
 
 	b3Mat33& a = (*this)(i0, j0);
 
-	u32 ii = i - 3 * i0;
-	u32 jj = j - 3 * j0;
+	uint32 ii = i - 3 * i0;
+	uint32 jj = j - 3 * j0;
 
 	return a(ii, jj);
 }
 
-inline scalar b3SparseMat33::GetElement(u32 i, u32 j) const
+inline scalar b3SparseMat33::GetElement(uint32 i, uint32 j) const
 {
 	B3_ASSERT(i < 3 * rowCount);
 	B3_ASSERT(j < 3 * rowCount);
 
-	u32 i0 = i / 3;
-	u32 j0 = j / 3;
+	uint32 i0 = i / 3;
+	uint32 j0 = j / 3;
 
 	b3Mat33 a = (*this)(i0, j0);
 
-	u32 ii = i - 3 * i0;
-	u32 jj = j - 3 * j0;
+	uint32 ii = i - 3 * i0;
+	uint32 jj = j - 3 * j0;
 
 	return a(ii, jj);
 }
 
 inline void b3SparseMat33::CreateMatrix(scalar* out) const
 {
-	u32 AM = 3 * rowCount;
-	u32 AN = AM;
+	uint32 AM = 3 * rowCount;
+	uint32 AN = AM;
 	scalar* A = out;
 
-	for (u32 i = 0; i < AM * AN; ++i)
+	for (uint32 i = 0; i < AM * AN; ++i)
 	{
 		A[i] = scalar(0);
 	}
 
-	for (u32 i = 0; i < rowCount; ++i)
+	for (uint32 i = 0; i < rowCount; ++i)
 	{
 		b3RowEntryList* list = rows + i;
 
 		for (b3RowEntry* e = list->head; e; e = e->next)
 		{
-			u32 j = e->column;
+			uint32 j = e->column;
 			b3Mat33 a = e->value;
 
-			for (u32 ii = 0; ii < 3; ++ii)
+			for (uint32 ii = 0; ii < 3; ++ii)
 			{
-				for (u32 jj = 0; jj < 3; ++jj)
+				for (uint32 jj = 0; jj < 3; ++jj)
 				{
-					u32 row = 3 * i + ii;
-					u32 col = 3 * j + jj;
+					uint32 row = 3 * i + ii;
+					uint32 col = 3 * j + jj;
 
 					A[row + AM * col] = a(ii, jj);
 				}
@@ -483,7 +483,7 @@ inline void b3Sub(b3SparseMat33& out, const b3DiagMat33& a, const b3SparseMat33&
 {
 	B3_ASSERT(out.rowCount == a.n);
 
-	for (u32 i = 0; i < a.n; ++i)
+	for (uint32 i = 0; i < a.n; ++i)
 	{
 		out(i, i) = a[i];
 	}
@@ -497,13 +497,13 @@ inline void b3Mul(b3DenseVec3& out, const b3SparseMat33& A, const b3DenseVec3& v
 
 	out.SetZero();
 
-	for (u32 i = 0; i < A.rowCount; ++i)
+	for (uint32 i = 0; i < A.rowCount; ++i)
 	{
 		b3RowEntryList* list = A.rows + i;
 
 		for (b3RowEntry* e = list->head; e; e = e->next)
 		{
-			u32 j = e->column;
+			uint32 j = e->column;
 			b3Mat33 a = e->value;
 
 			out[i] += a * v[j];
@@ -522,7 +522,7 @@ inline void b3Mul(b3SparseMat33& out, scalar s, const b3SparseMat33& B)
 
 	out = B;
 
-	for (u32 i = 0; i < out.rowCount; ++i)
+	for (uint32 i = 0; i < out.rowCount; ++i)
 	{
 		b3RowEntryList* list = out.rows + i;
 		for (b3RowEntry* e = list->head; e; e = e->next)
@@ -543,7 +543,7 @@ inline void b3Mul(b3SparseMat33& out, const b3DiagMat33& A, const b3SparseMat33&
 	// [a11 0 ] [b11 b12] = [a11 * b11  a11 * b12]
 	// [0  a22] [b21 b22]   [a22 * b21  a22 * b22]
 	// cij = aii * bij
-	for (u32 i = 0; i < out.rowCount; ++i)
+	for (uint32 i = 0; i < out.rowCount; ++i)
 	{
 		b3RowEntryList* list = out.rows + i;
 		for (b3RowEntry* e = list->head; e; e = e->next)
@@ -564,12 +564,12 @@ inline void b3Mul(b3SparseMat33& out, const b3SparseMat33& A, const b3DiagMat33&
 	// [a11 a12] * [b11 0 ] = [a11 * b11  a12 * b22]
 	// [a21 a22]   [0  b22]   [a21 * b11  a22 * b22]
 	// cij = aij * bjj
-	for (u32 i = 0; i < out.rowCount; ++i)
+	for (uint32 i = 0; i < out.rowCount; ++i)
 	{
 		b3RowEntryList* list = out.rows + i;
 		for (b3RowEntry* e = list->head; e; e = e->next)
 		{
-			u32 j = e->column;
+			uint32 j = e->column;
 			e->value = e->value * B[j];
 		}
 	}

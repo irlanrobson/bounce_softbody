@@ -28,13 +28,13 @@ b3FrameAllocator::~b3FrameAllocator()
 {
 }
 
-void* b3FrameAllocator::Allocate(u32 size)
+void* b3FrameAllocator::Allocate(uint32 size)
 {
-	u32 totalSize = sizeof(b3Block) + size;
+	uint32 totalSize = sizeof(b3Block) + size;
 
 	if (m_allocatedSize + totalSize > b3_maxFrameSize)
 	{
-		u8* p = (u8*)b3Alloc(totalSize);
+		uint8* p = (uint8*)b3Alloc(totalSize);
 		
 		b3Block* block = (b3Block*)p;
 		block->p = p;
@@ -43,7 +43,7 @@ void* b3FrameAllocator::Allocate(u32 size)
 		return p + sizeof(b3Block);
 	}
 
-	u8* p = m_p;
+	uint8* p = m_p;
 	m_p += totalSize;
 	m_allocatedSize += totalSize;
 	
@@ -56,7 +56,7 @@ void* b3FrameAllocator::Allocate(u32 size)
 
 void b3FrameAllocator::Free(void* q)
 {
-	u8* p = (u8*)(q) - sizeof(b3Block);
+	uint8* p = (uint8*)(q) - sizeof(b3Block);
 	b3Block* block = (b3Block*)p;
 	B3_ASSERT(block->p == p);
 	if (block->parent)

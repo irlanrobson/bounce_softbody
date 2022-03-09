@@ -20,10 +20,10 @@
 #include <bounce_softbody/common/memory/block_pool.h>
 #include <new>
 
-static const u32 b3_maxBlockSize = 640;
+static const uint32 b3_maxBlockSize = 640;
 
 // These are the supported object sizes. Actual allocations are rounded up the next size.
-static const u32 b3_blockSizes[b3_blockSizeCount] =
+static const uint32 b3_blockSizes[b3_blockSizeCount] =
 {
 	16,		// 0
 	32,		// 1
@@ -46,24 +46,24 @@ struct b3SizeMap
 {
 	b3SizeMap()
 	{
-		u32 j = 0;
+		uint32 j = 0;
 		slots[0] = 0;
-		for (u32 i = 1; i <= b3_maxBlockSize; ++i)
+		for (uint32 i = 1; i <= b3_maxBlockSize; ++i)
 		{
 			B3_ASSERT(j < b3_blockSizeCount);
 			if (i <= b3_blockSizes[j])
 			{
-				slots[i] = (u8)j;
+				slots[i] = (uint8)j;
 			}
 			else
 			{
 				++j;
-				slots[i] = (u8)j;
+				slots[i] = (uint8)j;
 			}
 		}
 	}
 
-	u8 slots[b3_maxBlockSize + 1];
+	uint8 slots[b3_maxBlockSize + 1];
 };
 
 static const b3SizeMap b3_sizeMap;
@@ -71,7 +71,7 @@ static const b3SizeMap b3_sizeMap;
 b3BlockAllocator::b3BlockAllocator()
 {
 	m_blockPools = (b3BlockPool*)b3Alloc(sizeof(b3BlockPool) * b3_blockSizeCount);
-	for (u32 i = 0; i < b3_blockSizeCount; ++i)
+	for (uint32 i = 0; i < b3_blockSizeCount; ++i)
 	{
 		new (m_blockPools + i) b3BlockPool(b3_blockSizes[i]);
 	}
@@ -79,14 +79,14 @@ b3BlockAllocator::b3BlockAllocator()
 
 b3BlockAllocator::~b3BlockAllocator()
 {
-	for (u32 i = 0; i < b3_blockSizeCount; ++i)
+	for (uint32 i = 0; i < b3_blockSizeCount; ++i)
 	{
 		m_blockPools[i].~b3BlockPool();
 	}
 	b3Free(m_blockPools);
 }
 
-void* b3BlockAllocator::Allocate(u32 size)
+void* b3BlockAllocator::Allocate(uint32 size)
 {
 	if (size == 0)
 	{
@@ -100,13 +100,13 @@ void* b3BlockAllocator::Allocate(u32 size)
 		return b3Alloc(size);
 	}
 
-	u32 index = b3_sizeMap.slots[size];
+	uint32 index = b3_sizeMap.slots[size];
 	B3_ASSERT(0 <= index && index < b3_blockSizeCount);
 
 	return m_blockPools[index].Allocate();
 }
 
-void b3BlockAllocator::Free(void* p, u32 size)
+void b3BlockAllocator::Free(void* p, uint32 size)
 {
 	if (size == 0)
 	{
@@ -121,7 +121,7 @@ void b3BlockAllocator::Free(void* p, u32 size)
 		return;
 	}
 	
-	u32 index = b3_sizeMap.slots[size];
+	uint32 index = b3_sizeMap.slots[size];
 	B3_ASSERT(0 <= index && index < b3_blockSizeCount);
 
 	m_blockPools[index].Free(p);

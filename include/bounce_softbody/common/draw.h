@@ -45,10 +45,10 @@ public:
 	virtual void DrawSolidTriangle(const b3Vec3& normal, const b3Vec3& p1, const b3Vec3& p2, const b3Vec3& p3, const b3Color& color, bool depthEnabled = true) = 0;
 
 	// Draw a polygon with vertices ordered CCW.
-	virtual void DrawPolygon(const void* vertices, u32 vertexStride, u32 count, const b3Color& color, bool depthEnabled = true) = 0;
+	virtual void DrawPolygon(const void* vertices, uint32 vertexStride, uint32 count, const b3Color& color, bool depthEnabled = true) = 0;
 	
 	// Draw a solid polygon with vertices ordered CCW.
-	virtual void DrawSolidPolygon(const b3Vec3& normal, const void* vertices, u32 vertexStride, u32 count, const b3Color& color, bool depthEnabled = true) = 0;
+	virtual void DrawSolidPolygon(const b3Vec3& normal, const void* vertices, uint32 vertexStride, uint32 count, const b3Color& color, bool depthEnabled = true) = 0;
 
 	// Draw a circle with center, normal, and radius.
 	virtual void DrawCircle(const b3Vec3& normal, const b3Vec3& center, scalar radius, const b3Color& color, bool depthEnabled = true) = 0;
@@ -75,7 +75,7 @@ public:
 	virtual void DrawSolidCylinder(const b3Vec3& axis, const b3Vec3& center, scalar radius, scalar height, const b3Color& color, bool depthEnabled = true) = 0;
 	
 	// Draw a grid with orientation, center, width, and height.
-	virtual void DrawGrid(const b3Vec3& normal, const b3Vec3& center, u32 width, u32 height, const b3Color& color, bool depthEnabled = true) = 0;
+	virtual void DrawGrid(const b3Vec3& normal, const b3Vec3& center, uint32 width, uint32 height, const b3Color& color, bool depthEnabled = true) = 0;
 	
 	// Draw a capsule with segment and radius.
 	virtual void DrawCapsule(const b3Vec3& p1, const b3Vec3& p2, scalar radius, const b3Color& color, bool depthEnabled = true) = 0;

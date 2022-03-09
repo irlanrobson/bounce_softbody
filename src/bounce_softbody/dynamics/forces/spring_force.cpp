@@ -66,8 +66,8 @@ void b3SpringForce::ComputeForces(const b3SparseForceSolverData* data)
 	b3SparseMat33& dfdx = *data->dfdx;
 	b3SparseMat33& dfdv = *data->dfdv;
 
-	u32 i1 = m_p1->m_solverId;
-	u32 i2 = m_p2->m_solverId;
+	uint32 i1 = m_p1->m_solverId;
+	uint32 i2 = m_p2->m_solverId;
 
 	b3Vec3 x1 = x[i1];
 	b3Vec3 v1 = v[i1];

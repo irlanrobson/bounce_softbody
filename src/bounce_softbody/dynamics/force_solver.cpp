@@ -27,11 +27,11 @@
 #include <bounce_softbody/common/memory/stack_allocator.h>
 
 // Number of non-linear iterations.
-u32 b3_forceSolverIterations = 0;
+uint32 b3_forceSolverIterations = 0;
 
 // Min/max number of inner iterations.
-u32 b3_forceSolverMinSubIterations = B3_MAX_U32;
-u32 b3_forceSolverMaxSubIterations = 0;
+uint32 b3_forceSolverMinSubIterations = B3_MAX_U32;
+uint32 b3_forceSolverMaxSubIterations = 0;
 
 b3ForceSolver::b3ForceSolver(const b3ForceSolverDef& def)
 {
@@ -57,29 +57,29 @@ class b3ForceModel : public b3SparseForceModel
 public:
 	void ComputeForces(const b3SparseForceSolverData* data)
 	{
-		for (u32 i = 0; i < m_particleCount; ++i)
+		for (uint32 i = 0; i < m_particleCount; ++i)
 		{
 			m_particles[i]->ComputeForces(data);
 		}
 		
-		for (u32 i = 0; i < m_forceCount; ++i)
+		for (uint32 i = 0; i < m_forceCount; ++i)
 		{
 			m_forces[i]->ComputeForces(data);
 		}
 
-		for (u32 i = 0; i < m_shapeContactCount; ++i)
+		for (uint32 i = 0; i < m_shapeContactCount; ++i)
 		{
 			m_shapeContacts[i]->ComputeForces(data);
 		}
 	}
 
-	u32 m_particleCount;
+	uint32 m_particleCount;
 	b3Particle** m_particles;
 
-	u32 m_forceCount;
+	uint32 m_forceCount;
 	b3Force** m_forces;
 
-	u32 m_shapeContactCount;
+	uint32 m_shapeContactCount;
 	b3SphereAndShapeContact** m_shapeContacts;
 };
 
@@ -95,7 +95,7 @@ void b3ForceSolver::Solve(const b3Vec3& gravity)
 	b3DiagMat33 S(m_particleCount);
 	b3DenseVec3 z(m_particleCount);
 	
-	for (u32 i = 0; i < m_particleCount; ++i)
+	for (uint32 i = 0; i < m_particleCount; ++i)
 	{
 		b3Particle* p = m_particles[i];
 
@@ -170,7 +170,7 @@ void b3ForceSolver::Solve(const b3Vec3& gravity)
 	b3_forceSolverMaxSubIterations = solverOutput.maxSubIterations;
 
 	// Copy buffers back to the particles.
-	for (u32 i = 0; i < m_particleCount; ++i)
+	for (uint32 i = 0; i < m_particleCount; ++i)
 	{
 		m_particles[i]->m_position = x[i];
 		m_particles[i]->m_velocity = v[i];

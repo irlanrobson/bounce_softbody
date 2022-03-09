@@ -23,8 +23,8 @@ b3BroadPhase::b3BroadPhase()
 	m_proxyCount = 0;
 
 	m_moveBufferCapacity = 16;
-	m_moveBuffer = (u32*)b3Alloc(m_moveBufferCapacity * sizeof(u32));
-	memset(m_moveBuffer, 0, m_moveBufferCapacity * sizeof(u32));
+	m_moveBuffer = (uint32*)b3Alloc(m_moveBufferCapacity * sizeof(uint32));
+	memset(m_moveBuffer, 0, m_moveBufferCapacity * sizeof(uint32));
 	m_moveBufferCount = 0;
 
 	m_pairCapacity = 16;
@@ -39,7 +39,7 @@ b3BroadPhase::~b3BroadPhase()
 	b3Free(m_pairs);
 }
 
-void b3BroadPhase::BufferMove(u32 proxyId) 
+void b3BroadPhase::BufferMove(uint32 proxyId) 
 {
 	// The proxy has been moved. Add it to the buffer of moved proxies.
 	// Check capacity.
@@ -48,9 +48,9 @@ void b3BroadPhase::BufferMove(u32 proxyId)
 		// Duplicate capacity.
 		m_moveBufferCapacity *= 2;
 
-		u32* oldMoveBuffer = m_moveBuffer;
-		m_moveBuffer = (u32*)b3Alloc(m_moveBufferCapacity * sizeof(u32));
-		memcpy(m_moveBuffer, oldMoveBuffer, m_moveBufferCount * sizeof(u32));
+		uint32* oldMoveBuffer = m_moveBuffer;
+		m_moveBuffer = (uint32*)b3Alloc(m_moveBufferCapacity * sizeof(uint32));
+		memcpy(m_moveBuffer, oldMoveBuffer, m_moveBufferCount * sizeof(uint32));
 		b3Free(oldMoveBuffer);
 	}
 
@@ -59,9 +59,9 @@ void b3BroadPhase::BufferMove(u32 proxyId)
 	++m_moveBufferCount;
 }
 
-void b3BroadPhase::UnbufferMove(u32 proxyId)
+void b3BroadPhase::UnbufferMove(uint32 proxyId)
 {
-	for (u32 i = 0; i < m_moveBufferCount; ++i)
+	for (uint32 i = 0; i < m_moveBufferCount; ++i)
 	{
 		if (m_moveBuffer[i] == proxyId)
 		{
@@ -70,27 +70,27 @@ void b3BroadPhase::UnbufferMove(u32 proxyId)
 	}
 }
 
-bool b3BroadPhase::TestOverlap(u32 proxy1, u32 proxy2) const 
+bool b3BroadPhase::TestOverlap(uint32 proxy1, uint32 proxy2) const 
 {
 	return m_tree.TestOverlap(proxy1, proxy2);
 }
 
-u32 b3BroadPhase::CreateProxy(const b3AABB& aabb, void* userData) 
+uint32 b3BroadPhase::CreateProxy(const b3AABB& aabb, void* userData) 
 {
-	u32 proxyId = m_tree.CreateProxy(aabb, userData);
+	uint32 proxyId = m_tree.CreateProxy(aabb, userData);
 	++m_proxyCount;
 	BufferMove(proxyId);
 	return proxyId;
 }
 
-void b3BroadPhase::DestroyProxy(u32 proxyId) 
+void b3BroadPhase::DestroyProxy(uint32 proxyId) 
 {
 	UnbufferMove(proxyId);
 	--m_proxyCount;
 	m_tree.DestroyProxy(proxyId);
 }
 
-void b3BroadPhase::MoveProxy(u32 proxyId, const b3AABB& aabb, const b3Vec3& displacement)
+void b3BroadPhase::MoveProxy(uint32 proxyId, const b3AABB& aabb, const b3Vec3& displacement)
 {
 	bool buffer = m_tree.MoveProxy(proxyId, aabb, displacement);
 	if (buffer)
@@ -100,12 +100,12 @@ void b3BroadPhase::MoveProxy(u32 proxyId, const b3AABB& aabb, const b3Vec3& disp
 	}
 }
 
-void b3BroadPhase::TouchProxy(u32 proxyId)
+void b3BroadPhase::TouchProxy(uint32 proxyId)
 {
 	BufferMove(proxyId);
 }
 
-bool b3BroadPhase::Report(u32 proxyId) 
+bool b3BroadPhase::Report(uint32 proxyId) 
 {
 	if (proxyId == m_queryProxyId) 
 	{

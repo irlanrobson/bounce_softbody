@@ -26,7 +26,7 @@ bool b3SparseSolveCG(b3SolveCGOutput* output, const b3SolveCGInput* input)
 {
 	const b3SparseMat33& A = *input->A;
 	const b3DenseVec3& b = *input->b;
-	u32 maxIterations = input->maxIterations;
+	uint32 maxIterations = input->maxIterations;
 	scalar epsilon = input->tolerance;
 	b3DenseVec3& x = *output->x;
 
@@ -34,7 +34,7 @@ bool b3SparseSolveCG(b3SolveCGOutput* output, const b3SolveCGInput* input)
 	// P = diag(A) 
 	b3DiagMat33 P(A.rowCount);
 	b3DiagMat33 invP(A.rowCount);
-	for (u32 i = 0; i < A.rowCount; ++i)
+	for (uint32 i = 0; i < A.rowCount; ++i)
 	{
 		b3Mat33 a = A(i, i);
 
@@ -58,7 +58,7 @@ bool b3SparseSolveCG(b3SolveCGOutput* output, const b3SolveCGInput* input)
 
 	scalar delta_new = b3Dot(r, c);
 
-	u32 iteration = 0;
+	uint32 iteration = 0;
 	for (;;)
 	{
 		if (iteration == maxIterations)

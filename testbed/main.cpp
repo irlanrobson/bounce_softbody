@@ -101,7 +101,7 @@ static void Run()
 {
 	int w, h;
 	glfwGetWindowSize(s_window, &w, &h);
-	s_view->Event_SetWindowSize(u32(w), u32(h));
+	s_view->Event_SetWindowSize(uint32(w), uint32(h));
 
 	std::chrono::duration<double> sleepAdjust(0.0);
 

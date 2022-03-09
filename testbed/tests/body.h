@@ -58,9 +58,9 @@ public:
 			b3DrawSegment(g_debugDrawData, pA, pB, b3Color_white);
 		}
 
-		extern u32 b3_forceSolverIterations;
-		extern u32 b3_forceSolverMinSubIterations;
-		extern u32 b3_forceSolverMaxSubIterations;
+		extern uint32 b3_forceSolverIterations;
+		extern uint32 b3_forceSolverMinSubIterations;
+		extern uint32 b3_forceSolverMaxSubIterations;
 
 		DrawString(b3Color_white, "Iterations = %d", b3_forceSolverIterations);
 		DrawString(b3Color_white, "Sub-iterations [min] [max] = [%d] [%d]", b3_forceSolverMinSubIterations, b3_forceSolverMaxSubIterations);
@@ -71,7 +71,7 @@ public:
 	
 	virtual void Draw()
 	{
-		m_body->Draw(&m_draw);
+		m_body->DebugDraw(&m_draw);
 	}
 	
 	void MouseMove(const b3Ray& pw)

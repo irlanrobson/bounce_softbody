@@ -24,7 +24,7 @@
 // A growable LIFO stack with an initial capacity of N.
 // If the stack capacity exceeds the initial capacity, the heap 
 // is used to increase the capacity of the stack.
-template <typename T, u32 N>
+template <typename T, uint32 N>
 class b3Stack
 {
 public:
@@ -80,7 +80,7 @@ public:
 		--m_count;
 	}
 
-	u32 Count() const
+	uint32 Count() const
 	{
 		return m_count;
 	}
@@ -90,9 +90,9 @@ public:
 		return m_count == 0;
 	}
 private:
-	u32 m_capacity;
+	uint32 m_capacity;
 	T* m_elements;
-	u32 m_count;
+	uint32 m_count;
 	T m_stackElements[N];
 };
 

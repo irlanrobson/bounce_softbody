@@ -57,10 +57,10 @@ void b3MouseForce::ClearForces()
 
 void b3MouseForce::ComputeForces(const b3SparseForceSolverData* data)
 {
-	u32 i1 = m_p1->m_solverId;
-	u32 i2 = m_p2->m_solverId;
-	u32 i3 = m_p3->m_solverId;
-	u32 i4 = m_p4->m_solverId;
+	uint32 i1 = m_p1->m_solverId;
+	uint32 i2 = m_p2->m_solverId;
+	uint32 i3 = m_p3->m_solverId;
+	uint32 i4 = m_p4->m_solverId;
 
 	b3DenseVec3& x = *data->x;
 	b3DenseVec3& v = *data->v;
@@ -110,7 +110,7 @@ void b3MouseForce::ComputeForces(const b3SparseForceSolverData* data)
 
 				// Force
 				b3Vec3 fs[4];
-				for (u32 i = 0; i < 4; ++i)
+				for (uint32 i = 0; i < 4; ++i)
 				{
 					fs[i] = -m_ks * C * dCdx[i];
 				}
@@ -157,9 +157,9 @@ void b3MouseForce::ComputeForces(const b3SparseForceSolverData* data)
 				d2Cdx[3][3] = -w4 * w4 * B;
 
 				b3Mat33 K[4][4];
-				for (u32 i = 0; i < 4; ++i)
+				for (uint32 i = 0; i < 4; ++i)
 				{
-					for (u32 j = 0; j < 4; ++j)
+					for (uint32 j = 0; j < 4; ++j)
 					{
 						K[i][j] = -m_ks * (b3Outer(dCdx[i], dCdx[j]) + C * d2Cdx[i][j]);
 					}
@@ -195,7 +195,7 @@ void b3MouseForce::ComputeForces(const b3SparseForceSolverData* data)
 			
 			// Force
 			b3Vec3 fs[4];
-			for (u32 i = 0; i < 4; ++i)
+			for (uint32 i = 0; i < 4; ++i)
 			{
 				fs[i] = -m_kd * dCdt * dCdx[i];
 			}
@@ -212,9 +212,9 @@ void b3MouseForce::ComputeForces(const b3SparseForceSolverData* data)
 
 			// Force derivative
 			b3Mat33 K[4][4];
-			for (u32 i = 0; i < 4; ++i)
+			for (uint32 i = 0; i < 4; ++i)
 			{
-				for (u32 j = 0; j < 4; ++j)
+				for (uint32 j = 0; j < 4; ++j)
 				{
 					b3Mat33 Kij = -m_kd * b3Outer(dCdx[i], dCdx[j]);
 

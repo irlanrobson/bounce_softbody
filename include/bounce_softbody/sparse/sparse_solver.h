@@ -29,7 +29,7 @@ struct b3SolveCGInput
 {
 	const b3SparseMat33* A; // A in Ax = b
 	const b3DenseVec3* b; // b in Ax = b
-	u32 maxIterations; // maximum CG iterations
+	uint32 maxIterations; // maximum CG iterations
 	scalar tolerance; // allowed error
 };
 
@@ -37,7 +37,7 @@ struct b3SolveCGInput
 struct b3SolveCGOutput
 {
 	b3DenseVec3* x; // solution. it must be initialized with an initial guess.
-	u32 iterations; // number of CG iterations
+	uint32 iterations; // number of CG iterations
 	scalar error; // error
 };
 

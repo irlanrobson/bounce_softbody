@@ -75,7 +75,7 @@ public:
 	b3Particle* GetParticleList();
 
 	// Get the number of particles in this body.
-	u32 GetParticleCount() const;
+	uint32 GetParticleCount() const;
 
 	// Create a force.
 	b3Force* CreateForce(const b3ForceDef& def);
@@ -88,7 +88,7 @@ public:
 	b3Force* GetForceList();
 
 	// Get the number of forces in this body.
-	u32 GetForceCount() const;
+	uint32 GetForceCount() const;
 
 	// Create a sphere fixture.
 	b3SphereFixture* CreateSphere(const b3SphereFixtureDef& def);
@@ -101,7 +101,7 @@ public:
 	b3SphereFixture* GetSphereList();
 
 	// Get the number of spheres in this body.
-	u32 GetSphereCount() const;
+	uint32 GetSphereCount() const;
 
 	// Create a triangle fixture.
 	b3TriangleFixture* CreateTriangle(const b3TriangleFixtureDef& def);
@@ -114,7 +114,7 @@ public:
 	b3TriangleFixture* GetTriangleList();
 
 	// Get the number of triangles in this body.
-	u32 GetTriangleCount() const;
+	uint32 GetTriangleCount() const;
 
 	// Create a tetrahedron fixture.
 	b3TetrahedronFixture* CreateTetrahedron(const b3TetrahedronFixtureDef& def);
@@ -127,7 +127,7 @@ public:
 	b3TetrahedronFixture* GetTetrahedronList();
 
 	// Get the number of tetrahedrons in this body.
-	u32 GetTetrahedronCount() const;
+	uint32 GetTetrahedronCount() const;
 
 	// Create a new world fixture.
 	b3WorldFixture* CreateFixture(const b3WorldFixtureDef& def);
@@ -140,7 +140,7 @@ public:
 	b3WorldFixture* GetFixtureList();
 
 	// Get the number of world fixtures in this body.
-	u32 GetFixtureCount() const;
+	uint32 GetFixtureCount() const;
 
 	// Set the acceleration of gravity.
 	void SetGravity(const b3Vec3& gravity);
@@ -150,7 +150,7 @@ public:
 
 	// Perform a time step given the number of force solver and subsolver iterations. 
 	// Use one force iteration for reasonable performance. 
-	void Step(scalar dt, u32 forceIterations, u32 forceSubIterations);
+	void Step(scalar dt, uint32 forceIterations, uint32 forceSubIterations);
 
 	// Perform a ray cast with the body.
 	bool RayCastSingle(b3BodyRayCastSingleOutput* output, const b3Vec3& p1, const b3Vec3& p2) const;
@@ -159,7 +159,7 @@ public:
 	scalar GetEnergy() const;
 
 	// Debug draw the body entities.
-	void Draw(b3Draw* draw) const;
+	void DebugDraw(b3Draw* draw) const;
 protected:
 	friend class b3Particle;
 	friend class b3SphereFixture;
@@ -185,27 +185,27 @@ protected:
 
 	// List of particles
 	b3Particle* m_particleList;
-	u32 m_particleCount;
+	uint32 m_particleCount;
 
 	// List of forces
 	b3Force* m_forceList;
-	u32 m_forceCount;
+	uint32 m_forceCount;
 
 	// List of spheres
 	b3SphereFixture* m_sphereList;
-	u32 m_sphereCount;
+	uint32 m_sphereCount;
 
 	// List of triangles
 	b3TriangleFixture* m_triangleList;
-	u32 m_triangleCount;
+	uint32 m_triangleCount;
 
 	// List of tetrahedrons
 	b3TetrahedronFixture* m_tetrahedronList;
-	u32 m_tetrahedronCount;
+	uint32 m_tetrahedronCount;
 
 	// List of world fixtures
 	b3WorldFixture* m_fixtureList;
-	u32 m_fixtureCount;
+	uint32 m_fixtureCount;
 
 	// Contact manager
 	b3ContactManager m_contactManager;
@@ -234,7 +234,7 @@ inline b3Particle* b3Body::GetParticleList()
 	return m_particleList;
 }
 
-inline u32 b3Body::GetParticleCount() const
+inline uint32 b3Body::GetParticleCount() const
 {
 	return m_particleCount;
 }
@@ -249,7 +249,7 @@ inline b3Force* b3Body::GetForceList()
 	return m_forceList;
 }
 
-inline u32 b3Body::GetForceCount() const
+inline uint32 b3Body::GetForceCount() const
 {
 	return m_forceCount;
 }
@@ -264,7 +264,7 @@ inline b3SphereFixture* b3Body::GetSphereList()
 	return m_sphereList;
 }
 
-inline u32 b3Body::GetSphereCount() const
+inline uint32 b3Body::GetSphereCount() const
 {
 	return m_sphereCount;
 }
@@ -279,7 +279,7 @@ inline b3TriangleFixture* b3Body::GetTriangleList()
 	return m_triangleList;
 }
 
-inline u32 b3Body::GetTriangleCount() const
+inline uint32 b3Body::GetTriangleCount() const
 {
 	return m_triangleCount;
 }
@@ -294,7 +294,7 @@ inline b3TetrahedronFixture* b3Body::GetTetrahedronList()
 	return m_tetrahedronList;
 }
 
-inline u32 b3Body::GetTetrahedronCount() const
+inline uint32 b3Body::GetTetrahedronCount() const
 {
 	return m_tetrahedronCount;
 }
@@ -309,7 +309,7 @@ inline b3WorldFixture* b3Body::GetFixtureList()
 	return m_fixtureList;
 }
 
-inline u32 b3Body::GetFixtureCount() const
+inline uint32 b3Body::GetFixtureCount() const
 {
 	return m_fixtureCount;
 }

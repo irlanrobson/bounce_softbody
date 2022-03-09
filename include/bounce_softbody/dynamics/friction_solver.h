@@ -29,7 +29,7 @@ class b3SphereAndShapeContact;
 struct b3FrictionSolverDef
 {
 	b3TimeStep step;
-	u32 shapeContactCount;
+	uint32 shapeContactCount;
 	b3SphereAndShapeContact** shapeContacts;
 };
 
@@ -48,7 +48,7 @@ public:
 protected:
 	b3TimeStep m_step;
 	b3StackAllocator* m_allocator;
-	u32 m_shapeContactCount;
+	uint32 m_shapeContactCount;
 	b3SphereAndShapeContact** m_shapeContacts;
 };
 

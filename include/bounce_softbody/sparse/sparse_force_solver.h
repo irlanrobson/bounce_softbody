@@ -65,7 +65,7 @@ struct b3SolveBEInput
 
 	b3SparseForceModel* forceModel; // force callback
 
-	u32 dofCount; // number of degrees of freedom 
+	uint32 dofCount; // number of degrees of freedom 
 
 	const b3DenseVec3* x0; // initial position x(t)
 	const b3DenseVec3* v0; // initial velocity v(t)
@@ -75,10 +75,10 @@ struct b3SolveBEInput
 	const b3DiagMat33* S; // constraint filter matrix
 	const b3DenseVec3* z; // desired subsolver solution (usually zero)
 
-	u32 maxIterations; // max of outer iterations
+	uint32 maxIterations; // max of outer iterations
 	scalar tolerance; // outer tolerance. units: m^2/s^2 
 	
-	u32 maxSubIterations; // max of inner iterations
+	uint32 maxSubIterations; // max of inner iterations
 	scalar subTolerance; // inner tolerance. units: m^2/s^2
 };
 
@@ -87,10 +87,10 @@ struct b3SolveBEOutput
 {
 	b3DenseVec3* x; // x(t + h)
 	b3DenseVec3* v; // v(t + h)
-	u32 iterations; // number of non-linear solver iterations
+	uint32 iterations; // number of non-linear solver iterations
 	scalar error; // error
-	u32 minSubIterations; // min of inner iterations
-	u32 maxSubIterations; // max of inner iterations
+	uint32 minSubIterations; // min of inner iterations
+	uint32 maxSubIterations; // max of inner iterations
 };
 
 // Integrate F = ma over [t, t + h] using Backward Euler.

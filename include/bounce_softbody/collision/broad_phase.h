@@ -27,8 +27,8 @@
 // A pair of broad-phase proxies.
 struct b3Pair
 {
-	u32 proxy1;
-	u32 proxy2;
+	uint32 proxy1;
+	uint32 proxy2;
 };
 
 // The broad-phase interface. 
@@ -41,29 +41,29 @@ public:
 	~b3BroadPhase();
 
 	// Create a proxy and return a index to it.
-	u32 CreateProxy(const b3AABB& aabb, void* userData);
+	uint32 CreateProxy(const b3AABB& aabb, void* userData);
 	
 	// Destroy a given proxy and remove it from the broadphase.
-	void DestroyProxy(u32 proxyId);
+	void DestroyProxy(uint32 proxyId);
 
 	// Update an existing proxy AABB with a given AABB and a displacement.
 	// displacement = dt * velocity
-	void MoveProxy(u32 proxyId, const b3AABB& aabb, const b3Vec3& displacement);
+	void MoveProxy(uint32 proxyId, const b3AABB& aabb, const b3Vec3& displacement);
 
 	// Force move the proxy.
-	void TouchProxy(u32 proxyId);
+	void TouchProxy(uint32 proxyId);
 
 	// Get the fat AABB of a given proxy.
-	const b3AABB& GetFatAABB(u32 proxyId) const;
+	const b3AABB& GetFatAABB(uint32 proxyId) const;
 
 	// Get the user data attached to a proxy.
-	void* GetUserData(u32 proxyId) const;
+	void* GetUserData(uint32 proxyId) const;
 
 	// Get the number of proxies.
-	u32 GetProxyCount() const;
+	uint32 GetProxyCount() const;
 
 	// Test if two proxy AABBs are overlapping.
-	bool TestOverlap(u32 proxy1, u32 proxy2) const;
+	bool TestOverlap(uint32 proxy1, uint32 proxy2) const;
 	
 	// Notify the client callback the AABBs that are overlapping with the passed AABB.
 	template<class T>
@@ -85,45 +85,45 @@ public:
 private :
 	friend class b3DynamicTree;
 
-	void BufferMove(u32 proxyId);
-	void UnbufferMove(u32 proxyId);
+	void BufferMove(uint32 proxyId);
+	void UnbufferMove(uint32 proxyId);
 	
 	// The client callback used to add an overlapping pair
 	// to the overlapping pair buffer.
-	bool Report(u32 proxyId);
+	bool Report(uint32 proxyId);
 	
 	// The dynamic tree.
 	b3DynamicTree m_tree;
 
 	// Number of proxies
-	u32 m_proxyCount;
+	uint32 m_proxyCount;
 
 	// The current proxy being queried for overlap with another proxies. 
 	// It is used to avoid a proxy overlap with itself.
-	u32 m_queryProxyId;
+	uint32 m_queryProxyId;
 
 	// The objects that have moved in a step.
-	u32* m_moveBuffer;
-	u32 m_moveBufferCount;
-	u32 m_moveBufferCapacity;
+	uint32* m_moveBuffer;
+	uint32 m_moveBufferCount;
+	uint32 m_moveBufferCapacity;
 
 	// The buffer holding the unique overlapping AABB pairs.
 	b3Pair* m_pairs;
-	u32 m_pairCapacity;
-	u32 m_pairCount;
+	uint32 m_pairCapacity;
+	uint32 m_pairCount;
 };
 
-inline const b3AABB& b3BroadPhase::GetFatAABB(u32 proxyId) const 
+inline const b3AABB& b3BroadPhase::GetFatAABB(uint32 proxyId) const 
 {
 	return m_tree.GetFatAABB(proxyId);
 }
 
-inline void* b3BroadPhase::GetUserData(u32 proxyId) const 
+inline void* b3BroadPhase::GetUserData(uint32 proxyId) const 
 {
 	return m_tree.GetUserData(proxyId);
 }
 
-inline u32 b3BroadPhase::GetProxyCount() const
+inline uint32 b3BroadPhase::GetProxyCount() const
 {
 	return m_proxyCount;
 }
@@ -162,7 +162,7 @@ inline void b3BroadPhase::FindPairs(T* callback)
 	m_pairCount = 0;
 
 	// Notifying this class with QueryCallback(), gets the (duplicated) overlapping pair buffer.
-	for (u32 i = 0; i < m_moveBufferCount; ++i) 
+	for (uint32 i = 0; i < m_moveBufferCount; ++i) 
 	{
 		// Keep the current queried proxy ID to avoid self overlapping.
 		m_queryProxyId = m_moveBuffer[i];
@@ -184,7 +184,7 @@ inline void b3BroadPhase::FindPairs(T* callback)
 	std::sort(m_pairs, m_pairs + m_pairCount);
 
 	// Skip duplicated overlapping pairs.
-	u32 index = 0;
+	uint32 index = 0;
 	while (index < m_pairCount) 
 	{
 		const b3Pair* primaryPair = m_pairs + index;

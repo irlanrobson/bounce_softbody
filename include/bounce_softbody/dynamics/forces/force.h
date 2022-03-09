@@ -51,7 +51,7 @@ struct b3ForceDef
 	b3ForceType type;
 
 	// Feature index into mesh.
-	u32 meshIndex;
+	uint32 meshIndex;
 };
 
 // A force acts on a set of particles.
@@ -69,7 +69,7 @@ public:
 	b3Force* GetNext();
 
 	// Get the mesh feature index.
-	u32 GetMeshIndex() const { return m_meshIndex; }
+	uint32 GetMeshIndex() const { return m_meshIndex; }
 protected:
 	friend class b3Body;
 	friend class b3Particle;
@@ -93,7 +93,7 @@ protected:
 	b3ForceType m_type;
 	
 	// Feature index into mesh.
-	u32 m_meshIndex;
+	uint32 m_meshIndex;
 
 	// Links to body list.
 	b3Force* m_prev;

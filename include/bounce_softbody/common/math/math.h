@@ -82,12 +82,12 @@ inline T b3Sign(T x)
 }
 
 template <class T>
-inline u32 b3UniqueCount(const T* V, u32 N)
+inline uint32 b3UniqueCount(const T* V, uint32 N)
 {
-	u32 count = 0;
-	for (u32 i = 0; i < N; ++i) 
+	uint32 count = 0;
+	for (uint32 i = 0; i < N; ++i) 
 	{
-		u32 j;
+		uint32 j;
 		for (j = 0; j < N; ++j)
 		{
 			if (V[i] == V[j])
@@ -104,12 +104,12 @@ inline u32 b3UniqueCount(const T* V, u32 N)
 }
 
 // Log a matrix stored in column-major order.
-inline void b3Log(const scalar* A, u32 AM, u32 AN)
+inline void b3Log(const scalar* A, uint32 AM, uint32 AN)
 {
-	for (u32 i = 0; i < AM; ++i)
+	for (uint32 i = 0; i < AM; ++i)
 	{
 		b3Log("[");
-		for (u32 j = 0; j < AN; ++j)
+		for (uint32 j = 0; j < AN; ++j)
 		{
 			if (j == 0)
 			{
@@ -126,17 +126,17 @@ inline void b3Log(const scalar* A, u32 AM, u32 AN)
 
 // Multiply two matrices stored in column-major order.
 // C = A * B
-inline void b3Mul(scalar* C, const scalar* A, u32 AM, u32 AN, const scalar* B, u32 BM, u32 BN)
+inline void b3Mul(scalar* C, const scalar* A, uint32 AM, uint32 AN, const scalar* B, uint32 BM, uint32 BN)
 {
 	B3_ASSERT(AN == BM);
 
-	for (u32 i = 0; i < AM; ++i)
+	for (uint32 i = 0; i < AM; ++i)
 	{
-		for (u32 j = 0; j < BN; ++j)
+		for (uint32 j = 0; j < BN; ++j)
 		{
 			C[i + AM * j] = scalar(0);
 
-			for (u32 k = 0; k < AN; ++k)
+			for (uint32 k = 0; k < AN; ++k)
 			{
 				C[i + AM * j] += A[i + AM * k] * B[k + BM * j];
 			}
@@ -146,11 +146,11 @@ inline void b3Mul(scalar* C, const scalar* A, u32 AM, u32 AN, const scalar* B, u
 
 // Return the transpose of a given matrix stored in column-major order.
 // B = A^T
-inline void b3Transpose(scalar* B, const scalar* A, u32 AM, u32 AN)
+inline void b3Transpose(scalar* B, const scalar* A, uint32 AM, uint32 AN)
 {
-	for (u32 i = 0; i < AM; ++i)
+	for (uint32 i = 0; i < AM; ++i)
 	{
-		for (u32 j = 0; j < AN; ++j)
+		for (uint32 j = 0; j < AN; ++j)
 		{
 			B[j + AN * i] = A[i + AM * j];
 		}
@@ -160,16 +160,16 @@ inline void b3Transpose(scalar* B, const scalar* A, u32 AM, u32 AN)
 // Return the original matrix with the given row and column ignored.
 // The row and column parameters must be zero based indices to the element.
 // The given matrix must be stored in column-major order.
-inline void b3SubMatrix(scalar* out, const scalar* A, u32 AM, u32 AN, u32 row, u32 col)
+inline void b3SubMatrix(scalar* out, const scalar* A, uint32 AM, uint32 AN, uint32 row, uint32 col)
 {
 	B3_ASSERT(row < AM);
 	B3_ASSERT(col < AN);
 	
-	u32 count = 0;
+	uint32 count = 0;
 	
-	for (u32 j = 0; j < AN; ++j)
+	for (uint32 j = 0; j < AN; ++j)
 	{
-		for (u32 i = 0; i < AM; ++i)
+		for (uint32 i = 0; i < AM; ++i)
 		{
 			if (i != row && j != col)
 			{
@@ -181,10 +181,10 @@ inline void b3SubMatrix(scalar* out, const scalar* A, u32 AM, u32 AN, u32 row, u
 
 // Return the lenght of a given vector.
 // ||v||
-inline scalar b3Length(const scalar* v, u32 n)
+inline scalar b3Length(const scalar* v, uint32 n)
 {
 	scalar result(0);
-	for (u32 i = 0; i < n; ++i)
+	for (uint32 i = 0; i < n; ++i)
 	{
 		result += v[i] * v[i];
 	}

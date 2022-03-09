@@ -42,7 +42,7 @@ struct b3DebugTriangle
 class b3DebugTriangles
 {
 public:
-	b3DebugTriangles(u32 capacity)
+	b3DebugTriangles(uint32 capacity)
 	{
 		m_capacity = capacity;
 		m_count = 0;
@@ -92,7 +92,7 @@ public:
 		}
 
 		// First pass: Depth test enabled.
-		for (u32 i = 0; i < m_count; ++i)
+		for (uint32 i = 0; i < m_count; ++i)
 		{
 			b3DebugTriangle triangle = m_triangles[i];
 			if (triangle.depthEnabled == true)
@@ -104,7 +104,7 @@ public:
 		m_renderer->FlushTriangles(true);
 
 		// Second pass: Depth test disabled.
-		for (u32 i = 0; i < m_count; ++i)
+		for (uint32 i = 0; i < m_count; ++i)
 		{
 			b3DebugTriangle triangle = m_triangles[i];
 			if (triangle.depthEnabled == false)
@@ -131,8 +131,8 @@ public:
 	// Is drawing enabled?
 	bool IsDrawEnabled() const { return m_drawEnabled; }
 private:
-	u32 m_capacity;
-	u32 m_count;
+	uint32 m_capacity;
+	uint32 m_count;
 	b3DebugTriangle* m_triangles;
 	b3DebugTrianglesRenderer* m_renderer;
 	bool m_drawEnabled;

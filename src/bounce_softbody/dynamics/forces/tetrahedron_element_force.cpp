@@ -50,7 +50,7 @@ static B3_FORCE_INLINE void b3ComputeD(scalar out[36],
 		0, 			 	 0, 			  0, 			   0,  0,  mu
 	};
 
-	for (u32 i = 0; i < 36; ++i)
+	for (uint32 i = 0; i < 36; ++i)
 	{
 		out[i] = D[i];
 	}
@@ -152,7 +152,7 @@ static B3_FORCE_INLINE void b3ComputeB(scalar out[72],
 		0, 0, dN4dz, 0, dN4dy, dN4dx
 	};
 
-	for (u32 i = 0; i < 72; ++i)
+	for (uint32 i = 0; i < 72; ++i)
 	{
 		out[i] = B[i];
 	}
@@ -160,18 +160,18 @@ static B3_FORCE_INLINE void b3ComputeB(scalar out[72],
 
 // Return the element in a block matrix given the indices 
 // of the element in its corresponding expanded matrix.
-static B3_FORCE_INLINE scalar& b3GetElement(b3Mat33 K[16], u32 i, u32 j)
+static B3_FORCE_INLINE scalar& b3GetElement(b3Mat33 K[16], uint32 i, uint32 j)
 {
 	B3_ASSERT(i < 3 * 4);
 	B3_ASSERT(j < 3 * 4);
 
-	u32 i0 = i / 3;
-	u32 j0 = j / 3;
+	uint32 i0 = i / 3;
+	uint32 j0 = j / 3;
 
 	b3Mat33& a = K[i0 + 4 * j0];
 
-	u32 ii = i - 3 * i0;
-	u32 jj = j - 3 * j0;
+	uint32 ii = i - 3 * i0;
+	uint32 jj = j - 3 * j0;
 
 	return a(ii, jj);
 }
@@ -179,9 +179,9 @@ static B3_FORCE_INLINE scalar& b3GetElement(b3Mat33 K[16], u32 i, u32 j)
 // Convert a 12-by-12 matrix to its 3-by-3 block form.
 static B3_FORCE_INLINE void b3SetK(b3Mat33 K[16], scalar Ke[144])
 {
-	for (u32 i = 0; i < 12; ++i)
+	for (uint32 i = 0; i < 12; ++i)
 	{
-		for (u32 j = 0; j < 12; ++j)
+		for (uint32 j = 0; j < 12; ++j)
 		{
 			scalar k1 = Ke[i + 12 * j];
 			scalar& k2 = b3GetElement(K, i, j);
@@ -255,7 +255,7 @@ void b3TetrahedronElementForce::ResetElementData()
 	// 12 x 12
 	scalar BT_D_B[144];
 	b3Mul(BT_D_B, BT_D, 12, 6, B, 6, 12);
-	for (u32 i = 0; i < 144; ++i)
+	for (uint32 i = 0; i < 144; ++i)
 	{
 		BT_D_B[i] *= V;
 	}
@@ -270,11 +270,11 @@ void b3TetrahedronElementForce::ClearForces()
 
 // Extract rotation from deformation
 // "A Robust Method to Extract the Rotational Part of Deformations", Matthias Muller et al.
-static b3Quat b3ExtractRotation(const b3Mat33& A, const b3Quat& q0, u32 maxIterations = 32)
+static b3Quat b3ExtractRotation(const b3Mat33& A, const b3Quat& q0, uint32 maxIterations = 32)
 {
 	b3Quat q = q0;
 
-	for (u32 iteration = 0; iteration < maxIterations; ++iteration)
+	for (uint32 iteration = 0; iteration < maxIterations; ++iteration)
 	{
 		b3Mat33 R = q.GetRotationMatrix();
 
@@ -320,10 +320,10 @@ void b3TetrahedronElementForce::ComputeForces(const b3SparseForceSolverData* dat
 	b3SparseMat33& dfdx = *data->dfdx;
 	b3SparseMat33& dfdv = *data->dfdv;
 
-	u32 i1 = m_p1->m_solverId;
-	u32 i2 = m_p2->m_solverId;
-	u32 i3 = m_p3->m_solverId;
-	u32 i4 = m_p4->m_solverId;
+	uint32 i1 = m_p1->m_solverId;
+	uint32 i2 = m_p2->m_solverId;
+	uint32 i3 = m_p3->m_solverId;
+	uint32 i4 = m_p4->m_solverId;
 
 	b3Vec3 x1 = m_x1;
 	b3Vec3 x2 = m_x2;
@@ -365,9 +365,9 @@ void b3TetrahedronElementForce::ComputeForces(const b3SparseForceSolverData* dat
 	b3Mat33 K[16];
 	
 	// K = R * K0 * R^T
-	for (u32 i = 0; i < 4; ++i)
+	for (uint32 i = 0; i < 4; ++i)
 	{
-		for (u32 j = 0; j < 4; ++j)
+		for (uint32 j = 0; j < 4; ++j)
 		{
 			b3Mat33 k = R * m_K[i + 4 * j] * RT;
 			
@@ -375,15 +375,15 @@ void b3TetrahedronElementForce::ComputeForces(const b3SparseForceSolverData* dat
 		}
 	}
 
-	u32 is[4] = { i1, i2, i3, i4 };
+	uint32 is[4] = { i1, i2, i3, i4 };
 	
-	for (u32 i = 0; i < 4; ++i)
+	for (uint32 i = 0; i < 4; ++i)
 	{
-		u32 vi = is[i];
+		uint32 vi = is[i];
 
-		for (u32 j = 0; j < 4; ++j)
+		for (uint32 j = 0; j < 4; ++j)
 		{
-			u32 vj = is[j];
+			uint32 vj = is[j];
 
 			b3Mat33 k = K[i + 4 * j];
 
@@ -401,10 +401,10 @@ void b3TetrahedronElementForce::ComputeForces(const b3SparseForceSolverData* dat
 
 	// Forces in unrotated frame
 	b3Vec3 fs[4];
-	for (u32 i = 0; i < 4; ++i)
+	for (uint32 i = 0; i < 4; ++i)
 	{
 		fs[i].SetZero();
-		for (u32 j = 0; j < 4; ++j)
+		for (uint32 j = 0; j < 4; ++j)
 		{
 			fs[i] += m_K[i + 4 * j] * us[j];
 		}
@@ -429,10 +429,10 @@ void b3TetrahedronElementForce::ComputeForces(const b3SparseForceSolverData* dat
 		// Lagged Rayleigh damping force
 		// fd ~= -k * K(x) * v
 		b3Vec3 fds[4];
-		for (u32 i = 0; i < 4; ++i)
+		for (uint32 i = 0; i < 4; ++i)
 		{
 			fds[i].SetZero();
-			for (u32 j = 0; j < 4; ++j)
+			for (uint32 j = 0; j < 4; ++j)
 			{
 				b3Mat33 k = K[i + 4 * j];		
 				
@@ -446,13 +446,13 @@ void b3TetrahedronElementForce::ComputeForces(const b3SparseForceSolverData* dat
 		f[i3] -= fds[2];
 		f[i4] -= fds[3];
 
-		for (u32 i = 0; i < 4; ++i)
+		for (uint32 i = 0; i < 4; ++i)
 		{
-			u32 vi = is[i];
+			uint32 vi = is[i];
 
-			for (u32 j = 0; j < 4; ++j)
+			for (uint32 j = 0; j < 4; ++j)
 			{
-				u32 vj = is[j];
+				uint32 vj = is[j];
 
 				b3Mat33 k = K[i + 4 * j];
 

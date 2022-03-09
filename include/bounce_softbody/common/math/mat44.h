@@ -36,25 +36,25 @@ struct b3Mat44
 		w = _w;
 	}
 	// Read an indexed column vector from this matrix.
-	const b3Vec4& operator[](u32 i) const
+	const b3Vec4& operator[](uint32 i) const
 	{
 		return (&x)[i];
 	}
 
 	// Write an indexed column vector to this matrix.
-	b3Vec4& operator[](u32 i)
+	b3Vec4& operator[](uint32 i)
 	{
 		return (&x)[i];
 	}
 
 	// Read an indexed element from this matrix.
-	scalar operator()(u32 i, u32 j) const
+	scalar operator()(uint32 i, uint32 j) const
 	{
 		return (&x.x)[i + 4 * j];
 	}
 
 	// Write an indexed element to this matrix.
-	scalar& operator()(u32 i, u32 j)
+	scalar& operator()(uint32 i, uint32 j)
 	{
 		return (&x.x)[i + 4 * j];
 	}

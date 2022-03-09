@@ -24,7 +24,7 @@
 // A bounded FIFO queue with a fixed capacity of N.
 // The capacity must be greater than one.
 // The elements are allocated on the stack.
-template <typename T, u32 N>
+template <typename T, uint32 N>
 class b3BoundedQueue
 {
 public:
@@ -95,7 +95,7 @@ public:
 		return m_elements[m_back > 0 ? m_back - 1 : N - 1];
 	}
 
-	u32 Count() const
+	uint32 Count() const
 	{
 		return m_count;
 	}
@@ -106,9 +106,9 @@ public:
 	}
 private:
 	T m_elements[N];
-	u32 m_count;
-	u32 m_back;
-	u32 m_front;
+	uint32 m_count;
+	uint32 m_back;
+	uint32 m_front;
 };
 
 #endif

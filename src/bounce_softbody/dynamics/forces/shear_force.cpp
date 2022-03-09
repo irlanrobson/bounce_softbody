@@ -114,9 +114,9 @@ void b3ShearForce::ComputeForces(const b3SparseForceSolverData* data)
 	b3Vec3 dwudx = m_dwudx;
 	b3Vec3 dwvdx = m_dwvdx;
 
-	u32 i1 = m_p1->m_solverId;
-	u32 i2 = m_p2->m_solverId;
-	u32 i3 = m_p3->m_solverId;
+	uint32 i1 = m_p1->m_solverId;
+	uint32 i2 = m_p2->m_solverId;
+	uint32 i3 = m_p3->m_solverId;
 
 	b3DenseVec3& x = *data->x;
 	b3DenseVec3& v = *data->v;
@@ -142,7 +142,7 @@ void b3ShearForce::ComputeForces(const b3SparseForceSolverData* data)
 
 	// Jacobian
 	b3Vec3 dCdx[3];
-	for (u32 i = 0; i < 3; ++i)
+	for (uint32 i = 0; i < 3; ++i)
 	{
 		dCdx[i] = alpha * (dwudx[i] * wv + dwvdx[i] * wu);
 	}
@@ -153,7 +153,7 @@ void b3ShearForce::ComputeForces(const b3SparseForceSolverData* data)
 
 		// Force
 		b3Vec3 fs[3];
-		for (u32 i = 0; i < 3; ++i)
+		for (uint32 i = 0; i < 3; ++i)
 		{
 			fs[i] = -m_ks * C * dCdx[i];
 		}
@@ -168,9 +168,9 @@ void b3ShearForce::ComputeForces(const b3SparseForceSolverData* data)
 
 		// Force derivative
 		b3Mat33 K[3][3];
-		for (u32 i = 0; i < 3; ++i)
+		for (uint32 i = 0; i < 3; ++i)
 		{
-			for (u32 j = 0; j < 3; ++j)
+			for (uint32 j = 0; j < 3; ++j)
 			{
 				//b3Mat33 d2Cxij = alpha * (dwudx[i] * dwvdx[j] + dwudx[j] * dwvdx[i]) * I;
 				//b3Mat33 Kij = -m_ks * (b3Outer(dCdx[i], dCdx[j]) + C * d2Cxij);
@@ -198,14 +198,14 @@ void b3ShearForce::ComputeForces(const b3SparseForceSolverData* data)
 		b3Vec3 vs[3] = { v1, v2, v3 };
 
 		scalar dCdt = scalar(0);
-		for (u32 i = 0; i < 3; ++i) 
+		for (uint32 i = 0; i < 3; ++i) 
 		{
 			dCdt += b3Dot(dCdx[i], vs[i]);
 		}
 
 		// Force
 		b3Vec3 fs[3];
-		for (u32 i = 0; i < 3; ++i)
+		for (uint32 i = 0; i < 3; ++i)
 		{
 			fs[i] = -m_kd * dCdt * dCdx[i];
 		}
@@ -220,9 +220,9 @@ void b3ShearForce::ComputeForces(const b3SparseForceSolverData* data)
 
 		// Force derivative
 		b3Mat33 K[3][3];
-		for (u32 i = 0; i < 3; ++i)
+		for (uint32 i = 0; i < 3; ++i)
 		{
-			for (u32 j = 0; j < 3; ++j)
+			for (uint32 j = 0; j < 3; ++j)
 			{
 				b3Mat33 Kij = -m_kd * b3Outer(dCdx[i], dCdx[j]);
 

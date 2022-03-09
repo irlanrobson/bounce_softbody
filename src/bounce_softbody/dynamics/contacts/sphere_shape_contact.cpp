@@ -64,7 +64,7 @@ void b3SphereAndShapeContact::ComputeForces(const b3SparseForceSolverData* data)
 
 	b3Particle* p1 = m_f1->m_p;
 
-	u32 i1 = p1->m_solverId;
+	uint32 i1 = p1->m_solverId;
 
 	b3Vec3 x1 = x[i1];
 	b3Vec3 v1 = v[i1];

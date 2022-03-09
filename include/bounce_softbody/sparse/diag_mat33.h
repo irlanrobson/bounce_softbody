@@ -26,7 +26,7 @@
 // original matrix.
 struct b3DiagMat33
 {
-	b3DiagMat33(u32 _n)
+	b3DiagMat33(uint32 _n)
 	{
 		n = _n;
 		v = (b3Mat33*)b3Alloc(n * sizeof(b3Mat33));
@@ -45,13 +45,13 @@ struct b3DiagMat33
 		b3Free(v);
 	}
 
-	const b3Mat33& operator[](u32 i) const
+	const b3Mat33& operator[](uint32 i) const
 	{
 		B3_ASSERT(i < n);
 		return v[i];
 	}
 
-	b3Mat33& operator[](u32 i)
+	b3Mat33& operator[](uint32 i)
 	{
 		B3_ASSERT(i < n);
 		return v[i];
@@ -88,7 +88,7 @@ struct b3DiagMat33
 
 	void SetZero()
 	{
-		for (u32 i = 0; i < n; ++i)
+		for (uint32 i = 0; i < n; ++i)
 		{
 			v[i].SetZero();
 		}
@@ -96,21 +96,21 @@ struct b3DiagMat33
 
 	void SetIdentity()
 	{
-		for (u32 i = 0; i < n; ++i)
+		for (uint32 i = 0; i < n; ++i)
 		{
 			v[i].SetIdentity();
 		}
 	}
 
 	b3Mat33* v;
-	u32 n;
+	uint32 n;
 };
 
 inline void b3Transpose(b3DiagMat33& out, const b3DiagMat33& A)
 {
 	B3_ASSERT(out.n == A.n);
 
-	for (u32 i = 0; i < A.n; ++i)
+	for (uint32 i = 0; i < A.n; ++i)
 	{
 		out[i] = b3Transpose(A[i]);
 	}
@@ -120,7 +120,7 @@ inline void b3Add(b3DiagMat33& out, const b3DiagMat33& a, const b3DiagMat33& b)
 {
 	B3_ASSERT(out.n == a.n && a.n == b.n);
 
-	for (u32 i = 0; i < a.n; ++i)
+	for (uint32 i = 0; i < a.n; ++i)
 	{
 		out[i] = a[i] + b[i];
 	}
@@ -130,7 +130,7 @@ inline void b3Sub(b3DiagMat33& out, const b3DiagMat33& a, const b3DiagMat33& b)
 {
 	B3_ASSERT(out.n == a.n && a.n == b.n);
 
-	for (u32 i = 0; i < a.n; ++i)
+	for (uint32 i = 0; i < a.n; ++i)
 	{
 		out[i] = a[i] - b[i];
 	}
@@ -140,7 +140,7 @@ inline void b3Mul(b3DiagMat33& out, scalar a, const b3DiagMat33& b)
 {
 	B3_ASSERT(out.n == b.n);
 
-	for (u32 i = 0; i < b.n; ++i)
+	for (uint32 i = 0; i < b.n; ++i)
 	{
 		out[i] = a * b[i];
 	}
@@ -150,7 +150,7 @@ inline void b3Mul(b3DenseVec3& out, const b3DiagMat33& a, const b3DenseVec3& b)
 {
 	B3_ASSERT(out.n == a.n && a.n == b.n);
 
-	for (u32 i = 0; i < b.n; ++i)
+	for (uint32 i = 0; i < b.n; ++i)
 	{
 		out[i] = a[i] * b[i];
 	}

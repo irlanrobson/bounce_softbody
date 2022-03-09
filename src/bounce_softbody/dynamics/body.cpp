@@ -466,7 +466,7 @@ void b3Body::ResetMass()
 
 struct b3BodyRayCastSingleWrapper
 {
-	scalar Report(const b3RayCastInput& input, u32 proxyId)
+	scalar Report(const b3RayCastInput& input, uint32 proxyId)
 	{
 		// Get fixture associated with the proxy.
 		void* userData = tree->GetUserData(proxyId);
@@ -548,7 +548,7 @@ void b3Body::Solve(const b3TimeStep& step)
 	solver.Solve(step, m_gravity);
 }
 
-void b3Body::Step(scalar dt, u32 forceIterations, u32 forceSubIterations)
+void b3Body::Step(scalar dt, uint32 forceIterations, uint32 forceSubIterations)
 {
 	// Time step parameters
 	b3TimeStep step;
@@ -602,7 +602,7 @@ void b3Body::Step(scalar dt, u32 forceIterations, u32 forceSubIterations)
 	m_contactManager.FindNewContacts();
 }
 
-void b3Body::Draw(b3Draw* draw) const
+void b3Body::DebugDraw(b3Draw* draw) const
 {
 	for (b3Particle* p = m_particleList; p; p = p->m_next)
 	{

@@ -39,10 +39,10 @@ struct b3AABB
 	}
 
 	// Set this AABB from a list of points.
-	void Set(const b3Vec3* points, u32 count)
+	void Set(const b3Vec3* points, uint32 count)
 	{
 		lowerBound = upperBound = points[0];
-		for (u32 i = 1; i < count; ++i)
+		for (uint32 i = 1; i < count; ++i)
 		{
 			lowerBound = b3Min(lowerBound, points[i]);
 			upperBound = b3Max(upperBound, points[i]);
@@ -50,10 +50,10 @@ struct b3AABB
 	}
 
 	// Set this AABB from a list of points and a transform.
-	void Set(const b3Vec3* points, u32 count, const b3Transform& xf)
+	void Set(const b3Vec3* points, uint32 count, const b3Transform& xf)
 	{
 		lowerBound = upperBound = b3Mul(xf, points[0]);
-		for (u32 i = 1; i < count; ++i)
+		for (uint32 i = 1; i < count; ++i)
 		{
 			b3Vec3 v = b3Mul(xf, points[i]);
 			lowerBound = b3Min(lowerBound, v);
@@ -62,10 +62,10 @@ struct b3AABB
 	}
 
 	// Set this AABB from a list of points, a local scale, and a transform.
-	void Set(const b3Vec3* points, u32 count, const b3Vec3& scale, const b3Transform& xf)
+	void Set(const b3Vec3* points, uint32 count, const b3Vec3& scale, const b3Transform& xf)
 	{
 		lowerBound = upperBound = b3Mul(xf, b3Mul(scale, points[0]));
-		for (u32 i = 1; i < count; ++i)
+		for (uint32 i = 1; i < count; ++i)
 		{
 			b3Vec3 v = b3Mul(xf, b3Mul(scale, points[i]));
 			lowerBound = b3Min(lowerBound, v);
@@ -161,12 +161,12 @@ struct b3AABB
 	}
 
 	// Get the index of the longest axis of this AABB.
-	u32 GetLongestAxisIndex() const
+	uint32 GetLongestAxisIndex() const
 	{
 		b3Vec3 d = upperBound - lowerBound;
 		
 		scalar maxValue = d.x;
-		u32 maxIndex = 0;
+		uint32 maxIndex = 0;
 		
 		if (d.y > maxValue)
 		{
@@ -212,14 +212,14 @@ struct b3AABB
 		normals[4].Set(scalar(0), scalar(0), scalar(-1));
 		normals[5].Set(scalar(0), scalar(0), scalar(1));
 
-		u32 index = B3_MAX_U32;
+		uint32 index = B3_MAX_U32;
 
 		scalar lower = scalar(0);
 		scalar upper = input.maxFraction;
 
-		u32 planeIndex = 0;
+		uint32 planeIndex = 0;
 		
-		for (u32 i = 0; i < 3; ++i)
+		for (uint32 i = 0; i < 3; ++i)
 		{
 			scalar numerators[2], denominators[2];
 
@@ -229,7 +229,7 @@ struct b3AABB
 			denominators[0] = -d[i];
 			denominators[1] = d[i];
 			
-			for (u32 j = 0; j < 2; ++j)
+			for (uint32 j = 0; j < 2; ++j)
 			{
 				scalar numerator = numerators[j];
 				scalar denominator = denominators[j];

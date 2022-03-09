@@ -105,9 +105,9 @@ public:
 				b3Particle* p2 = s->GetParticle2();
 				b3Particle* p3 = s->GetParticle3();
 
-				u32 v1 = p1->GetMeshIndex();
-				u32 v2 = p2->GetMeshIndex();
-				u32 v3 = p3->GetMeshIndex();
+				uint32 v1 = p1->GetMeshIndex();
+				uint32 v2 = p2->GetMeshIndex();
+				uint32 v3 = p3->GetMeshIndex();
 
 				tension[v1] += f1;
 				tension[v2] += f2;

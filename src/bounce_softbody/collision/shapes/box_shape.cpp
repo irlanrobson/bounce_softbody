@@ -81,10 +81,10 @@ bool b3BoxShape::CollideSphere(b3SphereManifold* manifold, const b3Sphere& spher
 	};
 
 	// Find the minimum separation face.	
-	u32 faceIndex = 0;
+	uint32 faceIndex = 0;
 	scalar separation = -B3_MAX_SCALAR;
 
-	for (u32 i = 0; i < 6; ++i)
+	for (uint32 i = 0; i < 6; ++i)
 	{
 		b3Plane plane = planes[i];
 		scalar s = b3Distance(cLocal, plane);
@@ -157,7 +157,7 @@ void b3BoxShape::Draw(b3Draw* draw) const
 		b3Vec3(e.x,  e.y,  e.z)
 	};
 
-	u32 indices[36] =
+	uint32 indices[36] =
 	{
 		0, 6, 4,
 		0, 2, 6,
@@ -173,7 +173,7 @@ void b3BoxShape::Draw(b3Draw* draw) const
 		1, 7, 3
 	};
 
-	for (u32 i = 0; i < 36; i += 3)
+	for (uint32 i = 0; i < 36; i += 3)
 	{
 		b3Vec3 A = m_xf * vertices[indices[i]];
 		b3Vec3 B = m_xf * vertices[indices[i + 1]];

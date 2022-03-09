@@ -61,7 +61,7 @@ struct b3ParticleDef
 	scalar massDamping;
 
 	// Optional vertex index in the mesh.
-	u32 meshIndex;
+	uint32 meshIndex;
 
 	// User data pointer to anything.
 	void* userData;
@@ -113,7 +113,7 @@ public:
 	scalar GetMassDamping() const;
 
 	// Get the mesh index.
-	u32 GetMeshIndex() const;
+	uint32 GetMeshIndex() const;
 	
 	// Set the user data.
 	void SetUserData(void* userData);
@@ -186,10 +186,10 @@ private:
 	scalar m_massDamping;
 
 	// Mesh index. 
-	u32 m_meshIndex;
+	uint32 m_meshIndex;
 
 	// Solver temp identifier
-	u32 m_solverId;
+	uint32 m_solverId;
 
 	// User data
 	void* m_userData;
@@ -273,7 +273,7 @@ inline scalar b3Particle::GetMassDamping() const
 	return m_massDamping;
 }
 
-inline u32 b3Particle::GetMeshIndex() const
+inline uint32 b3Particle::GetMeshIndex() const
 {
 	return m_meshIndex;
 }

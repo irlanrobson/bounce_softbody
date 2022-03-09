@@ -32,9 +32,9 @@ struct b3TimeStep;
 struct b3BodySolverDef
 {
 	b3StackAllocator* stack;
-	u32 particleCapacity;
-	u32 forceCapacity;
-	u32 shapeContactCapacity;
+	uint32 particleCapacity;
+	uint32 forceCapacity;
+	uint32 shapeContactCapacity;
 };
 
 class b3BodySolver
@@ -51,16 +51,16 @@ public:
 private:
 	b3StackAllocator* m_stack;
 
-	u32 m_particleCapacity;
-	u32 m_particleCount;
+	uint32 m_particleCapacity;
+	uint32 m_particleCount;
 	b3Particle** m_particles;
 
-	u32 m_forceCapacity;
-	u32 m_forceCount;
+	uint32 m_forceCapacity;
+	uint32 m_forceCount;
 	b3Force** m_forces;
 
-	u32 m_shapeContactCapacity;
-	u32 m_shapeContactCount;
+	uint32 m_shapeContactCapacity;
+	uint32 m_shapeContactCount;
 	b3SphereAndShapeContact** m_shapeContacts;
 };
 

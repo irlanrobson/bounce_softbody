@@ -120,7 +120,7 @@ static B3_FORCE_INLINE void b3ComputeB(scalar out[18],
 		0, dN3dy, dN3dx,
 	};
 
-	for (u32 i = 0; i < 18; ++i)
+	for (uint32 i = 0; i < 18; ++i)
 	{
 		out[i] = B[i];
 	}
@@ -149,18 +149,18 @@ static B3_FORCE_INLINE b3Mat22 b3ExtractRotation(const b3Mat22& M)
 	return Q;
 }
 
-static B3_FORCE_INLINE scalar& b3GetElement(b3Mat22 K[9], u32 i, u32 j)
+static B3_FORCE_INLINE scalar& b3GetElement(b3Mat22 K[9], uint32 i, uint32 j)
 {
 	B3_ASSERT(i < 6);
 	B3_ASSERT(j < 6);
 
-	u32 i0 = i / 2;
-	u32 j0 = j / 2;
+	uint32 i0 = i / 2;
+	uint32 j0 = j / 2;
 
 	b3Mat22& a = K[i0 + 3 * j0];
 
-	u32 ii = i - 2 * i0;
-	u32 jj = j - 2 * j0;
+	uint32 ii = i - 2 * i0;
+	uint32 jj = j - 2 * j0;
 
 	return a(ii, jj);
 }
@@ -168,9 +168,9 @@ static B3_FORCE_INLINE scalar& b3GetElement(b3Mat22 K[9], u32 i, u32 j)
 // Convert a 6x6 matrix to 2x2 block form.
 static B3_FORCE_INLINE void b3SetK(b3Mat22 K[9], scalar Ke[36])
 {
-	for (u32 i = 0; i < 6; ++i)
+	for (uint32 i = 0; i < 6; ++i)
 	{
-		for (u32 j = 0; j < 6; ++j)
+		for (uint32 j = 0; j < 6; ++j)
 		{
 			scalar k1 = Ke[i + 6 * j];
 			scalar& k2 = b3GetElement(K, i, j);
@@ -269,7 +269,7 @@ void b3TriangleElementForce::ResetElementData()
 	// 6x6
 	scalar K[36];
 	b3Mul(K, BT_C, 6, 3, B, 3, 6);
-	for (u32 i = 0; i < 36; ++i)
+	for (uint32 i = 0; i < 36; ++i)
 	{
 		K[i] *= A;
 	}
@@ -292,9 +292,9 @@ void b3TriangleElementForce::ComputeForces(const b3SparseForceSolverData* data)
 	b3SparseMat33& dfdx = *data->dfdx;
 	b3SparseMat33& dfdv = *data->dfdv;
 
-	u32 i1 = m_p1->m_solverId;
-	u32 i2 = m_p2->m_solverId;
-	u32 i3 = m_p3->m_solverId;
+	uint32 i1 = m_p1->m_solverId;
+	uint32 i2 = m_p2->m_solverId;
+	uint32 i3 = m_p3->m_solverId;
 
 	b3Vec3 p1 = p[i1];
 	b3Vec3 p2 = p[i2];
@@ -353,11 +353,11 @@ void b3TriangleElementForce::ComputeForces(const b3SparseForceSolverData* data)
 	// 2D forces in unrotated frame
 	b3Vec2 fs[3];
 
-	for (u32 i = 0; i < 3; ++i)
+	for (uint32 i = 0; i < 3; ++i)
 	{
 		fs[i].SetZero();
 		
-		for (u32 j = 0; j < 3; ++j)
+		for (uint32 j = 0; j < 3; ++j)
 		{
 			b3Mat22 k = m_K[i + 3 * j];
 
@@ -385,9 +385,9 @@ void b3TriangleElementForce::ComputeForces(const b3SparseForceSolverData* data)
 	b3Mat33 K[9];
 
 	// K = R * K0 * R^T
-	for (u32 i = 0; i < 3; ++i)
+	for (uint32 i = 0; i < 3; ++i)
 	{
-		for (u32 j = 0; j < 3; ++j)
+		for (uint32 j = 0; j < 3; ++j)
 		{
 			// 2D corotated stiffness matrix
 			b3Mat22 k = R * m_K[i + 3 * j] * RT;
@@ -410,15 +410,15 @@ void b3TriangleElementForce::ComputeForces(const b3SparseForceSolverData* data)
 		}
 	}
 
-	u32 is[3] = { i1, i2, i3 };
+	uint32 is[3] = { i1, i2, i3 };
 
-	for (u32 i = 0; i < 3; ++i)
+	for (uint32 i = 0; i < 3; ++i)
 	{
-		u32 vi = is[i];
+		uint32 vi = is[i];
 
-		for (u32 j = 0; j < 3; ++j)
+		for (uint32 j = 0; j < 3; ++j)
 		{
-			u32 vj = is[j];
+			uint32 vj = is[j];
 
 			b3Mat33 k = K[i + 3 * j];
 
@@ -434,10 +434,10 @@ void b3TriangleElementForce::ComputeForces(const b3SparseForceSolverData* data)
 		// Lagged Rayleigh damping force
 		// fd ~= -k * K(x) * v
 		b3Vec3 fds[3];
-		for (u32 i = 0; i < 3; ++i)
+		for (uint32 i = 0; i < 3; ++i)
 		{
 			fds[i].SetZero();
-			for (u32 j = 0; j < 3; ++j)
+			for (uint32 j = 0; j < 3; ++j)
 			{
 				b3Mat33 k = K[i + 3 * j];
 
@@ -450,13 +450,13 @@ void b3TriangleElementForce::ComputeForces(const b3SparseForceSolverData* data)
 		f[i2] -= fds[1];
 		f[i3] -= fds[2];
 
-		for (u32 i = 0; i < 3; ++i)
+		for (uint32 i = 0; i < 3; ++i)
 		{
-			u32 vi = is[i];
+			uint32 vi = is[i];
 
-			for (u32 j = 0; j < 3; ++j)
+			for (uint32 j = 0; j < 3; ++j)
 			{
-				u32 vj = is[j];
+				uint32 vj = is[j];
 
 				b3Mat33 k = K[i + 3 * j];
 

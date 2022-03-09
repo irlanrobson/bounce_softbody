@@ -33,7 +33,7 @@ b3StackAllocator::~b3StackAllocator()
 	b3Free(m_blocks);
 }
 
-void* b3StackAllocator::Allocate(u32 size) 
+void* b3StackAllocator::Allocate(uint32 size) 
 {
 	if (m_blockCount == m_blockCapacity) 
 	{
@@ -50,7 +50,7 @@ void* b3StackAllocator::Allocate(u32 size)
 	if (m_allocatedSize + size > b3_maxStackSize) 
 	{
 		// Allocate with parent allocator.
-		block->data = (u8*) b3Alloc(size);
+		block->data = (uint8*) b3Alloc(size);
 		block->parent = true;
 	}
 	else 

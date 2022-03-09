@@ -89,7 +89,7 @@ private:
 	scalar m_area;
 
 	// Dynamic tree proxy.
-	u32 m_proxyId;
+	uint32 m_proxyId;
 
 	// Links to the body list.
 	b3TriangleFixture* m_prev;

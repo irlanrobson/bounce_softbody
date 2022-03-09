@@ -54,7 +54,7 @@ struct b3FixtureDef
 	scalar density;
 	
 	// Feature index into mesh.
-	u32 meshIndex;
+	uint32 meshIndex;
 };
 
 // This is an internal body fixture.
@@ -112,7 +112,7 @@ protected:
 	scalar m_density;
 
 	// Feature index into mesh 
-	u32 m_meshIndex;
+	uint32 m_meshIndex;
 };
 
 inline b3Fixture::b3Fixture(const b3FixtureDef& def, b3Body* body)

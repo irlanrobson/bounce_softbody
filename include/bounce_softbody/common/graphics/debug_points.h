@@ -42,7 +42,7 @@ struct b3DebugPoint
 class b3DebugPoints
 {
 public:
-	b3DebugPoints(u32 capacity)
+	b3DebugPoints(uint32 capacity)
 	{
 		m_capacity = capacity;
 		m_count = 0;
@@ -90,7 +90,7 @@ public:
 		}
 
 		// First pass: Depth test enabled.
-		for (u32 i = 0; i < m_count; ++i)
+		for (uint32 i = 0; i < m_count; ++i)
 		{
 			b3DebugPoint point = m_points[i];
 			if (point.depthEnabled == true)
@@ -102,7 +102,7 @@ public:
 		m_renderer->FlushPoints(true);
 
 		// Second pass: Depth test disabled.
-		for (u32 i = 0; i < m_count; ++i)
+		for (uint32 i = 0; i < m_count; ++i)
 		{
 			b3DebugPoint point = m_points[i];
 			if (point.depthEnabled == false)
@@ -129,8 +129,8 @@ public:
 	// Is drawing enabled?
 	bool IsDrawEnabled() const { return m_drawEnabled; }
 private:
-	u32 m_capacity;
-	u32 m_count;
+	uint32 m_capacity;
+	uint32 m_count;
 	b3DebugPoint* m_points;
 	b3DebugPointsRenderer* m_renderer;
 	bool m_drawEnabled;

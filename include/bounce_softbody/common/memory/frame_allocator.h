@@ -23,7 +23,7 @@
 
 // Allocate 1 MiB from the stack. 
 // Increase as you want.
-const u32 b3_maxFrameSize = B3_MiB(1);
+const uint32 b3_maxFrameSize = B3_MiB(1);
 
 // A small frame allocator.
 class b3FrameAllocator
@@ -34,7 +34,7 @@ public:
 
 	// Allocate a block of memory.
 	// Allocate using b3Alloc if the memory is full.
-	void* Allocate(u32 size);
+	void* Allocate(uint32 size);
 	
 	// Free the memory if it was allocated by b3Alloc.
 	void Free(void* q);
@@ -46,14 +46,14 @@ private:
 	// Block header
 	struct b3Block
 	{
-		u32 size;
+		uint32 size;
 		void* p;
 		bool parent;
 	};
 
-	u8 m_memory[b3_maxFrameSize];
-	u8* m_p;
-	u32 m_allocatedSize;
+	uint8 m_memory[b3_maxFrameSize];
+	uint8* m_p;
+	uint32 m_allocatedSize;
 };
 
 #endif

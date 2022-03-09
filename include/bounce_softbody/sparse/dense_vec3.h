@@ -23,7 +23,7 @@
 
 struct b3DenseVec3
 {
-	b3DenseVec3(u32 _n)
+	b3DenseVec3(uint32 _n)
 	{
 		n = _n;
 		v = (b3Vec3*)b3Alloc(n * sizeof(b3Vec3));
@@ -42,13 +42,13 @@ struct b3DenseVec3
 		b3Free(v);
 	}
 
-	const b3Vec3& operator[](u32 i) const
+	const b3Vec3& operator[](uint32 i) const
 	{
 		B3_ASSERT(i < n);
 		return v[i];
 	}
 
-	b3Vec3& operator[](u32 i)
+	b3Vec3& operator[](uint32 i)
 	{
 		B3_ASSERT(i < n);
 		return v[i];
@@ -85,39 +85,39 @@ struct b3DenseVec3
 
 	void SetZero()
 	{
-		for (u32 i = 0; i < n; ++i)
+		for (uint32 i = 0; i < n; ++i)
 		{
 			v[i].SetZero();
 		}
 	}
 
-	scalar& GetComponent(u32 i)
+	scalar& GetComponent(uint32 i)
 	{
 		B3_ASSERT(i < 3 * n);
-		u32 i0 = i / 3;
+		uint32 i0 = i / 3;
 		b3Vec3& iv = v[i0];
-		u32 ii = i - 3 * i0;
+		uint32 ii = i - 3 * i0;
 		return iv[ii];
 	}
 
-	scalar GetComponent(u32 i) const
+	scalar GetComponent(uint32 i) const
 	{
 		B3_ASSERT(i < 3 * n);
-		u32 i0 = i / 3;
+		uint32 i0 = i / 3;
 		const b3Vec3& iv = v[i0];
-		u32 ii = i - 3 * i0;
+		uint32 ii = i - 3 * i0;
 		return iv[ii];
 	}
 
 	b3Vec3* v;
-	u32 n;
+	uint32 n;
 };
 
 inline void b3Add(b3DenseVec3& out, const b3DenseVec3& a, const b3DenseVec3& b)
 {
 	B3_ASSERT(out.n == a.n && a.n == b.n);
 
-	for (u32 i = 0; i < a.n; ++i)
+	for (uint32 i = 0; i < a.n; ++i)
 	{
 		out[i] = a[i] + b[i];
 	}
@@ -127,7 +127,7 @@ inline void b3Sub(b3DenseVec3& out, const b3DenseVec3& a, const b3DenseVec3& b)
 {
 	B3_ASSERT(out.n == a.n && a.n == b.n);
 
-	for (u32 i = 0; i < a.n; ++i)
+	for (uint32 i = 0; i < a.n; ++i)
 	{
 		out[i] = a[i] - b[i];
 	}
@@ -137,7 +137,7 @@ inline void b3Mul(b3DenseVec3& out, scalar a, const b3DenseVec3& b)
 {
 	B3_ASSERT(out.n == b.n);
 
-	for (u32 i = 0; i < b.n; ++i)
+	for (uint32 i = 0; i < b.n; ++i)
 	{
 		out[i] = a * b[i];
 	}
@@ -154,7 +154,7 @@ inline scalar b3Dot(const b3DenseVec3& a, const b3DenseVec3& b)
 
 	scalar result(0);
 
-	for (u32 i = 0; i < a.n; ++i)
+	for (uint32 i = 0; i < a.n; ++i)
 	{
 		result += b3Dot(a[i], b[i]);
 	}
@@ -166,7 +166,7 @@ inline scalar b3LengthSquared(const b3DenseVec3& v)
 {
 	scalar result(0);
 
-	for (u32 i = 0; i < v.n; ++i)
+	for (uint32 i = 0; i < v.n; ++i)
 	{
 		result += b3LengthSquared(v[i]);
 	}

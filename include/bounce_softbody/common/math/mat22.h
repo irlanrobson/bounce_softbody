@@ -31,25 +31,25 @@ struct b3Mat22
 	b3Mat22(const b3Vec2& _x, const b3Vec2& _y) : x(_x), y(_y) { }
 	
 	// Read an indexed column vector from this matrix.
-	const b3Vec2& operator[](u32 i) const
+	const b3Vec2& operator[](uint32 i) const
 	{
 		return (&x)[i];
 	}
 
 	// Write an indexed column vector to this matrix.
-	b3Vec2& operator[](u32 i)
+	b3Vec2& operator[](uint32 i)
 	{
 		return (&x)[i];
 	}
 
 	// Read an indexed element from this matrix.
-	scalar operator()(u32 i, u32 j) const
+	scalar operator()(uint32 i, uint32 j) const
 	{
 		return (&x.x)[i + 2 * j];
 	}
 
 	// Write an indexed element to this matrix.
-	scalar& operator()(u32 i, u32 j)
+	scalar& operator()(uint32 i, uint32 j)
 	{
 		return (&x.x)[i + 2 * j];
 	}

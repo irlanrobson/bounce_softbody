@@ -23,7 +23,7 @@
 
 // Allocate 1 MiB from the stack. 
 // Increase as you want.
-const u32 b3_maxStackSize = B3_MiB(1);
+const uint32 b3_maxStackSize = B3_MiB(1);
 
 // A stack allocator.
 class b3StackAllocator 
@@ -32,22 +32,22 @@ public :
 	b3StackAllocator();
 	~b3StackAllocator();
 
-	void* Allocate(u32 size);
+	void* Allocate(uint32 size);
 	void Free(void* p);
 private :
 	struct b3Block 
 	{
-		u32 size;
-		u8* data;
+		uint32 size;
+		uint8* data;
 		bool parent;
 	};
 	
-	u32 m_blockCapacity;
+	uint32 m_blockCapacity;
 	b3Block* m_blocks;
-	u32 m_blockCount;
+	uint32 m_blockCount;
 
-	u32 m_allocatedSize; // marker
-	u8 m_memory[b3_maxStackSize];
+	uint32 m_allocatedSize; // marker
+	uint8 m_memory[b3_maxStackSize];
 };
 
 #endif

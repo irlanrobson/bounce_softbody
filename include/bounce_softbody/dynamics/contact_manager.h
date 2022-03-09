@@ -39,7 +39,7 @@ public:
 	b3Body* m_body;
 	b3BlockAllocator* m_allocator;
 	b3SphereAndShapeContact* m_shapeContactList;
-	u32 m_shapeContactCount;
+	uint32 m_shapeContactCount;
 };
 
 #endif

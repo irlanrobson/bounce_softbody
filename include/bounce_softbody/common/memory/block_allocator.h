@@ -24,7 +24,7 @@
 class b3BlockPool;
 
 // Number of blocks pools.
-const u32 b3_blockSizeCount = 14;
+const uint32 b3_blockSizeCount = 14;
 
 /// This is a small object allocator used for allocating small
 /// objects that persist for more than one time step.
@@ -36,10 +36,10 @@ public:
 	~b3BlockAllocator();
 
 	// Allocate memory. This will use b3Alloc if the size is larger than b3_maxBlockSize.
-	void* Allocate(u32 size);
+	void* Allocate(uint32 size);
 
 	// Free memory. This will use b3Free if the size is larger than b3_maxBlockSize.
-	void Free(void* p, u32 size);
+	void Free(void* p, uint32 size);
 private:
 	// One pool per block size.
 	b3BlockPool* m_blockPools;

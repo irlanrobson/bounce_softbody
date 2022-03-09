@@ -151,7 +151,7 @@ b3Mat33 b3SymInverse(const b3Mat33& A)
 	return M;
 }
 
-static B3_FORCE_INLINE scalar b3Minor(const b3Mat44& A, u32 i, u32 j)
+static B3_FORCE_INLINE scalar b3Minor(const b3Mat44& A, uint32 i, uint32 j)
 {
 	b3Mat33 S;
 	b3SubMatrix(&S.x.x, &A.x.x, 4, 4, i, j);
@@ -159,14 +159,14 @@ static B3_FORCE_INLINE scalar b3Minor(const b3Mat44& A, u32 i, u32 j)
 }
 
 // (-1)^(i + j)
-static B3_FORCE_INLINE i32 b3CofactorSign(u32 i, u32 j)
+static B3_FORCE_INLINE int32 b3CofactorSign(uint32 i, uint32 j)
 {
 	return (i + j) % 2 == 0 ? 1 : -1;
 }
 
-static B3_FORCE_INLINE scalar b3Cofactor(const b3Mat44& A, u32 i, u32 j)
+static B3_FORCE_INLINE scalar b3Cofactor(const b3Mat44& A, uint32 i, uint32 j)
 {
-	i32 sign = b3CofactorSign(i, j);
+	int32 sign = b3CofactorSign(i, j);
 	scalar minor = b3Minor(A, i, j);
 	return scalar(sign) * minor;
 }
@@ -174,9 +174,9 @@ static B3_FORCE_INLINE scalar b3Cofactor(const b3Mat44& A, u32 i, u32 j)
 static B3_FORCE_INLINE b3Mat44 b3CofactorMatrix(const b3Mat44& A)
 {
 	b3Mat44 C;
-	for (u32 i = 0; i < 4; ++i)
+	for (uint32 i = 0; i < 4; ++i)
 	{
-		for (u32 j = 0; j < 4; ++j)
+		for (uint32 j = 0; j < 4; ++j)
 		{
 			C(i, j) = b3Cofactor(A, i, j);
 		}
@@ -188,7 +188,7 @@ static B3_FORCE_INLINE scalar b3Det(const b3Mat44& A, const b3Mat44& C)
 {
 	// Cofactor expansion along the first row
 	scalar result = scalar(0);
-	for (u32 j = 0; j < 4; ++j)
+	for (uint32 j = 0; j < 4; ++j)
 	{
 		result += A(0, j) * C(0, j);
 	}

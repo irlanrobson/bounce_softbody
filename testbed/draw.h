@@ -47,12 +47,12 @@ public:
 		b3DrawSolidTriangle(m_debugDrawData, normal, p1, p2, p3, color);
 	}
 	
-	void DrawPolygon(const void* vertices, u32 vertexStride, u32 count, const b3Color& color, bool depthEnabled)
+	void DrawPolygon(const void* vertices, uint32 vertexStride, uint32 count, const b3Color& color, bool depthEnabled)
 	{
 		b3DrawPolygon(m_debugDrawData, vertices, vertexStride, count, color, depthEnabled);	
 	}
 	
-	void DrawSolidPolygon(const b3Vec3& normal, const void* vertices, u32 vertexStride, u32 count, const b3Color& color, bool depthEnabled)
+	void DrawSolidPolygon(const b3Vec3& normal, const void* vertices, uint32 vertexStride, uint32 count, const b3Color& color, bool depthEnabled)
 	{
 		b3DrawSolidPolygon(m_debugDrawData, normal, vertices, vertexStride, count, color, depthEnabled);
 	}
@@ -97,7 +97,7 @@ public:
 		b3DrawSolidCylinder(m_debugDrawData, axis, center, radius, height, color, depthEnabled);
 	}
 	
-	void DrawGrid(const b3Vec3& normal, const b3Vec3& center, u32 width, u32 height, const b3Color& color, bool depthEnabled)
+	void DrawGrid(const b3Vec3& normal, const b3Vec3& center, uint32 width, uint32 height, const b3Color& color, bool depthEnabled)
 	{
 		b3DrawGrid(m_debugDrawData, normal, center, width, height, color, depthEnabled);
 	}

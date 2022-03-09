@@ -24,13 +24,13 @@
 #include <new>
 #include <float.h>
 
-typedef signed int i32;
-typedef signed short i16;
-typedef signed char	i8;
-typedef unsigned int u32;
-typedef unsigned short u16;
-typedef unsigned char u8;
-typedef unsigned long long u64;
+typedef signed int int32;
+typedef signed short int16;
+typedef signed char	int8;
+typedef unsigned int uint32;
+typedef unsigned short uint16;
+typedef unsigned char uint8;
+typedef unsigned long long uint64;
 typedef float scalar;
 typedef double scalar64;
 
@@ -107,7 +107,7 @@ typedef double scalar64;
 #endif
 
 // You should implement this function to use your own memory allocator.
-void* b3Alloc(u32 size);
+void* b3Alloc(uint32 size);
 
 // You must implement this function if you have implemented b3Alloc.
 void b3Free(void* block);
@@ -119,9 +119,9 @@ void b3Log(const char* string, ...);
 // The current version this software.
 struct b3Version
 {
-	u32 major; //significant changes 
-	u32 minor; //minor features
-	u32 revision; //patches
+	uint32 major; //significant changes 
+	uint32 minor; //minor features
+	uint32 revision; //patches
 };
 
 // The current version of Bounce Softbody.

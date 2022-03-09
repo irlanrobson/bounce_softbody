@@ -26,8 +26,8 @@ struct b3TimeStep
 {
 	scalar dt;
 	scalar inv_dt;
-	u32 forceIterations;
-	u32 forceSubIterations;
+	uint32 forceIterations;
+	uint32 forceSubIterations;
 };
 
 #endif

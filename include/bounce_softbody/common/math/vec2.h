@@ -31,13 +31,13 @@ struct b3Vec2
 	b3Vec2(scalar _x, scalar _y) : x(_x), y(_y) { }
 
 	// Read an indexed component from this vector.
-	scalar operator[](u32 i) const 
+	scalar operator[](uint32 i) const 
 	{ 
 		return (&x)[i]; 
 	}
 
 	// Write an indexed component to this vector.
-	scalar& operator[](u32 i) 
+	scalar& operator[](uint32 i) 
 	{ 
 		return (&x)[i]; 
 	}

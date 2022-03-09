@@ -22,13 +22,13 @@
 #include <bounce_softbody/common/settings.h>
 
 // Number of blocks per chunk.
-const u32 b3_blockCount = 32;
+const uint32 b3_blockCount = 32;
 
 // A pool of memory blocks.
 class b3BlockPool
 {
 public:
-	b3BlockPool(u32 blockSize);
+	b3BlockPool(uint32 blockSize);
 	~b3BlockPool();
 
 	void* Allocate();
@@ -45,11 +45,11 @@ private:
 		b3Chunk* next;
 	};
 
-	u32 m_blockSize;
-	u32 m_chunkSize;
+	uint32 m_blockSize;
+	uint32 m_chunkSize;
 
 	b3Chunk* m_chunks;
-	u32 m_chunkCount;
+	uint32 m_chunkCount;
 };
 
 #endif

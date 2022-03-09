@@ -33,7 +33,7 @@ b3FrictionSolver::b3FrictionSolver(const b3FrictionSolverDef& def)
 
 void b3FrictionSolver::Solve()
 {
-	for (u32 i = 0; i < m_shapeContactCount; ++i)
+	for (uint32 i = 0; i < m_shapeContactCount; ++i)
 	{
 		b3SphereAndShapeContact* c = m_shapeContacts[i];
 		if (c->m_active == false)

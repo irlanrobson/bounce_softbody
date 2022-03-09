@@ -26,25 +26,25 @@ template <typename T>
 class b3Array
 {
 public:
-	const T& operator[](u32 i) const
+	const T& operator[](uint32 i) const
 	{
 		B3_ASSERT(i < m_count);
 		return m_elements[i];
 	}
 
-	T& operator[](u32 i)
+	T& operator[](uint32 i)
 	{
 		B3_ASSERT(i < m_count);
 		return m_elements[i];
 	}
 
-	const T* Get(u32 i) const
+	const T* Get(uint32 i) const
 	{
 		B3_ASSERT(i < m_count);
 		return m_elements + i;
 	}
 
-	T* Get(u32 i)
+	T* Get(uint32 i)
 	{
 		B3_ASSERT(i < m_count);
 		return m_elements + i;
@@ -96,12 +96,12 @@ public:
 		return m_elements[m_count - 1];
 	}
 
-	u32 Capacity() const
+	uint32 Capacity() const
 	{
 		return m_capacity;
 	}
 
-	u32 Count() const
+	uint32 Count() const
 	{
 		return m_count;
 	}
@@ -111,19 +111,19 @@ public:
 		return m_count == 0;
 	}
 
-	void Remove(u32 index)
+	void Remove(uint32 index)
 	{
 		B3_ASSERT(m_count > 0);
 		B3_ASSERT(index < m_count);
 		--m_count;
 		// Swap current element with its next.
-		for (u32 i = index; i < m_count; ++i)
+		for (uint32 i = index; i < m_count; ++i)
 		{
 			m_elements[i] = m_elements[i + 1];
 		}
 	}
 	
-	void Reserve(u32 size)
+	void Reserve(uint32 size)
 	{
 		if (m_capacity < size)
 		{
@@ -140,7 +140,7 @@ public:
 		B3_ASSERT(m_capacity >= size);
 	}
 
-	void Resize(u32 size)
+	void Resize(uint32 size)
 	{
 		if (m_capacity < size)
 		{
@@ -186,7 +186,7 @@ public:
 		Swap(other);
 	}
 protected:
-	b3Array(T* elements, u32 N)
+	b3Array(T* elements, uint32 N)
 	{
 		B3_ASSERT(N > 0);
 		m_localElements = elements;
@@ -213,14 +213,14 @@ protected:
 		}
 	}
 
-	u32 m_capacity;
+	uint32 m_capacity;
 	T* m_elements;
-	u32 m_count;
+	uint32 m_count;
 	
 	T* m_localElements;
 };
 
-template <typename T, u32 N>
+template <typename T, uint32 N>
 class b3StackArray : public b3Array<T>
 {
 public :

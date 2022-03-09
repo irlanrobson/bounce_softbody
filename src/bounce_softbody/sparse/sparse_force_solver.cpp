@@ -108,7 +108,7 @@ void b3SparseSolveBE(b3SolveBEOutput* output, const b3SolveBEInput* input)
 
 	b3SparseForceModel* forceModel = input->forceModel;
 
-	u32 dofCount = input->dofCount;
+	uint32 dofCount = input->dofCount;
 
 	const b3DenseVec3& x0 = *input->x0;
 	const b3DenseVec3& v0 = *input->v0;
@@ -118,10 +118,10 @@ void b3SparseSolveBE(b3SolveBEOutput* output, const b3SolveBEInput* input)
 	const b3DiagMat33& S = *input->S;
 	const b3DenseVec3& z = *input->z;
 
-	u32 maxIterations = input->maxIterations;
+	uint32 maxIterations = input->maxIterations;
 	scalar epsilon = input->tolerance;
 
-	u32 maxSubIterations = input->maxSubIterations;
+	uint32 maxSubIterations = input->maxSubIterations;
 	scalar subEpsilon = input->subTolerance;
 
 	// S^T
@@ -141,7 +141,7 @@ void b3SparseSolveBE(b3SolveBEOutput* output, const b3SolveBEInput* input)
 	scalar error0 = scalar(0);
 	scalar error = scalar(0);
 
-	u32 iteration = 0;
+	uint32 iteration = 0;
 
 	while (iteration < maxIterations)
 	{

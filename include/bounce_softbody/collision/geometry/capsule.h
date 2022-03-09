@@ -35,19 +35,19 @@ struct b3Capsule
 		radius = r;
 	}
 
-	const b3Vec3& GetVertex(u32 index) const;
-	u32 GetSupportVertex(const b3Vec3& direction) const;
+	const b3Vec3& GetVertex(uint32 index) const;
+	uint32 GetSupportVertex(const b3Vec3& direction) const;
 };
 
 // Unit capsule centered at the origin
 extern const b3Capsule b3Capsule_identity;
 
-inline const b3Vec3& b3Capsule::GetVertex(u32 index) const
+inline const b3Vec3& b3Capsule::GetVertex(uint32 index) const
 {
 	return (&vertex1)[index];
 }
 
-inline u32 b3Capsule::GetSupportVertex(const b3Vec3& d) const
+inline uint32 b3Capsule::GetSupportVertex(const b3Vec3& d) const
 {
 	if (b3Dot(d, vertex1) > b3Dot(d, vertex2))
 	{

@@ -184,7 +184,7 @@ void b3Particle::ComputeForces(const b3SparseForceSolverData* data)
 	b3DenseVec3& f = *data->f;
 	b3SparseMat33& dfdv = *data->dfdv;
 
-	u32 i = m_solverId;
+	uint32 i = m_solverId;
 
 	if (m_massDamping > scalar(0))
 	{

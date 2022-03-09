@@ -129,9 +129,9 @@ void b3StretchForce::ComputeForces(const b3SparseForceSolverData* data)
 	b3Vec3 dwudx = m_dwudx;
 	b3Vec3 dwvdx = m_dwvdx;
 
-	u32 i1 = m_p1->m_solverId;
-	u32 i2 = m_p2->m_solverId;
-	u32 i3 = m_p3->m_solverId;
+	uint32 i1 = m_p1->m_solverId;
+	uint32 i2 = m_p2->m_solverId;
+	uint32 i3 = m_p3->m_solverId;
 
 	b3DenseVec3& x = *data->x;
 	b3DenseVec3& v = *data->v;
@@ -165,7 +165,7 @@ void b3StretchForce::ComputeForces(const b3SparseForceSolverData* data)
 
 		// Jacobian
 		b3Vec3 dCudx[3];
-		for (u32 i = 0; i < 3; ++i)
+		for (uint32 i = 0; i < 3; ++i)
 		{
 			dCudx[i] = alpha * dwudx[i] * n_wu;
 		}
@@ -176,7 +176,7 @@ void b3StretchForce::ComputeForces(const b3SparseForceSolverData* data)
 
 			// Force
 			b3Vec3 fs[3];
-			for (u32 i = 0; i < 3; ++i)
+			for (uint32 i = 0; i < 3; ++i)
 			{
 				fs[i] = -m_ks_u * Cu * dCudx[i];
 			}
@@ -191,9 +191,9 @@ void b3StretchForce::ComputeForces(const b3SparseForceSolverData* data)
 
 			// Force gradient
 			b3Mat33 K[3][3];
-			for (u32 i = 0; i < 3; ++i)
+			for (uint32 i = 0; i < 3; ++i)
 			{
-				for (u32 j = 0; j < 3; ++j)
+				for (uint32 j = 0; j < 3; ++j)
 				{
 					b3Mat33 Kij = b3Outer(dCudx[i], dCudx[j]);
 
@@ -226,14 +226,14 @@ void b3StretchForce::ComputeForces(const b3SparseForceSolverData* data)
 		{
 			b3Vec3 vs[3] = { v1, v2, v3 };
 			scalar dCudt = scalar(0);
-			for (u32 i = 0; i < 3; ++i)
+			for (uint32 i = 0; i < 3; ++i)
 			{
 				dCudt += b3Dot(dCudx[i], vs[i]);
 			}
 
 			// Force
 			b3Vec3 fs[3];
-			for (u32 i = 0; i < 3; ++i)
+			for (uint32 i = 0; i < 3; ++i)
 			{
 				fs[i] = -m_kd_u * dCudt * dCudx[i];
 			}
@@ -248,9 +248,9 @@ void b3StretchForce::ComputeForces(const b3SparseForceSolverData* data)
 
 			// Force gradient
 			b3Mat33 K[3][3];
-			for (u32 i = 0; i < 3; ++i)
+			for (uint32 i = 0; i < 3; ++i)
 			{
-				for (u32 j = 0; j < 3; ++j)
+				for (uint32 j = 0; j < 3; ++j)
 				{
 					b3Mat33 Kij = -m_kd_u * b3Outer(dCudx[i], dCudx[j]);
 
@@ -279,7 +279,7 @@ void b3StretchForce::ComputeForces(const b3SparseForceSolverData* data)
 
 		// Jacobian
 		b3Vec3 dCvdx[3];
-		for (u32 i = 0; i < 3; ++i)
+		for (uint32 i = 0; i < 3; ++i)
 		{
 			dCvdx[i] = alpha * dwvdx[i] * n_wv;
 		}
@@ -290,7 +290,7 @@ void b3StretchForce::ComputeForces(const b3SparseForceSolverData* data)
 
 			// Force
 			b3Vec3 fs[3];
-			for (u32 i = 0; i < 3; ++i)
+			for (uint32 i = 0; i < 3; ++i)
 			{
 				fs[i] = -m_ks_v * Cv * dCvdx[i];
 			}
@@ -305,9 +305,9 @@ void b3StretchForce::ComputeForces(const b3SparseForceSolverData* data)
 
 			// Force gradient
 			b3Mat33 K[3][3];
-			for (u32 i = 0; i < 3; ++i)
+			for (uint32 i = 0; i < 3; ++i)
 			{
-				for (u32 j = 0; j < 3; ++j)
+				for (uint32 j = 0; j < 3; ++j)
 				{
 					b3Mat33 Kij = b3Outer(dCvdx[i], dCvdx[j]);
 
@@ -341,14 +341,14 @@ void b3StretchForce::ComputeForces(const b3SparseForceSolverData* data)
 			b3Vec3 vs[3] = { v1, v2, v3 };
 
 			scalar dCvdt = scalar(0);
-			for (u32 i = 0; i < 3; ++i)
+			for (uint32 i = 0; i < 3; ++i)
 			{
 				dCvdt += b3Dot(dCvdx[i], vs[i]);
 			}
 
 			// Force
 			b3Vec3 fs[3];
-			for (u32 i = 0; i < 3; ++i)
+			for (uint32 i = 0; i < 3; ++i)
 			{
 				fs[i] = -m_kd_v * dCvdt * dCvdx[i];
 			}
@@ -363,9 +363,9 @@ void b3StretchForce::ComputeForces(const b3SparseForceSolverData* data)
 
 			// Force gradient
 			b3Mat33 K[3][3];
-			for (u32 i = 0; i < 3; ++i)
+			for (uint32 i = 0; i < 3; ++i)
 			{
-				for (u32 j = 0; j < 3; ++j)
+				for (uint32 j = 0; j < 3; ++j)
 				{
 					b3Mat33 Kij = -m_kd_v * b3Outer(dCvdx[i], dCvdx[j]);
 

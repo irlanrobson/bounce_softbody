@@ -18,7 +18,7 @@
 
 #include <bounce_softbody/common/memory/block_pool.h>
 
-b3BlockPool::b3BlockPool(u32 blockSize)
+b3BlockPool::b3BlockPool(uint32 blockSize)
 {
 	m_blockSize = blockSize;
 	m_chunkSize = b3_blockCount * m_blockSize;
@@ -29,19 +29,19 @@ b3BlockPool::b3BlockPool(u32 blockSize)
 	// Pre-allocate some chunks
 	b3Chunk* chunk = (b3Chunk*)b3Alloc(sizeof(b3Chunk) + m_chunkSize);
 	++m_chunkCount;
-	chunk->freeBlocks = (b3Block*)((u8*)chunk + sizeof(b3Chunk));
+	chunk->freeBlocks = (b3Block*)((uint8*)chunk + sizeof(b3Chunk));
 
 #ifdef _DEBUG
 	memset(chunk->freeBlocks, 0xcd, m_chunkSize);
 #endif
 
 	// Link the singly-linked list of the new block of the chunk.
-	for (u32 i = 0; i < b3_blockCount - 1; ++i)
+	for (uint32 i = 0; i < b3_blockCount - 1; ++i)
 	{
-		b3Block* current = (b3Block*)((u8*)chunk->freeBlocks + i * blockSize);
-		current->next = (b3Block*)((u8*)chunk->freeBlocks + (i + 1) * blockSize);
+		b3Block* current = (b3Block*)((uint8*)chunk->freeBlocks + i * blockSize);
+		current->next = (b3Block*)((uint8*)chunk->freeBlocks + (i + 1) * blockSize);
 	}
-	b3Block* last = (b3Block*)((u8*)chunk->freeBlocks + (b3_blockCount - 1) * blockSize);
+	b3Block* last = (b3Block*)((uint8*)chunk->freeBlocks + (b3_blockCount - 1) * blockSize);
 	last->next = nullptr;
 
 	// Push back the new chunk of the singly-linked list of chunks.
@@ -77,19 +77,19 @@ void* b3BlockPool::Allocate()
 	// Allocate a new chunk of memory.
 	b3Chunk* chunk = (b3Chunk*)b3Alloc(sizeof(b3Chunk) + m_chunkSize);
 	++m_chunkCount;
-	chunk->freeBlocks = (b3Block*)((u8*)chunk + sizeof(b3Chunk));
+	chunk->freeBlocks = (b3Block*)((uint8*)chunk + sizeof(b3Chunk));
 
 #ifdef _DEBUG
 	memset(chunk->freeBlocks, 0xcd, m_chunkSize);
 #endif
 
 	// Link the singly-linked list of the new block of the chunk.
-	for (u32 i = 0; i < b3_blockCount - 1; ++i)
+	for (uint32 i = 0; i < b3_blockCount - 1; ++i)
 	{
-		b3Block* current = (b3Block*)((u8*)chunk->freeBlocks + i * m_blockSize);
-		current->next = (b3Block*)((u8*)chunk->freeBlocks + (i + 1) * m_blockSize);
+		b3Block* current = (b3Block*)((uint8*)chunk->freeBlocks + i * m_blockSize);
+		current->next = (b3Block*)((uint8*)chunk->freeBlocks + (i + 1) * m_blockSize);
 	}
-	b3Block* last = (b3Block*)((u8*)chunk->freeBlocks + (b3_blockCount - 1) * m_blockSize);
+	b3Block* last = (b3Block*)((uint8*)chunk->freeBlocks + (b3_blockCount - 1) * m_blockSize);
 	last->next = nullptr;
 
 	// Push back the new chunk of the singly-linked list of chunks.
@@ -108,12 +108,12 @@ void b3BlockPool::Free(void* p)
 	// Verify the block was allocated from this allocator.
 	bool found = false;
 	b3Chunk* c = m_chunks;
-	for (u32 i = 0; i < m_chunkCount; ++i)
+	for (uint32 i = 0; i < m_chunkCount; ++i)
 	{
 		b3Chunk* chunk = c;
 		// Memory aabb test.
-		b3Block* blocks = (b3Block*)((u8*)chunk + sizeof(b3Chunk));
-		if ((u8*)blocks <= (u8*)p && (u8*)p + m_blockSize <= (u8*)blocks + m_chunkSize)
+		b3Block* blocks = (b3Block*)((uint8*)chunk + sizeof(b3Chunk));
+		if ((uint8*)blocks <= (uint8*)p && (uint8*)p + m_blockSize <= (uint8*)blocks + m_chunkSize)
 		{
 			found = true;
 			break;
