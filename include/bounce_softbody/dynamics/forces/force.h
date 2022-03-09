@@ -19,7 +19,7 @@
 #ifndef B3_FORCE_H
 #define B3_FORCE_H
 
-#include <bounce_softbody/common/template/list.h>
+#include <bounce_softbody/common/settings.h>
 
 class b3BlockAllocator;
 class b3Particle;
@@ -71,7 +71,6 @@ public:
 	// Get the mesh feature index.
 	u32 GetMeshIndex() const { return m_meshIndex; }
 protected:
-	friend class b3List<b3Force>;
 	friend class b3Body;
 	friend class b3Particle;
 	friend class b3ForceSolver;

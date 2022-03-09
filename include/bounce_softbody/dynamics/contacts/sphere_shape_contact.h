@@ -19,7 +19,6 @@
 #ifndef B3_SPHERE_AND_SHAPE_CONTACT_H
 #define B3_SPHERE_AND_SHAPE_CONTACT_H
 
-#include <bounce_softbody/common/template/list.h>
 #include <bounce_softbody/common/math/vec3.h>
 
 class b3BlockAllocator;

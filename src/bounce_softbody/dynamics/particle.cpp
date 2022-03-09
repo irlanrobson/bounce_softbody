@@ -89,7 +89,7 @@ void b3Particle::DestroyFixtures()
 {
 	{
 		// Destroy spheres
-		b3SphereFixture* s = m_body->m_sphereList.m_head;
+		b3SphereFixture* s = m_body->m_sphereList;
 		while (s)
 		{
 			b3SphereFixture* s0 = s;
@@ -104,7 +104,7 @@ void b3Particle::DestroyFixtures()
 
 	{
 		// Destroy triangles
-		b3TriangleFixture* t = m_body->m_triangleList.m_head;
+		b3TriangleFixture* t = m_body->m_triangleList;
 		while (t)
 		{
 			b3TriangleFixture* t0 = t;
@@ -119,7 +119,7 @@ void b3Particle::DestroyFixtures()
 
 	{
 		// Destroy tetrahedrons
-		b3TetrahedronFixture* t = m_body->m_tetrahedronList.m_head;
+		b3TetrahedronFixture* t = m_body->m_tetrahedronList;
 		while (t)
 		{
 			b3TetrahedronFixture* t0 = t;
@@ -135,7 +135,7 @@ void b3Particle::DestroyFixtures()
 
 void b3Particle::DestroyForces()
 {
-	b3Force* f = m_body->m_forceList.m_head;
+	b3Force* f = m_body->m_forceList;
 	while (f)
 	{
 		b3Force* f0 = f;
@@ -151,7 +151,7 @@ void b3Particle::DestroyForces()
 void b3Particle::DestroyContacts()
 {
 	// Destroy shape contacts
-	b3SphereAndShapeContact* c = m_body->m_contactManager.m_shapeContactList.m_head;
+	b3SphereAndShapeContact* c = m_body->m_contactManager.m_shapeContactList;
 	while (c)
 	{
 		if (c->m_f1->m_p == this)
@@ -169,7 +169,7 @@ void b3Particle::DestroyContacts()
 void b3Particle::SynchronizeFixtures()
 {
 	// Synchronize triangles
-	for (b3TriangleFixture* t = m_body->m_triangleList.m_head; t; t = t->m_next)
+	for (b3TriangleFixture* t = m_body->m_triangleList; t; t = t->m_next)
 	{
 		if (t->m_p1 == this || t->m_p2 == this || t->m_p3 == this)
 		{

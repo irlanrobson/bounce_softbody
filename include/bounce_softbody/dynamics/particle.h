@@ -19,7 +19,6 @@
 #ifndef B3_PARTICLE_H
 #define B3_PARTICLE_H
 
-#include <bounce_softbody/common/template/list.h>
 #include <bounce_softbody/common/math/vec3.h>
 
 class b3Body;
@@ -127,7 +126,6 @@ public:
 	b3Particle* GetNext();
 	const b3Particle* GetNext() const;
 private:
-	friend class b3List<b3Particle>;
 	friend class b3Body;
 	friend class b3ContactManager;
 	friend class b3BodySolver;

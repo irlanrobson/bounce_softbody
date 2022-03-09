@@ -21,7 +21,6 @@
 
 #include <bounce_softbody/dynamics/fixtures/fixture.h>
 #include <bounce_softbody/collision/geometry/aabb.h>
-#include <bounce_softbody/common/template/list.h>
 
 class b3Particle;
 
@@ -69,7 +68,6 @@ public:
 private:
 	friend class b3Body;
 	friend class b3Particle;
-	friend class b3List<b3TetrahedronFixture>;
 
 	b3TetrahedronFixture(const b3TetrahedronFixtureDef& def, b3Body* body);
 

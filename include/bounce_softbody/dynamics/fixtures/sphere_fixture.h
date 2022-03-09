@@ -21,7 +21,6 @@
 
 #include <bounce_softbody/dynamics/fixtures/fixture.h>
 #include <bounce_softbody/collision/geometry/aabb.h>
-#include <bounce_softbody/common/template/list.h>
 
 class b3Particle;
 
@@ -55,8 +54,7 @@ private:
 	friend class b3SphereAndShapeContact;
 	friend class b3BodySolver;
 	friend class b3FrictionSolver;
-	friend class b3List<b3SphereFixture>;
-
+	
 	b3SphereFixture(const b3SphereFixtureDef& def, b3Body* body);
 	
 	// Compute AABB

@@ -21,7 +21,6 @@
 
 #include <bounce_softbody/dynamics/fixtures/fixture.h>
 #include <bounce_softbody/collision/geometry/aabb.h>
-#include <bounce_softbody/common/template/list.h>
 
 struct b3RayCastInput;
 struct b3RayCastOutput;
@@ -72,7 +71,6 @@ private:
 	friend class b3Body;
 	friend class b3Particle;
 	friend class b3ContactManager;
-	friend class b3List<b3TriangleFixture>;
 
 	b3TriangleFixture(const b3TriangleFixtureDef& def, b3Body* body);
 	

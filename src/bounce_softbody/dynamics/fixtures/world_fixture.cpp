@@ -76,7 +76,7 @@ void b3WorldFixture::Destroy(b3BlockAllocator* allocator)
 
 void b3WorldFixture::DestroyContacts()
 {
-	b3SphereAndShapeContact* c = m_body->m_contactManager.m_shapeContactList.m_head;
+	b3SphereAndShapeContact* c = m_body->m_contactManager.m_shapeContactList;
 	while (c)
 	{
 		b3SphereAndShapeContact* c0 = c;

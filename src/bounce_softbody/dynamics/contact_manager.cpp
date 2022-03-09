@@ -23,10 +23,16 @@
 #include <bounce_softbody/dynamics/fixtures/world_fixture.h>
 #include <bounce_softbody/common/memory/block_allocator.h>
 
+b3ContactManager::b3ContactManager()
+{
+	m_shapeContactList = nullptr;
+	m_shapeContactCount = 0;
+}
+
 void b3ContactManager::AddPair(b3SphereFixture* f1, b3WorldFixture* f2)
 {
 	// Check if there is a contact between the two entities.
-	for (b3SphereAndShapeContact* c = m_shapeContactList.m_head; c; c = c->m_next)
+	for (b3SphereAndShapeContact* c = m_shapeContactList; c; c = c->m_next)
 	{
 		if (c->m_f1 == f1 && c->m_f2 == f2)
 		{
@@ -45,17 +51,25 @@ void b3ContactManager::AddPair(b3SphereFixture* f1, b3WorldFixture* f2)
 	b3SphereAndShapeContact* c = b3SphereAndShapeContact::Create(f1, f2, m_allocator);
 
 	// Push the contact to the contact list.
-	m_shapeContactList.PushFront(c);
+	c->m_prev = nullptr;
+	c->m_next = m_shapeContactList;
+	if (m_shapeContactList)
+	{
+		m_shapeContactList->m_prev = c;
+	}
+	m_shapeContactList = c;
+	++m_shapeContactCount;
+
 }
 
 void b3ContactManager::FindNewContacts()
 {
 	// Run a simple broadphase loop.
-	for (b3SphereFixture* f1 = m_body->m_sphereList.m_head; f1 != nullptr; f1 = f1->m_next)
+	for (b3SphereFixture* f1 = m_body->m_sphereList; f1; f1 = f1->m_next)
 	{
 		b3AABB aabb1 = f1->ComputeAABB();
 
-		for (b3WorldFixture* f2 = m_body->m_fixtureList.m_head; f2 != nullptr; f2 = f2->m_next)
+		for (b3WorldFixture* f2 = m_body->m_fixtureList; f2; f2 = f2->m_next)
 		{
 			b3AABB aabb2 = f2->ComputeAABB();
 
@@ -67,19 +81,34 @@ void b3ContactManager::FindNewContacts()
 	}
 }
 
-void b3ContactManager::Destroy(b3SphereAndShapeContact* contact)
+void b3ContactManager::Destroy(b3SphereAndShapeContact* c)
 {
 	// Remove from the body.
-	m_shapeContactList.Remove(contact);
-	
+	if (c->m_prev)
+	{
+		c->m_prev->m_next = c->m_next;
+	}
+
+	if (c->m_next)
+	{
+		c->m_next->m_prev = c->m_prev;
+	}
+
+	if (c == m_shapeContactList)
+	{
+		m_shapeContactList = c->m_next;
+	}
+
+	--m_shapeContactCount;
+
 	// Call the factory.
-	b3SphereAndShapeContact::Destroy(contact, m_allocator);
+	b3SphereAndShapeContact::Destroy(c, m_allocator);
 }
 
 void b3ContactManager::UpdateContacts()
 {
 	// Update the state of sphere and shape contacts.
-	b3SphereAndShapeContact* c = m_shapeContactList.m_head;
+	b3SphereAndShapeContact* c = m_shapeContactList;
 	while (c)
 	{
 		b3SphereFixture* f1 = c->m_f1;

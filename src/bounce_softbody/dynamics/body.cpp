@@ -29,6 +29,24 @@
 
 b3Body::b3Body()
 {
+	m_particleList = nullptr;
+	m_particleCount = 0;
+
+	m_forceList = nullptr;
+	m_forceCount = 0;
+
+	m_sphereList = nullptr;
+	m_sphereCount = 0;
+
+	m_triangleList = nullptr;
+	m_triangleCount = 0;
+
+	m_tetrahedronList = nullptr;
+	m_tetrahedronCount = 0;
+
+	m_fixtureList = nullptr;
+	m_fixtureCount = 0;
+
 	m_contactManager.m_body = this;
 	m_contactManager.m_allocator = &m_blockAllocator;
 	
@@ -46,29 +64,93 @@ b3Particle* b3Body::CreateParticle(const b3ParticleDef& def)
 	b3Particle* p = new(mem) b3Particle(def, this);
 
 	// Add to body list.
-	m_particleList.PushFront(p);
+	p->m_prev = nullptr;
+	p->m_next = m_particleList;
+	if (m_particleList)
+	{
+		m_particleList->m_prev = p;
+	}
+	m_particleList = p;
+	++m_particleCount;
 
 	return p;
 }
 
-void b3Body::DestroyParticle(b3Particle* particle)
+void b3Body::DestroyParticle(b3Particle* p)
 {
 	// Delete the attached objects.
-	particle->DestroyFixtures();
-	particle->DestroyForces();
-	particle->DestroyContacts();
+	p->DestroyFixtures();
+	p->DestroyForces();
+	p->DestroyContacts();
 
 	// Remove from body list.
-	m_particleList.Remove(particle);
+	if (p->m_prev)
+	{
+		p->m_prev->m_next = p->m_next;
+	}
 	
-	particle->~b3Particle();
-	m_blockAllocator.Free(particle, sizeof(b3Particle));
+	if (p->m_next)
+	{
+		p->m_next->m_prev = p->m_prev;
+	}
+
+	if (p == m_particleList)
+	{
+		m_particleList = p->m_next;
+	}
+
+	--m_particleCount;
+
+	p->~b3Particle();
+	m_blockAllocator.Free(p, sizeof(b3Particle));
+}
+
+b3Force* b3Body::CreateForce(const b3ForceDef& def)
+{
+	// Call the factory.
+	b3Force* f = b3Force::Create(&def, &m_blockAllocator);
+
+	// Add to body list.
+	f->m_prev = nullptr;
+	f->m_next = m_forceList;
+	if (m_forceList)
+	{
+		m_forceList->m_prev = f;
+	}
+	m_forceList = f;
+	++m_forceCount;
+	
+	return f;
+}
+
+void b3Body::DestroyForce(b3Force* f)
+{
+	// Remove from body list.
+	if (f->m_prev)
+	{
+		f->m_prev->m_next = f->m_next;
+	}
+
+	if (f->m_next)
+	{
+		f->m_next->m_prev = f->m_prev;
+	}
+
+	if (f == m_forceList)
+	{
+		m_forceList = f->m_next;
+	}
+
+	--m_forceCount;
+
+	// Call the factory
+	b3Force::Destroy(f, &m_blockAllocator);
 }
 
 b3SphereFixture* b3Body::CreateSphere(const b3SphereFixtureDef& def)
 {
 	// Check if the fixture exists.
-	for (b3SphereFixture* s = m_sphereList.m_head; s; s = s->m_next)
+	for (b3SphereFixture* s = m_sphereList; s; s = s->m_next)
 	{
 		if (s->m_p == def.p)
 		{
@@ -80,28 +162,50 @@ b3SphereFixture* b3Body::CreateSphere(const b3SphereFixtureDef& def)
 	b3SphereFixture* s = new (mem)b3SphereFixture(def, this);
 	
 	// Add to body list.
-	m_sphereList.PushFront(s);
+	s->m_prev = nullptr;
+	s->m_next = m_sphereList;
+	if (m_sphereList)
+	{
+		m_sphereList->m_prev = s;
+	}
+	m_sphereList = s;
+	++m_sphereCount;
 
 	return s;
 }
 
-void b3Body::DestroySphere(b3SphereFixture* fixture)
+void b3Body::DestroySphere(b3SphereFixture* s)
 {
 	// Destroy attached objects.
-	fixture->DestroyContacts();
+	s->DestroyContacts();
 
 	// Remove from body list.
-	m_sphereList.Remove(fixture);
-	
-	fixture->~b3SphereFixture();
-	m_blockAllocator.Free(fixture, sizeof(b3SphereFixture));
+	if (s->m_prev)
+	{
+		s->m_prev->m_next = s->m_next;
+	}
+
+	if (s->m_next)
+	{
+		s->m_next->m_prev = s->m_prev;
+	}
+
+	if (s == m_sphereList)
+	{
+		m_sphereList = s->m_next;
+	}
+
+	--m_sphereCount;
+
+	s->~b3SphereFixture();
+	m_blockAllocator.Free(s, sizeof(b3SphereFixture));
 }
 
 b3TriangleFixture* b3Body::CreateTriangle(const b3TriangleFixtureDef& def)
 {
 	// Check if the fixture exists.
 	b3Particle * p1 = def.p1, * p2 = def.p2, * p3 = def.p3;
-	for (b3TriangleFixture* t = m_triangleList.m_head; t; t = t->m_next)
+	for (b3TriangleFixture* t = m_triangleList; t; t = t->m_next)
 	{
 		bool hasP1 = t->m_p1 == p1 || t->m_p2 == p1 || t->m_p3 == p1;
 		bool hasP2 = t->m_p1 == p2 || t->m_p2 == p2 || t->m_p3 == p2;
@@ -121,7 +225,14 @@ b3TriangleFixture* b3Body::CreateTriangle(const b3TriangleFixtureDef& def)
 	t->m_proxyId = m_tree.CreateProxy(aabb, t);
 
 	// Add to body list.
-	m_triangleList.PushFront(t);
+	t->m_prev = nullptr;
+	t->m_next = m_triangleList;
+	if (m_triangleList)
+	{
+		m_triangleList->m_prev = t;
+	}
+	m_triangleList = t;
+	++m_triangleCount;
 
 	// Reset the body mass
 	ResetMass();
@@ -129,16 +240,31 @@ b3TriangleFixture* b3Body::CreateTriangle(const b3TriangleFixtureDef& def)
 	return t;
 }
 
-void b3Body::DestroyTriangle(b3TriangleFixture* fixture)
+void b3Body::DestroyTriangle(b3TriangleFixture* t)
 {
 	// Destroy tree proxy.
-	m_tree.DestroyProxy(fixture->m_proxyId);
+	m_tree.DestroyProxy(t->m_proxyId);
 
 	// Remove from body list.
-	m_triangleList.Remove(fixture);
-	
-	fixture->~b3TriangleFixture();
-	m_blockAllocator.Free(fixture, sizeof(b3TriangleFixture));
+	if (t->m_prev)
+	{
+		t->m_prev->m_next = t->m_next;
+	}
+
+	if (t->m_next)
+	{
+		t->m_next->m_prev = t->m_prev;
+	}
+
+	if (t == m_triangleList)
+	{
+		m_triangleList = t->m_next;
+	}
+
+	--m_triangleCount;
+
+	t->~b3TriangleFixture();
+	m_blockAllocator.Free(t, sizeof(b3TriangleFixture));
 
 	// Reset the body mass
 	ResetMass();
@@ -148,7 +274,7 @@ b3TetrahedronFixture* b3Body::CreateTetrahedron(const b3TetrahedronFixtureDef& d
 {
 	// Check if the fixture exists.
 	b3Particle * p1 = def.p1, * p2 = def.p2, * p3 = def.p3, * p4 = def.p4;
-	for (b3TetrahedronFixture* t = m_tetrahedronList.m_head; t; t = t->m_next)
+	for (b3TetrahedronFixture* t = m_tetrahedronList; t; t = t->m_next)
 	{
 		bool hasP1 = t->m_p1 == p1 || t->m_p2 == p1 || t->m_p3 == p1 || t->m_p4 == p1;
 		bool hasP2 = t->m_p1 == p2 || t->m_p2 == p2 || t->m_p3 == p2 || t->m_p4 == p2;
@@ -165,7 +291,14 @@ b3TetrahedronFixture* b3Body::CreateTetrahedron(const b3TetrahedronFixtureDef& d
 	b3TetrahedronFixture* t = new (mem)b3TetrahedronFixture(def, this);
 
 	// Add to body list.
-	m_tetrahedronList.PushFront(t);
+	t->m_prev = nullptr;
+	t->m_next = m_tetrahedronList;
+	if (m_tetrahedronList)
+	{
+		m_tetrahedronList->m_prev = t;
+	}
+	m_tetrahedronList = t;
+	++m_tetrahedronCount;
 
 	// Reset the body mass.
 	ResetMass();
@@ -173,66 +306,84 @@ b3TetrahedronFixture* b3Body::CreateTetrahedron(const b3TetrahedronFixtureDef& d
 	return t;
 }
 
-void b3Body::DestroyTetrahedron(b3TetrahedronFixture* fixture)
+void b3Body::DestroyTetrahedron(b3TetrahedronFixture* t)
 {
 	// Remove from body list.
-	m_tetrahedronList.Remove(fixture);
-	
-	fixture->~b3TetrahedronFixture();
-	m_blockAllocator.Free(fixture, sizeof(b3TetrahedronFixture));
+	if (t->m_prev)
+	{
+		t->m_prev->m_next = t->m_next;
+	}
+
+	if (t->m_next)
+	{
+		t->m_next->m_prev = t->m_prev;
+	}
+
+	if (t == m_tetrahedronList)
+	{
+		m_tetrahedronList = t->m_next;
+	}
+
+	--m_tetrahedronCount;
+
+	t->~b3TetrahedronFixture();
+	m_blockAllocator.Free(t, sizeof(b3TetrahedronFixture));
 
 	// Reset the body mass
 	ResetMass();
 }
 
-b3Force* b3Body::CreateForce(const b3ForceDef& def)
-{
-	// Call the factory.
-	b3Force* f = b3Force::Create(&def, &m_blockAllocator);
-	
-	// Add to body list.
-	m_forceList.PushFront(f);
-	return f;
-}
-
-void b3Body::DestroyForce(b3Force* force)
-{
-	// Remove from body list.
-	m_forceList.Remove(force);
-	
-	// Call the factory
-	b3Force::Destroy(force, &m_blockAllocator);
-}
-
 b3WorldFixture* b3Body::CreateFixture(const b3WorldFixtureDef& def)
 {
 	void* mem = m_blockAllocator.Allocate(sizeof(b3WorldFixture));
-	b3WorldFixture* fixture = new (mem) b3WorldFixture;
-	fixture->Create(&m_blockAllocator, this, def);
+	b3WorldFixture* f = new (mem) b3WorldFixture;
+	f->Create(&m_blockAllocator, this, def);
 
 	// Add to the body list
-	m_fixtureList.PushFront(fixture);
+	f->m_prev = nullptr;
+	f->m_next = m_fixtureList;
+	if (m_fixtureList)
+	{
+		m_fixtureList->m_prev = f;
+	}
+	m_fixtureList = f;
+	++m_fixtureCount;
 
-	return fixture;
+	return f;
 }
 
-void b3Body::DestroyFixture(b3WorldFixture* fixture)
+void b3Body::DestroyFixture(b3WorldFixture* f)
 {
 	// Destroy attached contacts.
-	fixture->DestroyContacts();
+	f->DestroyContacts();
 
 	// Remove from the body list.
-	m_fixtureList.Remove(fixture);
+	if (f->m_prev)
+	{
+		f->m_prev->m_next = f->m_next;
+	}
 
-	fixture->Destroy(&m_blockAllocator);
-	fixture->~b3WorldFixture();
-	m_blockAllocator.Free(fixture, sizeof(b3WorldFixture));
+	if (f->m_next)
+	{
+		f->m_next->m_prev = f->m_prev;
+	}
+
+	if (f == m_fixtureList)
+	{
+		m_fixtureList = f->m_next;
+	}
+
+	--m_fixtureCount;
+
+	f->Destroy(&m_blockAllocator);
+	f->~b3WorldFixture();
+	m_blockAllocator.Free(f, sizeof(b3WorldFixture));
 }
 
 scalar b3Body::GetEnergy() const
 {
 	scalar E = scalar(0);
-	for (b3Particle* p = m_particleList.m_head; p; p = p->m_next)
+	for (b3Particle* p = m_particleList; p; p = p->m_next)
 	{
 		E += p->m_mass * b3Dot(p->m_velocity, p->m_velocity);
 	}
@@ -243,14 +394,14 @@ void b3Body::ResetMass()
 {
 	// Clear masses. 
 	// Only touch fixture masses because there can be external particles.
-	for (b3TriangleFixture* t = m_triangleList.m_head; t; t = t->m_next)
+	for (b3TriangleFixture* t = m_triangleList; t; t = t->m_next)
 	{
 		t->m_p1->m_mass = scalar(0);
 		t->m_p2->m_mass = scalar(0);
 		t->m_p3->m_mass = scalar(0);
 	}
 
-	for (b3TetrahedronFixture* t = m_tetrahedronList.m_head; t; t = t->m_next)
+	for (b3TetrahedronFixture* t = m_tetrahedronList; t; t = t->m_next)
 	{
 		t->m_p1->m_mass = scalar(0);
 		t->m_p2->m_mass = scalar(0);
@@ -260,7 +411,7 @@ void b3Body::ResetMass()
 
 	// Accumulate contribution of each fixture.
 	const scalar inv3 = scalar(1) / scalar(3);
-	for (b3TriangleFixture* t = m_triangleList.m_head; t; t = t->m_next)
+	for (b3TriangleFixture* t = m_triangleList; t; t = t->m_next)
 	{
 		b3Particle* p1 = t->m_p1;
 		b3Particle* p2 = t->m_p2;
@@ -274,7 +425,7 @@ void b3Body::ResetMass()
 	}
 
 	const scalar inv4 = scalar(1) / scalar(4);
-	for (b3TetrahedronFixture* t = m_tetrahedronList.m_head; t; t = t->m_next)
+	for (b3TetrahedronFixture* t = m_tetrahedronList; t; t = t->m_next)
 	{
 		b3Particle* p1 = t->m_p1;
 		b3Particle* p2 = t->m_p2;
@@ -290,7 +441,7 @@ void b3Body::ResetMass()
 	}
 
 	// Invert
-	for (b3Particle* p = m_particleList.m_head; p; p = p->m_next)
+	for (b3Particle* p = m_particleList; p; p = p->m_next)
 	{
 		// Static and kinematic particles have zero mass.
 		if (p->m_type == e_staticParticle || p->m_type == e_kinematicParticle)
@@ -372,23 +523,23 @@ void b3Body::Solve(const b3TimeStep& step)
 {
 	b3BodySolverDef solverDef;
 	solverDef.stack = &m_stackAllocator;
-	solverDef.particleCapacity = m_particleList.m_count;
-	solverDef.forceCapacity = m_forceList.m_count;
-	solverDef.shapeContactCapacity = m_contactManager.m_shapeContactList.m_count;
+	solverDef.particleCapacity = m_particleCount;
+	solverDef.forceCapacity = m_forceCount;
+	solverDef.shapeContactCapacity = m_contactManager.m_shapeContactCount;
 	
 	b3BodySolver solver(solverDef);
 
-	for (b3Particle* p = m_particleList.m_head; p; p = p->m_next)
+	for (b3Particle* p = m_particleList; p; p = p->m_next)
 	{
 		solver.Add(p);
 	}
 
-	for (b3Force* f = m_forceList.m_head; f; f = f->m_next)
+	for (b3Force* f = m_forceList; f; f = f->m_next)
 	{
 		solver.Add(f);
 	}
 
-	for (b3SphereAndShapeContact* c = m_contactManager.m_shapeContactList.m_head; c; c = c->m_next)
+	for (b3SphereAndShapeContact* c = m_contactManager.m_shapeContactList; c; c = c->m_next)
 	{
 		solver.Add(c);
 	}
@@ -410,7 +561,7 @@ void b3Body::Step(scalar dt, u32 forceIterations, u32 forceSubIterations)
 	m_contactManager.UpdateContacts();
 
 	// Clear internal forces before accumulating them inside the solver.
-	for (b3Force* f = m_forceList.m_head; f; f = f->m_next)
+	for (b3Force* f = m_forceList; f; f = f->m_next)
 	{
 		f->ClearForces();
 	}
@@ -422,14 +573,14 @@ void b3Body::Step(scalar dt, u32 forceIterations, u32 forceSubIterations)
 	}
 
 	// Clear external forces and translations.
-	for (b3Particle* p = m_particleList.m_head; p; p = p->m_next)
+	for (b3Particle* p = m_particleList; p; p = p->m_next)
 	{
 		p->m_force.SetZero();
 		p->m_translation.SetZero();
 	}
 
 	// Synchronize triangles.
-	for (b3TriangleFixture* t = m_triangleList.m_head; t; t = t->m_next)
+	for (b3TriangleFixture* t = m_triangleList; t; t = t->m_next)
 	{
 		b3Particle* p1 = t->m_p1;
 		b3Particle* p2 = t->m_p2;
@@ -453,7 +604,7 @@ void b3Body::Step(scalar dt, u32 forceIterations, u32 forceSubIterations)
 
 void b3Body::Draw(b3Draw* draw) const
 {
-	for (b3Particle* p = m_particleList.m_head; p; p = p->m_next)
+	for (b3Particle* p = m_particleList; p; p = p->m_next)
 	{
 		if (p->m_type == e_staticParticle)
 		{
@@ -471,7 +622,7 @@ void b3Body::Draw(b3Draw* draw) const
 		}
 	}
 
-	for (b3TriangleFixture* t = m_triangleList.m_head; t; t = t->m_next)
+	for (b3TriangleFixture* t = m_triangleList; t; t = t->m_next)
 	{
 		b3Particle* p1 = t->m_p1;
 		b3Particle* p2 = t->m_p2;
@@ -537,7 +688,7 @@ void b3Body::Draw(b3Draw* draw) const
 		}
 	}
 
-	for (b3TetrahedronFixture* t = m_tetrahedronList.m_head; t; t = t->m_next)
+	for (b3TetrahedronFixture* t = m_tetrahedronList; t; t = t->m_next)
 	{
 		b3Particle* p1 = t->m_p1;
 		b3Particle* p2 = t->m_p2;
@@ -587,7 +738,7 @@ void b3Body::Draw(b3Draw* draw) const
 		draw->DrawSolidTriangle(n4, v2, v4, v3, b3Color_blue);
 	}
 
-	for (b3WorldFixture* s = m_fixtureList.m_head; s; s = s->GetNext())
+	for (b3WorldFixture* s = m_fixtureList; s; s = s->GetNext())
 	{
 		s->Draw(draw);
 	}

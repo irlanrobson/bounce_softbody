@@ -20,7 +20,6 @@
 #define B3_CONTACT_MANAGER_H
 
 #include <bounce_softbody/dynamics/contacts/sphere_shape_contact.h>
-#include <bounce_softbody/common/template/list.h>
 
 class b3Body;
 class b3BlockAllocator;
@@ -29,6 +28,8 @@ class b3BlockAllocator;
 class b3ContactManager
 {
 public:
+	b3ContactManager();
+
 	void AddPair(b3SphereFixture* fixture1, b3WorldFixture* fixture2);
 	void FindNewContacts();
 	void UpdateContacts();
@@ -37,7 +38,8 @@ public:
 
 	b3Body* m_body;
 	b3BlockAllocator* m_allocator;
-	b3List<b3SphereAndShapeContact> m_shapeContactList;
+	b3SphereAndShapeContact* m_shapeContactList;
+	u32 m_shapeContactCount;
 };
 
 #endif

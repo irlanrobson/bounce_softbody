@@ -20,7 +20,6 @@
 #define B3_WORLD_FIXTURE_H
 
 #include <bounce_softbody/collision/shapes/shape.h>
-#include <bounce_softbody/common/template/list.h>
 
 class b3Draw;
 class b3Body;
@@ -78,7 +77,6 @@ private:
 	friend class b3ContactManager;
 	friend class b3SphereAndShapeContact;
 	friend class b3FrictionSolver;
-	friend class b3List<b3WorldFixture>;
 
 	// Ctor.
 	b3WorldFixture();

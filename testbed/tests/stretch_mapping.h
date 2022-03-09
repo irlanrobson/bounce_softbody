@@ -91,7 +91,7 @@ public:
 			tension[i].SetZero();
 		}
 
-		for (b3Force* f = m_body->GetForceList().m_head; f; f = f->GetNext())
+		for (b3Force* f = m_body->GetForceList(); f; f = f->GetNext())
 		{
 			if (f->GetType() == e_stretchForce)
 			{
@@ -115,7 +115,7 @@ public:
 			}
 		}
 		
-		for (b3Particle* p = m_body->GetParticleList().m_head; p; p = p->GetNext())
+		for (b3Particle* p = m_body->GetParticleList(); p; p = p->GetNext())
 		{
 			if (p->GetType() == e_staticParticle)
 			{

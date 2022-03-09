@@ -103,7 +103,7 @@ public:
 
 	b3SpringForce* FindSpringForce(b3Particle* p1, b3Particle* p2)
 	{
-		for (b3Force* f = m_body->GetForceList().m_head; f; f = f->GetNext())
+		for (b3Force* f = m_body->GetForceList(); f; f = f->GetNext())
 		{
 			if (f->GetType() != e_springForce)
 			{
@@ -142,7 +142,7 @@ public:
 
 	void DrawSpringForces()
 	{
-		for (b3Force* f = m_body->GetForceList().m_head; f; f = f->GetNext())
+		for (b3Force* f = m_body->GetForceList(); f; f = f->GetNext())
 		{
 			if (f->GetType() != e_springForce)
 			{
@@ -162,7 +162,7 @@ public:
 		b3Array<b3TriangleFixture*>& above,
 		b3Array<b3TriangleFixture*>& below)
 	{
-		for (b3TriangleFixture* t = m_body->GetTriangleList().m_head; t; t = t->GetNext())
+		for (b3TriangleFixture* t = m_body->GetTriangleList(); t; t = t->GetNext())
 		{
 			b3Particle* p1 = t->GetParticle1();
 			b3Particle* p2 = t->GetParticle2();
@@ -423,7 +423,7 @@ public:
 
 	bool Tear()
 	{
-		b3Force* f = m_body->GetForceList().m_head;
+		b3Force* f = m_body->GetForceList();
 		while (f)
 		{
 			if (f->GetType() != e_springForce)

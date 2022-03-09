@@ -21,7 +21,6 @@
 
 #include <bounce_softbody/common/memory/stack_allocator.h>
 #include <bounce_softbody/common/memory/block_allocator.h>
-#include <bounce_softbody/common/template/list.h>
 #include <bounce_softbody/collision/trees/dynamic_tree.h>
 #include <bounce_softbody/dynamics/contact_manager.h>
 
@@ -71,9 +70,12 @@ public:
 	// Destroy a given particle.
 	void DestroyParticle(b3Particle* particle);
 
-	// Return the list of particles in this body.
-	const b3List<b3Particle>& GetParticleList() const;
-	b3List<b3Particle>& GetParticleList();
+	// Return the head of the list of particles in this body.
+	const b3Particle* GetParticleList() const;
+	b3Particle* GetParticleList();
+
+	// Get the number of particles in this body.
+	u32 GetParticleCount() const;
 
 	// Create a force.
 	b3Force* CreateForce(const b3ForceDef& def);
@@ -81,9 +83,12 @@ public:
 	// Destroy a given force.
 	void DestroyForce(b3Force* force);
 
-	// Return the list of forces in this body.
-	const b3List<b3Force>& GetForceList() const;
-	b3List<b3Force>& GetForceList();
+	// Return the head of the list of forces in this body.
+	const b3Force* GetForceList() const;
+	b3Force* GetForceList();
+
+	// Get the number of forces in this body.
+	u32 GetForceCount() const;
 
 	// Create a sphere fixture.
 	b3SphereFixture* CreateSphere(const b3SphereFixtureDef& def);
@@ -91,9 +96,12 @@ public:
 	// Destroy a given sphere fixture.
 	void DestroySphere(b3SphereFixture* fixture);
 	
-	// Return the list of spheres in this body.
-	const b3List<b3SphereFixture>& GetSphereList() const;
-	b3List<b3SphereFixture>& GetSphereList();
+	// Return the head of the list of spheres in this body.
+	const b3SphereFixture* GetSphereList() const;
+	b3SphereFixture* GetSphereList();
+
+	// Get the number of spheres in this body.
+	u32 GetSphereCount() const;
 
 	// Create a triangle fixture.
 	b3TriangleFixture* CreateTriangle(const b3TriangleFixtureDef& def);
@@ -101,9 +109,12 @@ public:
 	// Destroy a given triangle fixture.
 	void DestroyTriangle(b3TriangleFixture* fixture);
 
-	// Return the list of triangles in this body.
-	const b3List<b3TriangleFixture>& GetTriangleList() const;
-	b3List<b3TriangleFixture>& GetTriangleList();
+	// Return the head of the list of triangles in this body.
+	const b3TriangleFixture* GetTriangleList() const;
+	b3TriangleFixture* GetTriangleList();
+
+	// Get the number of triangles in this body.
+	u32 GetTriangleCount() const;
 
 	// Create a tetrahedron fixture.
 	b3TetrahedronFixture* CreateTetrahedron(const b3TetrahedronFixtureDef& def);
@@ -111,9 +122,12 @@ public:
 	// Destroy a given tetrahedron fixture.
 	void DestroyTetrahedron(b3TetrahedronFixture* fixture);
 
-	// Return the list of tetrahedrons in this body.
-	const b3List<b3TetrahedronFixture>& GetTetrahedronList() const;
-	b3List<b3TetrahedronFixture>& GetTetrahedronList();
+	// Return the head of the list of tetrahedrons in this body.
+	const b3TetrahedronFixture* GetTetrahedronList() const;
+	b3TetrahedronFixture* GetTetrahedronList();
+
+	// Get the number of tetrahedrons in this body.
+	u32 GetTetrahedronCount() const;
 
 	// Create a new world fixture.
 	b3WorldFixture* CreateFixture(const b3WorldFixtureDef& def);
@@ -121,9 +135,12 @@ public:
 	// Destroy a given world fixture.
 	void DestroyFixture(b3WorldFixture* fixture);
 
-	// Return the list of world fixtures in this body.
-	const b3List<b3WorldFixture>& GetFixtureList() const;
-	b3List<b3WorldFixture>& GetFixtureList();
+	// Return the head of the list of world fixtures in this body.
+	const b3WorldFixture* GetFixtureList() const;
+	b3WorldFixture* GetFixtureList();
+
+	// Get the number of world fixtures in this body.
+	u32 GetFixtureCount() const;
 
 	// Set the acceleration of gravity.
 	void SetGravity(const b3Vec3& gravity);
@@ -167,22 +184,28 @@ protected:
 	b3Vec3 m_gravity;
 
 	// List of particles
-	b3List<b3Particle> m_particleList;
+	b3Particle* m_particleList;
+	u32 m_particleCount;
 
 	// List of forces
-	b3List<b3Force> m_forceList;
+	b3Force* m_forceList;
+	u32 m_forceCount;
 
 	// List of spheres
-	b3List<b3SphereFixture> m_sphereList;
-	
+	b3SphereFixture* m_sphereList;
+	u32 m_sphereCount;
+
 	// List of triangles
-	b3List<b3TriangleFixture> m_triangleList;
-	
+	b3TriangleFixture* m_triangleList;
+	u32 m_triangleCount;
+
 	// List of tetrahedrons
-	b3List<b3TetrahedronFixture> m_tetrahedronList;
-	
+	b3TetrahedronFixture* m_tetrahedronList;
+	u32 m_tetrahedronCount;
+
 	// List of world fixtures
-	b3List<b3WorldFixture> m_fixtureList;
+	b3WorldFixture* m_fixtureList;
+	u32 m_fixtureCount;
 
 	// Contact manager
 	b3ContactManager m_contactManager;
@@ -201,64 +224,94 @@ inline b3Vec3 b3Body::GetGravity() const
 	return m_gravity;
 }
 
-inline const b3List<b3Force>& b3Body::GetForceList() const
-{
-	return m_forceList;
-}
-
-inline b3List<b3Force>& b3Body::GetForceList() 
-{
-	return m_forceList;
-}
-
-inline const b3List<b3Particle>& b3Body::GetParticleList() const
+inline const b3Particle* b3Body::GetParticleList() const
 {
 	return m_particleList;
 }
 
-inline b3List<b3Particle>& b3Body::GetParticleList() 
+inline b3Particle* b3Body::GetParticleList()
 {
 	return m_particleList;
 }
 
-inline const b3List<b3SphereFixture>& b3Body::GetSphereList() const
+inline u32 b3Body::GetParticleCount() const
+{
+	return m_particleCount;
+}
+
+inline const b3Force* b3Body::GetForceList() const
+{
+	return m_forceList;
+}
+
+inline b3Force* b3Body::GetForceList() 
+{
+	return m_forceList;
+}
+
+inline u32 b3Body::GetForceCount() const
+{
+	return m_forceCount;
+}
+
+inline const b3SphereFixture* b3Body::GetSphereList() const
 {
 	return m_sphereList;
 }
 
-inline b3List<b3SphereFixture>& b3Body::GetSphereList() 
+inline b3SphereFixture* b3Body::GetSphereList() 
 {
 	return m_sphereList;
 }
 
-inline const b3List<b3TriangleFixture>& b3Body::GetTriangleList() const
+inline u32 b3Body::GetSphereCount() const
+{
+	return m_sphereCount;
+}
+
+inline const b3TriangleFixture* b3Body::GetTriangleList() const
 {
 	return m_triangleList;
 }
 
-inline b3List<b3TriangleFixture>& b3Body::GetTriangleList() 
+inline b3TriangleFixture* b3Body::GetTriangleList() 
 {
 	return m_triangleList;
 }
 
-inline const b3List<b3TetrahedronFixture>& b3Body::GetTetrahedronList() const
+inline u32 b3Body::GetTriangleCount() const
+{
+	return m_triangleCount;
+}
+
+inline const b3TetrahedronFixture* b3Body::GetTetrahedronList() const
 {
 	return m_tetrahedronList;
 }
 
-inline b3List<b3TetrahedronFixture>& b3Body::GetTetrahedronList() 
+inline b3TetrahedronFixture* b3Body::GetTetrahedronList() 
 {
 	return m_tetrahedronList;
 }
 
-inline const b3List<b3WorldFixture>& b3Body::GetFixtureList() const
+inline u32 b3Body::GetTetrahedronCount() const
+{
+	return m_tetrahedronCount;
+}
+
+inline const b3WorldFixture* b3Body::GetFixtureList() const
 {
 	return m_fixtureList;
 }
 
-inline b3List<b3WorldFixture>& b3Body::GetFixtureList() 
+inline b3WorldFixture* b3Body::GetFixtureList() 
 {
 	return m_fixtureList;
+}
+
+inline u32 b3Body::GetFixtureCount() const
+{
+	return m_fixtureCount;
 }
 
 #endif

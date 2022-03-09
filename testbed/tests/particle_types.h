@@ -70,7 +70,7 @@ public:
 			SetClothType(e_dynamicParticle);
 		}
 
-		for (b3Particle* p = m_body->GetParticleList().m_head; p; p = p->GetNext())
+		for (b3Particle* p = m_body->GetParticleList(); p; p = p->GetNext())
 		{
 			b3Vec3 d;
 			d.SetZero();
