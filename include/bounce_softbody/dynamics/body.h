@@ -149,7 +149,7 @@ public:
 	b3Vec3 GetGravity() const;
 
 	// Perform a time step given the number of force solver and subsolver iterations. 
-	// Use one force iteration for reasonable performance. 
+	// Warning: Use one force solver iteration for reasonable performance. 
 	void Step(scalar dt, uint32 forceIterations, uint32 forceSubIterations);
 
 	// Perform a ray cast with the body.

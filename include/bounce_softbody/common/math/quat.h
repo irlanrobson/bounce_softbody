@@ -28,52 +28,45 @@ struct b3Quat
 	// Default constructor does nothing for performance.
 	b3Quat() { }
 
-	// Set this quaternion from four values.
-	b3Quat(scalar _x, scalar _y, scalar _z, scalar _s) : v(_x, _y, _z), s(_s) { }
+	// Construct this quaternion from a vector part and a scalar part.
+	b3Quat(const b3Vec3& _v, scalar _s) : v(_v), s(_s) { }
 
 	// Add a quaternion to this quaternion.
 	void operator+=(const b3Quat& q)
 	{
-		v.x += q.v.x;
-		v.y += q.v.y;
-		v.z += q.v.z;
+		v += q.v;
 		s += q.s;
 	}
 
 	// Subtract a quaternion from this quaternion.
 	void operator-=(const b3Quat& q)
 	{
-		v.x -= q.v.x;
-		v.y -= q.v.y;
-		v.z -= q.v.z;
+		v -= q.v;
 		s -= q.s;
 	}
 
 	// Set this quaternion to identity.
 	void SetIdentity()
 	{
-		v.x = v.y = v.z = scalar(0);
+		v.SetZero();
 		s = scalar(1);
 	}
 
-	// Set this quaternion from four values.
-	void Set(scalar _x, scalar _y, scalar _z, scalar _s)
+	// Set this quaternion from a vector part and a scalar part.
+	void Set(const b3Vec3& _v, scalar _s)
 	{
-		v.x = _x;
-		v.y = _y;
-		v.z = _z;
+		v = _v;
 		s = _s;
 	}
 
 	// Convert this quaternion to the unit quaternion. Return the length.
 	scalar Normalize()
 	{
-		scalar len = b3Sqrt(v.x * v.x + v.y * v.y + v.z * v.z + s * s);
+		scalar len = b3Sqrt(b3Dot(v, v) + s * s);
 		if (len > B3_EPSILON)
 		{
-			scalar inv_len = scalar(1) / len;
-			v *= inv_len;
-			s *= inv_len;
+			v /= len;
+			s /= len;
 		}
 		return len;
 	}
@@ -195,25 +188,31 @@ extern const b3Quat b3Quat_identity;
 // Add two quaternions.
 inline b3Quat operator+(const b3Quat& a, const b3Quat& b)
 {
-	return b3Quat(a.v.x + b.v.x, a.v.y + b.v.y, a.v.z + b.v.z, a.s + b.s);
+	return b3Quat(a.v + b.v, a.s + b.s);
 }
 
 // Subtract two quaternions.
 inline b3Quat operator-(const b3Quat& a, const b3Quat& b)
 {
-	return b3Quat(a.v.x - b.v.x, a.v.y - b.v.y, a.v.z - b.v.z, a.s - b.s);
+	return b3Quat(a.v - b.v, a.s - b.s);
 }
 
 // Multiply a quaternion by a scalar.
 inline b3Quat operator*(scalar s, const b3Quat& q)
 {
-	return b3Quat(s * q.v.x, s * q.v.y, s * q.v.z, s * q.s);
+	return b3Quat(s * q.v, s * q.s);
+}
+
+// Divide a quaternion by a scalar.
+inline b3Quat operator/(const b3Quat& q, scalar s)
+{
+	return b3Quat(q.v / s, q.s / s);
 }
 
 // Negate a quaternion.
 inline b3Quat operator-(const b3Quat& q)
 {
-	return b3Quat(-q.v.x, -q.v.y, -q.v.z, -q.s);
+	return b3Quat(-q.v, -q.s);
 }
 
 // Multiply two quaternions.
@@ -234,14 +233,14 @@ inline b3Quat operator*(const b3Quat& a, const b3Quat& b)
 // Perform the dot poduct of two quaternions.
 inline scalar b3Dot(const b3Quat& a, const b3Quat& b)
 {
-	return a.v.x * b.v.x + a.v.y * b.v.y + a.v.z * b.v.z + a.s * b.s;
+	return b3Dot(a.v, b.v) + a.s * b.s;
 }
 
 // Return the conjugate of a quaternion.
-// If the quaternion is unit this returns its inverse.
+// If the quaternion is a rotation this returns its inverse.
 inline b3Quat b3Conjugate(const b3Quat& q)
 {
-	return b3Quat(-q.v.x, -q.v.y, -q.v.z, q.s);
+	return b3Quat(-q.v, q.s);
 }
 
 // Multiply the conjugate of a quaternion times another quaternion.
@@ -253,19 +252,18 @@ inline b3Quat b3MulC(const b3Quat& a, const b3Quat& b)
 // Return the length of a quaternion.
 inline scalar b3Length(const b3Quat& q)
 {
-	return b3Sqrt(q.v.x * q.v.x + q.v.y * q.v.y + q.v.z * q.v.z + q.s * q.s);
+	return b3Sqrt(b3Dot(q.v, q.v) + q.s * q.s);
 }
 
 // Convert a quaternion to the unit quaternion.
 inline b3Quat b3Normalize(const b3Quat& q)
 {
-	scalar s = b3Length(q);
-	if (s > B3_EPSILON)
+	scalar len = b3Length(q);
+	if (len > B3_EPSILON)
 	{
-		s = scalar(1) / s;
-		return s * q;
+		return q / len;
 	}
-	return b3Quat(scalar(0), scalar(0), scalar(0), scalar(1));
+	return b3Quat_identity;
 }
 
 // Rotate a vector.

@@ -83,16 +83,16 @@ struct b3Vec2
 		y = _y;
 	}
 
-	// Convert this vector to the unit vector. Return the lenght.
+	// Convert this vector to the unit vector. Return the length.
 	scalar Normalize()
 	{
-		scalar lenght = b3Sqrt(x * x + y * y);
-		if (lenght > B3_EPSILON)
+		scalar length = b3Sqrt(x * x + y * y);
+		if (length > B3_EPSILON)
 		{
-			x /= lenght;
-			y /= lenght;
+			x /= length;
+			y /= length;
 		}
-		return lenght;
+		return length;
 	}
 
 	scalar x, y;

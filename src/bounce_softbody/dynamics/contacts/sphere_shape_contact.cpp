@@ -107,7 +107,7 @@ void b3SphereAndShapeContact::ComputeForces(const b3SparseForceSolverData* data)
 		b3Vec3 c1 = x1 - r1 * n2;
 		b3Vec3 c2 = x2 + r2 * n2;
 
-		// There is no spring rest lenght.
+		// There is no spring rest length.
 		// Therefore, there is no compression force.
 		scalar C = b3Length(c2 - c1);
 

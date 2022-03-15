@@ -64,7 +64,7 @@ const b3Mat44 b3Mat44_identity(
 
 const b3Transform b3Transform_identity(b3Vec3_zero, b3Quat_identity);
 
-const b3Quat b3Quat_identity(scalar(0), scalar(0), scalar(0), scalar(1));
+const b3Quat b3Quat_identity(b3Vec3_zero, scalar(1));
 
 b3Vec2 b3Mat22::Solve(const b3Vec2& b) const
 {

@@ -179,7 +179,7 @@ inline void b3SubMatrix(scalar* out, const scalar* A, uint32 AM, uint32 AN, uint
 	}
 }
 
-// Return the lenght of a given vector.
+// Return the length of a given vector.
 // ||v||
 inline scalar b3Length(const scalar* v, uint32 n)
 {

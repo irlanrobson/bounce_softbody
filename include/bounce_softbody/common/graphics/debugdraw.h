@@ -541,14 +541,14 @@ inline void b3DrawSolidCapsule(b3DebugDrawData* data, const b3Vec3& yAxis, const
 // Draw a transform.
 inline void b3DrawTransform(b3DebugDrawData* data, const b3Transform& xf, bool depthEnabled = true)
 {
-	scalar lenght = scalar(1);
+	scalar length = scalar(1);
 
 	b3Vec3 translation = xf.translation;
 	b3Quat rotation = xf.rotation;
 	
-	b3Vec3 A = translation + lenght * rotation.GetXAxis();
-	b3Vec3 B = translation + lenght * rotation.GetYAxis();
-	b3Vec3 C = translation + lenght * rotation.GetZAxis();
+	b3Vec3 A = translation + length * rotation.GetXAxis();
+	b3Vec3 B = translation + length * rotation.GetYAxis();
+	b3Vec3 C = translation + length * rotation.GetZAxis();
 
 	data->lines->Draw(translation, A, b3Color_red, depthEnabled);
 	data->lines->Draw(translation, B, b3Color_green, depthEnabled);
