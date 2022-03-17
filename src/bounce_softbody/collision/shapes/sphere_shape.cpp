@@ -79,5 +79,5 @@ bool b3SphereShape::CollideSphere(b3SphereManifold* manifold, const b3Sphere& sp
 void b3SphereShape::Draw(b3Draw* draw) const
 {
 	draw->DrawPoint(m_center, scalar(4), b3Color_black);
-	draw->DrawSolidSphere(b3Vec3_y, m_center, m_radius, b3Color_gray);
+	draw->DrawSolidSphere(b3Quat_identity, m_center, m_radius, b3Color_gray);
 }

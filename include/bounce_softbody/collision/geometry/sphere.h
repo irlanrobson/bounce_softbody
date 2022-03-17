@@ -40,9 +40,6 @@ struct b3Sphere
 	uint32 GetSupportVertex(const b3Vec3& direction) const;
 };
 
-// Unit sphere centered at origin
-extern const b3Sphere b3Sphere_identity;
-
 inline const b3Vec3& b3Sphere::GetVertex(uint32 index) const
 {
     B3_NOT_USED(index);

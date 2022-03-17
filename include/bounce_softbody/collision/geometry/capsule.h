@@ -39,9 +39,6 @@ struct b3Capsule
 	uint32 GetSupportVertex(const b3Vec3& direction) const;
 };
 
-// Unit capsule centered at the origin
-extern const b3Capsule b3Capsule_identity;
-
 inline const b3Vec3& b3Capsule::GetVertex(uint32 index) const
 {
 	return (&vertex1)[index];

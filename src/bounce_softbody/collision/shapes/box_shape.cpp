@@ -178,7 +178,9 @@ void b3BoxShape::Draw(b3Draw* draw) const
 		b3Vec3 A = m_xf * vertices[indices[i]];
 		b3Vec3 B = m_xf * vertices[indices[i + 1]];
 		b3Vec3 C = m_xf * vertices[indices[i + 2]];
-		b3Vec3 N = b3Normalize(b3Cross(B - A, C - A));
+		
+		b3Vec3 N = b3Cross(B - A, C - A);
+		N.Normalize();
 
 		draw->DrawSolidTriangle(N, A, B, C, b3Color_gray);
 	}

@@ -82,9 +82,9 @@ public:
 		b3DrawSphere(m_debugDrawData, center, radius, color, depthEnabled);
 	}
 
-	void DrawSolidSphere(const b3Vec3& axis, const b3Vec3& center, scalar radius, const b3Color& color, bool depthEnabled)
+	void DrawSolidSphere(const b3Quat& rotation, const b3Vec3& center, scalar radius, const b3Color& color, bool depthEnabled)
 	{
-		b3DrawSolidSphere(m_debugDrawData, axis, center, radius, color, depthEnabled);
+		b3DrawSolidSphere(m_debugDrawData, rotation, center, radius, color, depthEnabled);
 	}
 	
 	void DrawCylinder(const b3Vec3& axis, const b3Vec3& center, scalar radius, scalar height, const b3Color& color, bool depthEnabled)
@@ -107,9 +107,9 @@ public:
 		b3DrawCapsule(m_debugDrawData, p1, p2, radius, color, depthEnabled);
 	}
 	
-	void DrawSolidCapsule(const b3Vec3& axis, const b3Vec3& p1, const b3Vec3& p2, scalar radius, const b3Color& color, bool depthEnabled)
+	void DrawSolidCapsule(const b3Quat& rotation, const b3Vec3& p1, const b3Vec3& p2, scalar radius, const b3Color& color, bool depthEnabled)
 	{
-		b3DrawSolidCapsule(m_debugDrawData, axis, p1, p2, radius, color, depthEnabled);
+		b3DrawSolidCapsule(m_debugDrawData, rotation, p1, p2, radius, color, depthEnabled);
 	}
 	
 	void DrawAABB(const b3AABB& aabb, const b3Color& color, bool depthEnabled)

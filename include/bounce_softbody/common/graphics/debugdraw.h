@@ -259,12 +259,12 @@ inline void b3DrawSphere(b3DebugDrawData* data, const b3Vec3& center, scalar rad
 
 // Draw a solid sphere.
 template<uint32 H = 20, uint32 W = 20>
-inline void b3DrawSolidSphere(b3DebugDrawData* data, const b3Vec3& yAxis, const b3Vec3& center, scalar radius, const b3Color& color, bool depthEnabled = true)
+inline void b3DrawSolidSphere(b3DebugDrawData* data, const b3Quat& rotation, const b3Vec3& center, scalar radius, const b3Color& color, bool depthEnabled = true)
 {
 	b3SphereMesh<H, W> sphere;
 	
 	b3Transform xf;
-	xf.rotation = b3QuatRotationBetween(b3Vec3_y, yAxis);
+	xf.rotation = rotation;
 	xf.translation = center;
 
 	for (uint32 i = 0; i < sphere.indexCount / 3; ++i)
@@ -417,12 +417,12 @@ struct b3CylinderMesh
 
 // Draw a cylinder.
 template<uint32 H = 20, uint32 W = 20>
-inline void b3DrawCylinder(b3DebugDrawData* data, const b3Vec3& yAxis, const b3Vec3& center, scalar radius, scalar height, const b3Color& color, bool depthEnabled = true)
+inline void b3DrawCylinder(b3DebugDrawData* data, const b3Vec3& axis, const b3Vec3& center, scalar radius, scalar height, const b3Color& color, bool depthEnabled = true)
 {
 	b3CylinderMesh<H, W> cylinder;
 	
 	b3Transform xf;
-	xf.rotation = b3QuatRotationBetween(b3Vec3_y, yAxis);
+	xf.rotation = b3QuatRotationBetween(b3Vec3_y, axis);
 	xf.translation = center;
 
 	for (uint32 i = 0; i < cylinder.indexCount / 3; ++i)
@@ -458,12 +458,12 @@ inline void b3DrawCylinder(b3DebugDrawData* data, const b3Vec3& yAxis, const b3V
 
 // Draw a solid cylinder.
 template<uint32 H = 20, uint32 W = 20>
-inline void b3DrawSolidCylinder(b3DebugDrawData* data, const b3Vec3& yAxis, const b3Vec3& center, scalar radius, scalar height, const b3Color& color, bool depthEnabled = true)
+inline void b3DrawSolidCylinder(b3DebugDrawData* data, const b3Vec3& axis, const b3Vec3& center, scalar radius, scalar height, const b3Color& color, bool depthEnabled = true)
 {
 	b3CylinderMesh<H, W> cylinder;
 	
 	b3Transform xf;
-	xf.rotation = b3QuatRotationBetween(b3Vec3_y, yAxis);
+	xf.rotation = b3QuatRotationBetween(b3Vec3_y, axis);
 	xf.translation = center;
 
 	for (uint32 i = 0; i < cylinder.indexCount / 3; ++i)
@@ -521,9 +521,9 @@ inline void b3DrawCapsule(b3DebugDrawData* data, const b3Vec3& c1, const b3Vec3&
 
 // Draw a capsule in solid rendering mode.
 template<uint32 H = 20, uint32 W = 20>
-inline void b3DrawSolidCapsule(b3DebugDrawData* data, const b3Vec3& yAxis, const b3Vec3& c1, const b3Vec3& c2, scalar radius, const b3Color& color, bool depthEnabled = true)
+inline void b3DrawSolidCapsule(b3DebugDrawData* data, const b3Quat& rotation, const b3Vec3& c1, const b3Vec3& c2, scalar radius, const b3Color& color, bool depthEnabled = true)
 {
-	b3DrawSolidSphere<H, W>(data, yAxis, c1, radius, color, depthEnabled);
+	b3DrawSolidSphere<H, W>(data, rotation, c1, radius, color, depthEnabled);
 	if (b3LengthSquared(c1 - c2) > B3_EPSILON * B3_EPSILON)
 	{
 		{
@@ -534,7 +534,7 @@ inline void b3DrawSolidCapsule(b3DebugDrawData* data, const b3Vec3& yAxis, const
 			b3DrawSolidCylinder<H, W>(data, axis, center, radius, height, color, depthEnabled);
 		}
 
-		b3DrawSolidSphere<H, W>(data, yAxis, c2, radius, color, depthEnabled);
+		b3DrawSolidSphere<H, W>(data, rotation, c2, radius, color, depthEnabled);
 	}
 }
 

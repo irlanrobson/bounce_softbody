@@ -65,8 +65,8 @@ public:
 	// Draw a sphere with center, and radius.
 	virtual void DrawSphere(const b3Vec3& center, scalar radius, const b3Color& color, bool depthEnabled = true) = 0;
 
-	// Draw a solid sphere with axis of rotation, center, and radius.
-	virtual void DrawSolidSphere(const b3Vec3& axis, const b3Vec3& center, scalar radius, const b3Color& color, bool depthEnabled = true) = 0;
+	// Draw a solid sphere with rotation, center, and radius.
+	virtual void DrawSolidSphere(const b3Quat& rotation, const b3Vec3& center, scalar radius, const b3Color& color, bool depthEnabled = true) = 0;
 	
 	// Draw a cylinder with axis, center, radius, and height.
 	virtual void DrawCylinder(const b3Vec3& axis, const b3Vec3& center, scalar radius, scalar height, const b3Color& color, bool depthEnabled = true) = 0;
@@ -80,8 +80,8 @@ public:
 	// Draw a capsule with segment and radius.
 	virtual void DrawCapsule(const b3Vec3& p1, const b3Vec3& p2, scalar radius, const b3Color& color, bool depthEnabled = true) = 0;
 
-	// Draw a solid capsule with axis, segment and radius.
-	virtual void DrawSolidCapsule(const b3Vec3& axis, const b3Vec3& p1, const b3Vec3& p2, scalar radius, const b3Color& color, bool depthEnabled = true) = 0;
+	// Draw a solid capsule with rotation, segment and radius.
+	virtual void DrawSolidCapsule(const b3Quat& rotation, const b3Vec3& p1, const b3Vec3& p2, scalar radius, const b3Color& color, bool depthEnabled = true) = 0;
 
 	// Draw a AABB.
 	virtual void DrawAABB(const b3AABB& aabb, const b3Color& color, bool depthEnabled = true) = 0;

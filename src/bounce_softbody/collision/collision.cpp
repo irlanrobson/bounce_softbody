@@ -16,7 +16,4 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#include <bounce_softbody/collision/collision.h>
-#include <bounce_softbody/collision/geometry/sphere.h>
-
-const b3Sphere b3Sphere_identity(b3Vec3_zero, scalar(1)); 
+#include <bounce_softbody/collision/collision.h> 

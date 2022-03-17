@@ -141,6 +141,8 @@ void b3CapsuleShape::Draw(b3Draw* draw) const
 {
 	draw->DrawPoint(m_center1, scalar(4), b3Color_black);
 	draw->DrawPoint(m_center2, scalar(4), b3Color_black);
+	
 	draw->DrawSegment(m_center1, m_center2, b3Color_black);
-	draw->DrawSolidCapsule(b3Vec3_y, m_center1, m_center2, m_radius, b3Color_gray);
+	
+	draw->DrawSolidCapsule(b3Quat_identity, m_center1, m_center2, m_radius, b3Color_gray);
 }
