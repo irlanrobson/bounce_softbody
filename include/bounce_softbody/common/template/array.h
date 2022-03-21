@@ -157,7 +157,7 @@ public:
 		m_count = size;
 	}
 
-	void Swap(const b3Array<T>& other)
+	void Copy(const b3Array<T>& other)
 	{
 		if (m_elements == other.m_elements)
 		{
@@ -183,7 +183,7 @@ public:
 
 	void operator=(const b3Array<T>& other)
 	{
-		Swap(other);
+		Copy(other);
 	}
 protected:
 	b3Array(T* elements, uint32 N)
@@ -202,7 +202,7 @@ protected:
 		m_elements = nullptr;
 		m_count = 0;
 
-		Swap(other);
+		Copy(other);
 	}
 
 	~b3Array()
@@ -214,9 +214,8 @@ protected:
 	}
 
 	uint32 m_capacity;
-	T* m_elements;
 	uint32 m_count;
-	
+	T* m_elements;
 	T* m_localElements;
 };
 
@@ -238,12 +237,12 @@ public :
 
 	void operator=(const b3StackArray<T, N>& other)
 	{
-		b3Array<T>::Swap((const b3Array<T>& )other);
+		Copy((const b3Array<T>& )other);
 	}
 	
 	void operator=(const b3Array<T>& other)
 	{
-		Swap(other);
+		Copy(other);
 	}
 
 protected:
