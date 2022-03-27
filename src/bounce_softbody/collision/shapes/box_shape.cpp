@@ -54,7 +54,7 @@ b3AABB b3BoxShape::ComputeAABB() const
 	};
 
 	b3AABB aabb;
-	aabb.Set(vertices, 8, m_xf);
+	aabb.Compute(vertices, 8, m_xf);
 	aabb.Extend(m_radius);
 
 	return aabb;

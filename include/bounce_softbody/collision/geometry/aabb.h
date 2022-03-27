@@ -38,8 +38,8 @@ struct b3AABB
 		return support;
 	}
 
-	// Set this AABB from a list of points.
-	void Set(const b3Vec3* points, uint32 count)
+	// Compute this AABB from a list of points.
+	void Compute(const b3Vec3* points, uint32 count)
 	{
 		lowerBound = upperBound = points[0];
 		for (uint32 i = 1; i < count; ++i)
@@ -49,8 +49,8 @@ struct b3AABB
 		}
 	}
 
-	// Set this AABB from a list of points and a transform.
-	void Set(const b3Vec3* points, uint32 count, const b3Transform& xf)
+	// Compute this AABB from a list of points and a transform.
+	void Compute(const b3Vec3* points, uint32 count, const b3Transform& xf)
 	{
 		lowerBound = upperBound = b3Mul(xf, points[0]);
 		for (uint32 i = 1; i < count; ++i)
@@ -61,8 +61,8 @@ struct b3AABB
 		}
 	}
 
-	// Set this AABB from a list of points, a local scale, and a transform.
-	void Set(const b3Vec3* points, uint32 count, const b3Vec3& scale, const b3Transform& xf)
+	// Compute this AABB from a list of points, a local scale, and a transform.
+	void Compute(const b3Vec3* points, uint32 count, const b3Vec3& scale, const b3Transform& xf)
 	{
 		lowerBound = upperBound = b3Mul(xf, b3Mul(scale, points[0]));
 		for (uint32 i = 1; i < count; ++i)
@@ -161,7 +161,7 @@ struct b3AABB
 	}
 
 	// Get the index of the longest axis of this AABB.
-	uint32 GetLongestAxisIndex() const
+	uint32 GetLongestAxis() const
 	{
 		b3Vec3 d = upperBound - lowerBound;
 		
