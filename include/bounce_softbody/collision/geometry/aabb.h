@@ -198,103 +198,75 @@ struct b3AABB
 		return Contains(aabb.lowerBound) && Contains(aabb.upperBound);
 	}
 
-	// Perform a ray-cast against this AABB.
+	// From Real-time Collision Detection, p179.
 	bool RayCast(b3RayCastOutput* output, const b3RayCastInput& input) const
 	{
-		b3Vec3 p1 = input.p1;
-		b3Vec3 p2 = input.p2;
-		b3Vec3 d = p2 - p1;
+		scalar tmin = -B3_MAX_SCALAR;
+		scalar tmax = B3_MAX_SCALAR;
 
-		b3Vec3 e = GetExtents();
+		b3Vec3 p = input.p1;
+		b3Vec3 d = input.p2 - input.p1;
+		b3Vec3 absD = b3Abs(d);
 
-		b3Plane planes[6] =
+		b3Vec3 normal;
+		normal.SetZero();
+
+		for (uint32 i = 0; i < 3; ++i)
 		{
-			b3Plane(b3Vec3(scalar(1), scalar(0), scalar(0)), e.x),
-			b3Plane(b3Vec3(scalar(-1), scalar(0), scalar(0)), e.x),
-			b3Plane(b3Vec3(scalar(0), scalar(1), scalar(0)), e.y),
-			b3Plane(b3Vec3(scalar(0), scalar(-1), scalar(0)), e.y),
-			b3Plane(b3Vec3(scalar(0), scalar(0), scalar(1)), e.z),
-			b3Plane(b3Vec3(scalar(0), scalar(0), scalar(-1)), e.z),
-		};
-
-		scalar lower = scalar(0);
-		scalar upper = input.maxFraction;
-
-		uint32 index = B3_MAX_U32;
-
-		// s(lower) = p1 + lower * d, 0 <= lower <= kupper
-		// The segment intersects the plane if a 'lower' exists
-		// for which s(lower) is inside all half-spaces.
-
-		// Solve line segment to plane:
-		// dot(n, s(lower)) = offset
-		// dot(n, p1 + lower * d) = offset
-		// dot(n, p1) + dot(n, lower * d) = offset
-		// dot(n, p1) + lower * dot(n, d) = offset
-		// lower * dot(n, d) = offset - dot(n, p1)
-		// lower = (offset - dot(n, p1)) / dot(n, d)
-
-		for (uint32 i = 0; i < 6; ++i)
-		{
-			scalar numerator = planes[i].offset - b3Dot(planes[i].normal, p1);
-			scalar denominator = b3Dot(planes[i].normal, d);
-
-			if (denominator == scalar(0))
+			if (absD[i] < B3_EPSILON)
 			{
-				// s is parallel to this half-space.
-				if (numerator < scalar(0))
+				// Parallel.
+				if (p[i] < lowerBound[i] || upperBound[i] < p[i])
 				{
-					// s is outside of this half-space.
-					// dot(n, p1) and dot(n, p2) < 0.
 					return false;
 				}
 			}
 			else
 			{
-				// Original predicates:
-				// lower < numerator / denominator, for denominator < 0
-				// upper < numerator / denominator, for denominator < 0
-				// Optimized predicates:
-				// lower * denominator > numerator
-				// upper * denominator > numerator
-				if (denominator < scalar(0))
+				scalar inv_d = scalar(1) / d[i];
+				scalar t1 = (lowerBound[i] - p[i]) * inv_d;
+				scalar t2 = (upperBound[i] - p[i]) * inv_d;
+
+				// Sign of the normal vector.
+				scalar s = scalar(-1);
+
+				if (t1 > t2)
 				{
-					// s enters this half-space.
-					if (numerator < lower * denominator)
-					{
-						// Increase lower.
-						lower = numerator / denominator;
-						index = i;
-					}
-				}
-				else
-				{
-					// s exits the half-space.	
-					if (numerator < upper * denominator)
-					{
-						// Decrease upper.
-						upper = numerator / denominator;
-					}
+					b3Swap(t1, t2);
+					s = scalar(1);
 				}
 
-				// Exit if intersection becomes empty.
-				if (upper < lower)
+				// Push the min up
+				// tmin = max(tmin, t1) as in errata.
+				if (t1 > tmin)
+				{
+					normal.SetZero();
+					normal[i] = s;
+					tmin = t1;
+				}
+
+				// Pull the max down
+				// tmax = min(tmax, t2) as in errata.
+				tmax = b3Min(tmax, t2);
+
+				if (tmin > tmax)
 				{
 					return false;
 				}
 			}
 		}
 
-		B3_ASSERT(lower >= scalar(0) && lower <= input.maxFraction);
-
-		if (index != B3_MAX_U32)
+		// Does the ray start inside the box?
+		// Does the ray intersect beyond the max fraction?
+		if (tmin < scalar(0) || input.maxFraction < tmin)
 		{
-			output->fraction = lower;
-			output->normal = planes[index].normal;
-			return true;
+			return false;
 		}
 
-		return false;
+		// Intersection.
+		output->fraction = tmin;
+		output->normal = normal;
+		return true;
 	}
 
 	// Translate this AABB.
@@ -365,10 +337,27 @@ inline b3AABB b3Combine(const b3AABB& a, const b3AABB& b)
 }
 
 // Test if two AABBs are overlapping.
-inline bool b3TestOverlap(const b3AABB& a, const b3AABB& b) 
+// From Real-time Collision Detection, p79.
+inline bool b3TestOverlap(const b3AABB& a, const b3AABB& b)
 {
-	return (a.lowerBound.x <= b.upperBound.x) && (a.lowerBound.y <= b.upperBound.y) &&	(a.lowerBound.z <= b.upperBound.z) &&
-		   (a.upperBound.x >= b.lowerBound.x) && (a.upperBound.y >= b.lowerBound.y) &&	(a.upperBound.z >= b.lowerBound.z);
+	// Exit with no intersection if separated along an axis.
+	if (a.upperBound.x < b.lowerBound.x || a.lowerBound.x > b.upperBound.x) 
+	{
+		return false;
+	}
+	
+	if (a.upperBound.y < b.lowerBound.y || a.lowerBound.y > b.upperBound.y)
+	{
+		return false;
+	}
+	
+	if (a.upperBound.z < b.lowerBound.z || a.lowerBound.z > b.upperBound.z)
+	{
+		return false;
+	}
+
+	// Overlapping on all axes means AABBs are intersecting.
+	return true;
 }
 
 #endif
