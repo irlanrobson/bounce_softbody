@@ -195,7 +195,14 @@ struct b3AABB
 	// Test if this AABB contains another AABB.
 	bool Contains(const b3AABB& aabb) const
 	{
-		return Contains(aabb.lowerBound) && Contains(aabb.upperBound);
+		bool result = true;
+		result = result && lowerBound.x <= aabb.lowerBound.x;
+		result = result && lowerBound.y <= aabb.lowerBound.y;
+		result = result && lowerBound.z <= aabb.lowerBound.z;
+		result = result && aabb.upperBound.x <= upperBound.x;
+		result = result && aabb.upperBound.y <= upperBound.y;
+		result = result && aabb.upperBound.z <= upperBound.z;
+		return result;
 	}
 
 	// From Real-time Collision Detection, p179.
