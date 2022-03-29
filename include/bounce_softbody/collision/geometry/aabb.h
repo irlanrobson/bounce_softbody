@@ -21,7 +21,6 @@
 
 #include <bounce_softbody/common/math/transform.h>
 #include <bounce_softbody/collision/collision.h>
-#include <bounce_softbody/collision/geometry/plane.h>
 
 // A min-max representation of a three-dimensional AABB.
 struct b3AABB
