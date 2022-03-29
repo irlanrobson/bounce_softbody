@@ -21,6 +21,7 @@
 
 #include <bounce_softbody/common/math/transform.h>
 #include <bounce_softbody/collision/collision.h>
+#include <bounce_softbody/collision/geometry/plane.h>
 
 // A min-max representation of a three-dimensional AABB.
 struct b3AABB
@@ -204,84 +205,92 @@ struct b3AABB
 		b3Vec3 p2 = input.p2;
 		b3Vec3 d = p2 - p1;
 
-		b3Vec3 normals[6];
-		normals[0].Set(scalar(-1), scalar(0), scalar(0));
-		normals[1].Set(scalar(1), scalar(0), scalar(0));
-		normals[2].Set(scalar(0), scalar(-1), scalar(0));
-		normals[3].Set(scalar(0), scalar(1), scalar(0));
-		normals[4].Set(scalar(0), scalar(0), scalar(-1));
-		normals[5].Set(scalar(0), scalar(0), scalar(1));
+		b3Vec3 e = GetExtents();
 
-		uint32 index = B3_MAX_U32;
+		b3Plane planes[6] =
+		{
+			b3Plane(b3Vec3(scalar(1), scalar(0), scalar(0)), e.x),
+			b3Plane(b3Vec3(scalar(-1), scalar(0), scalar(0)), e.x),
+			b3Plane(b3Vec3(scalar(0), scalar(1), scalar(0)), e.y),
+			b3Plane(b3Vec3(scalar(0), scalar(-1), scalar(0)), e.y),
+			b3Plane(b3Vec3(scalar(0), scalar(0), scalar(1)), e.z),
+			b3Plane(b3Vec3(scalar(0), scalar(0), scalar(-1)), e.z),
+		};
 
 		scalar lower = scalar(0);
 		scalar upper = input.maxFraction;
 
-		uint32 planeIndex = 0;
-		
-		for (uint32 i = 0; i < 3; ++i)
+		uint32 index = B3_MAX_U32;
+
+		// s(lower) = p1 + lower * d, 0 <= lower <= kupper
+		// The segment intersects the plane if a 'lower' exists
+		// for which s(lower) is inside all half-spaces.
+
+		// Solve line segment to plane:
+		// dot(n, s(lower)) = offset
+		// dot(n, p1 + lower * d) = offset
+		// dot(n, p1) + dot(n, lower * d) = offset
+		// dot(n, p1) + lower * dot(n, d) = offset
+		// lower * dot(n, d) = offset - dot(n, p1)
+		// lower = (offset - dot(n, p1)) / dot(n, d)
+
+		for (uint32 i = 0; i < 6; ++i)
 		{
-			scalar numerators[2], denominators[2];
+			scalar numerator = planes[i].offset - b3Dot(planes[i].normal, p1);
+			scalar denominator = b3Dot(planes[i].normal, d);
 
-			numerators[0] = p1[i] - lowerBound[i];
-			numerators[1] = upperBound[i] - p1[i];
-
-			denominators[0] = -d[i];
-			denominators[1] = d[i];
-			
-			for (uint32 j = 0; j < 2; ++j)
+			if (denominator == scalar(0))
 			{
-				scalar numerator = numerators[j];
-				scalar denominator = denominators[j];
-				
-				if (denominator == scalar(0))
+				// s is parallel to this half-space.
+				if (numerator < scalar(0))
 				{
-					// s is parallel to this half-space.
-					if (numerator < scalar(0))
+					// s is outside of this half-space.
+					// dot(n, p1) and dot(n, p2) < 0.
+					return false;
+				}
+			}
+			else
+			{
+				// Original predicates:
+				// lower < numerator / denominator, for denominator < 0
+				// upper < numerator / denominator, for denominator < 0
+				// Optimized predicates:
+				// lower * denominator > numerator
+				// upper * denominator > numerator
+				if (denominator < scalar(0))
+				{
+					// s enters this half-space.
+					if (numerator < lower * denominator)
 					{
-						// s is outside of this half-space.
-						// dot(n, p1) and dot(n, p2) < 0.
-						return false;
+						// Increase lower.
+						lower = numerator / denominator;
+						index = i;
 					}
 				}
 				else
 				{
-					if (denominator < scalar(0))
+					// s exits the half-space.	
+					if (numerator < upper * denominator)
 					{
-						// s enters this half-space.
-						if (numerator < lower * denominator)
-						{
-							// Increase lower.
-							lower = numerator / denominator;
-							index = planeIndex;
-						}
-					}
-					else
-					{
-						// s exits the half-space.	
-						if (numerator < upper * denominator)
-						{
-							// Decrease upper.
-							upper = numerator / denominator;
-						}
-					}
-					// Exit if intersection becomes empty.
-					if (upper < lower)
-					{
-						return false;
+						// Decrease upper.
+						upper = numerator / denominator;
 					}
 				}
 
-				++planeIndex;
+				// Exit if intersection becomes empty.
+				if (upper < lower)
+				{
+					return false;
+				}
 			}
 		}
 
 		B3_ASSERT(lower >= scalar(0) && lower <= input.maxFraction);
-		
+
 		if (index != B3_MAX_U32)
 		{
 			output->fraction = lower;
-			output->normal = normals[index];
+			output->normal = planes[index].normal;
 			return true;
 		}
 
