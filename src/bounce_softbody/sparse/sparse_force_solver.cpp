@@ -207,8 +207,6 @@ void b3SparseSolveBE(b3SolveBEOutput* output, const b3SolveBEInput* input)
 
 		if (iteration == 0)
 		{
-			++iteration;
-
 			error0 = error;
 			
 			if (error <= epsilon * epsilon)
@@ -218,13 +216,13 @@ void b3SparseSolveBE(b3SolveBEOutput* output, const b3SolveBEInput* input)
 		}
 		else
 		{
-			++iteration;
-
 			if (error <= epsilon * epsilon * error0)
 			{
 				break;
 			}
 		}
+
+		++iteration;
 	}
 
 	*output->x = x;
