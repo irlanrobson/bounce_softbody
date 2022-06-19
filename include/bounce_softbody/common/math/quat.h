@@ -71,6 +71,13 @@ struct b3Quat
 		return len;
 	}
 
+	// Rotate a vector.
+	b3Vec3 Rotate(const b3Vec3& vIn) const
+	{
+		b3Vec3 t = scalar(2) * b3Cross(v, vIn);
+		return vIn + s * t + b3Cross(v, t);
+	}
+
 	// Set this quaternion from an axis and full angle 
 	// of rotation about the axis.
 	void SetAxisAngle(const b3Vec3& axis, scalar angle)
@@ -91,11 +98,10 @@ struct b3Quat
 		axis->SetZero();
 		if (sine > B3_EPSILON)
 		{
-			scalar inv_sine = scalar(1) / sine;
-			*axis = inv_sine * v;
+			*axis = v / sine;
 		}
 
-		// Cosine check
+		// Ensure cosine is in the range [-1, 1]
 		scalar cosine = b3Clamp(s, scalar(-1), scalar(1));
 
 		// Half angle
@@ -108,40 +114,19 @@ struct b3Quat
 	// Get the x axis.
 	b3Vec3 GetXAxis() const
 	{
-		scalar x = v.x, y = v.y, z = v.z, w = s;
-
-		scalar y2 = y + y, z2 = z + z;
-		scalar xy = x * y2, xz = x * z2;
-		scalar yy = y * y2, zz = z * z2;
-		scalar wy = w * y2, wz = w * z2;
-
-		return b3Vec3(scalar(1) - (yy + zz), xy + wz, xz - wy);
+		return Rotate(b3Vec3_x);
 	}
 
 	// Get the y axis.
 	b3Vec3 GetYAxis() const
 	{
-		scalar x = v.x, y = v.y, z = v.z, w = s;
-
-		scalar x2 = x + x, y2 = y + y, z2 = z + z;
-		scalar xx = x * x2, xy = x * y2;
-		scalar yz = y * z2, zz = z * z2;
-		scalar wx = w * x2, wz = w * z2;
-
-		return b3Vec3(xy - wz, scalar(1) - (xx + zz), yz + wx);
+		return Rotate(b3Vec3_y);
 	}
 
 	// Get the z axis.
 	b3Vec3 GetZAxis() const
 	{
-		scalar x = v.x, y = v.y, z = v.z, w = s;
-
-		scalar x2 = x + x, y2 = y + y, z2 = z + z;
-		scalar xx = x * x2, xz = x * z2;
-		scalar yy = y * y2, yz = y * z2;
-		scalar wx = w * x2, wy = w * y2;
-
-		return b3Vec3(xz + wy, yz - wx, scalar(1) - (xx + yy));
+		return Rotate(b3Vec3_z);
 	}
 
 	// Get the x, y, z axes.
@@ -269,8 +254,7 @@ inline b3Quat b3Normalize(const b3Quat& q)
 // Rotate a vector.
 inline b3Vec3 b3Mul(const b3Quat& q, const b3Vec3& v)
 {
-	b3Vec3 t = scalar(2) * b3Cross(q.v, v);
-	return v + q.s * t + b3Cross(q.v, t);
+	return q.Rotate(v);
 }
 
 // Inverse rotate a vector.
