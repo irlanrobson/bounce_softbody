@@ -16,42 +16,48 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef B3_RAY_H
-#define B3_RAY_H
+#ifndef GRID_CONTACT_H
+#define GRID_CONTACT_H
 
-#include <bounce_softbody/common/math/vec3.h>
-
-// A ray in finite form.
-// R(t) = O + t * n.
-struct b3Ray
+class GridContact : public Body
 {
-	// Default ctor does nothing for performance.
-	b3Ray() { }
-	
-	// Construct this ray from origin, direction, and length.
-	b3Ray(const b3Vec3& _origin, const b3Vec3& _direction, scalar _length) : 
-		origin(_origin), direction(_direction), length(_length) { }
-
-	// Construct this ray from a line segment.
-	b3Ray(const b3Vec3& A, const b3Vec3& B) 
+public:
+	GridContact()
 	{
-		origin = A;
-		direction = b3Normalize(B - A);
-		length = b3Distance(A, B);
+		m_gridMesh.BuildTree();
+		m_gridMesh.BuildAdjacency();
+		
+		m_clothMesh.Translate(b3Vec3(0.0f, 10.0f, 0.0f));
+
+		ClothDef def;
+		def.mesh = &m_clothMesh;
+		def.thickness = 0.1f;
+		def.friction = 0.8f;
+		m_body = new UniformBody(def);
+
+		b3MeshShape meshShape;
+		meshShape.m_radius = 0.05f;
+		meshShape.m_mesh = &m_gridMesh;
+		meshShape.m_scale.Set(5.0f, 1.0f, 5.0f);
+		
+		b3WorldFixtureDef fixtureDef;
+		fixtureDef.shape = &meshShape;
+		fixtureDef.friction = 0.5f;
+
+		m_body->CreateFixture(fixtureDef);
+
+		m_body->SetGravity(b3Vec3(0.0f, -9.8f, 0.0f));
+
+		m_bodyDragger = new BodyDragger(&m_ray, m_body);
 	}
 
-	// Return the begin point of this ray.
-	b3Vec3 A() const { return origin; }
-
-	// Return the end point of this ray.
-	b3Vec3 B() const
+	static Test* Create()
 	{
-		return origin + length * direction;
+		return new GridContact;
 	}
 
-	b3Vec3 origin;
-	b3Vec3 direction;
-	scalar length;
+	b3GridMesh<5, 5> m_gridMesh;
+	GridClothMesh<10, 10> m_clothMesh;
 };
 
 #endif

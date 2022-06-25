@@ -24,9 +24,14 @@
 #include <bounce_softbody/common/settings.h>
 #include <bounce_softbody/common/draw.h>
 
+#include <bounce_softbody/collision/geometry/mesh.h>
+#include <bounce_softbody/collision/geometry/grid_mesh.h>
+
 #include <bounce_softbody/collision/shapes/sphere_shape.h>
 #include <bounce_softbody/collision/shapes/capsule_shape.h>
+#include <bounce_softbody/collision/shapes/triangle_shape.h>
 #include <bounce_softbody/collision/shapes/box_shape.h>
+#include <bounce_softbody/collision/shapes/mesh_shape.h>
 
 #include <bounce_softbody/dynamics/body.h>
 #include <bounce_softbody/dynamics/particle.h>

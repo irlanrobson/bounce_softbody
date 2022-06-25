@@ -43,8 +43,10 @@ public:
 	{
 		e_sphere = 0,
 		e_capsule = 1,
-		e_box = 2,
-		e_typeCount = 3
+		e_triangle = 2,
+		e_box = 3,
+		e_mesh = 4,
+		e_typeCount = 5
 	};
 
 	// Default dtor.

@@ -21,6 +21,7 @@
 
 #include <bounce_softbody/common/math/transform.h>
 #include <bounce_softbody/collision/collision.h>
+#include <bounce_softbody/collision/geometry/sphere.h>
 
 // A min-max representation of a three-dimensional AABB.
 struct b3AABB
@@ -364,6 +365,19 @@ inline bool b3TestOverlap(const b3AABB& a, const b3AABB& b)
 
 	// Overlapping on all axes means AABBs are intersecting.
 	return true;
+}
+
+// Return the closest point on AABB to a given point.
+inline b3Vec3 b3ClosestPointOnAABB(const b3AABB& aabb, const b3Vec3& point)
+{
+	return b3Clamp(point, aabb.lowerBound, aabb.upperBound);
+}
+
+// Test if an AABB and a sphere are overlapping.
+inline bool b3TestOverlap(const b3AABB& aabb, const b3Sphere& sphere)
+{
+	b3Vec3 point = b3ClosestPointOnAABB(aabb, sphere.vertex);
+	return b3DistanceSquared(sphere.vertex, point) <= sphere.radius * sphere.radius;
 }
 
 #endif

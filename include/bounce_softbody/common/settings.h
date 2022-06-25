@@ -65,6 +65,9 @@ typedef double scalar64;
 // even created.
 #define B3_AABB_EXTENSION scalar(0.2)
 
+// Collision linear tolerance.
+#define B3_LINEAR_SLOP (0.005)
+
 // This is used to extend AABBs in the broad-phase. 
 // Is used to predict the future position based on the current displacement.
 // This is a dimensionless multiplier.

@@ -45,7 +45,7 @@ public:
 		m_draw.m_debugDrawData = g_debugDrawData;
 		m_ray.origin.SetZero();
 		m_ray.direction.Set(0.0f, 0.0f, -1.0f);
-		m_ray.fraction = g_camera->GetZFar();
+		m_ray.length = g_camera->GetZFar();
 	}
 	
 	virtual ~Test() { }

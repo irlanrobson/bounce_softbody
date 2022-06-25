@@ -20,7 +20,7 @@ Bounce Softbody is a small 3D softbody physics engine.
 
 ### Collision
 
-* Spheres, capsules, and boxes
+* Spheres, capsules, triangles, boxes, and triangle meshes
 * Dynamic tree
 
 ### Dynamics

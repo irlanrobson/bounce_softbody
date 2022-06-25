@@ -19,6 +19,7 @@
 #include <bounce_softbody/dynamics/fixtures/triangle_fixture.h>
 #include <bounce_softbody/dynamics/particle.h>
 #include <bounce_softbody/dynamics/body.h>
+#include <bounce_softbody/collision/shapes/triangle_shape.h>
 
 b3TriangleFixture::b3TriangleFixture(const b3TriangleFixtureDef& def, b3Body* body) : b3Fixture(def, body)
 {
@@ -56,88 +57,10 @@ void b3TriangleFixture::Synchronize(const b3Vec3& displacement)
 
 bool b3TriangleFixture::RayCast(b3RayCastOutput* output, const b3RayCastInput& input) const
 {
-	b3Vec3 p1 = input.p1;
-	b3Vec3 p2 = input.p2;
-	scalar maxFraction = input.maxFraction;
-
-	b3Vec3 d = p2 - p1;
-
-	if (b3LengthSquared(d) < B3_EPSILON * B3_EPSILON)
-	{
-		return false;
-	}
-
-	b3Vec3 v1 = m_p1->m_position;
-	b3Vec3 v2 = m_p2->m_position;
-	b3Vec3 v3 = m_p3->m_position;
-	
-	b3Vec3 n = b3Cross(v2 - v1, v3 - v1);
-	scalar len = b3Length(n);
-
-	if (len == scalar(0))
-	{
-		return false;
-	}
-
-	n /= len;
-
-	scalar num = b3Dot(n, v1 - p1);
-	scalar den = b3Dot(n, d);
-
-	if (den == scalar(0))
-	{
-		return false;
-	}
-
-	scalar fraction = num / den;
-
-	// Is the intersection not on the segment?
-	if (fraction < scalar(0) || maxFraction < fraction)
-	{
-		return false;
-	}
-
-	b3Vec3 Q = p1 + fraction * d;
-
-	b3Vec3 A = v1;
-	b3Vec3 B = v2;
-	b3Vec3 C = v3;
-
-	b3Vec3 AB = B - A;
-	b3Vec3 AC = C - A;
-
-	b3Vec3 QA = A - Q;
-	b3Vec3 QB = B - Q;
-	b3Vec3 QC = C - Q;
-
-	b3Vec3 QB_x_QC = b3Cross(QB, QC);
-	b3Vec3 QC_x_QA = b3Cross(QC, QA);
-	b3Vec3 QA_x_QB = b3Cross(QA, QB);
-
-	b3Vec3 AB_x_AC = b3Cross(AB, AC);
-
-	// Barycentric coordinates for Q
-	scalar u = b3Dot(QB_x_QC, AB_x_AC);
-	scalar v = b3Dot(QC_x_QA, AB_x_AC);
-	scalar w = b3Dot(QA_x_QB, AB_x_AC);
-
-	// Is the intersection on the triangle?
-	if (u >= scalar(0) && v >= scalar(0) && w >= scalar(0))
-	{
-		output->fraction = fraction;
-
-		// Does the ray start from below or above the triangle?
-		if (num > scalar(0))
-		{
-			output->normal = -n;
-		}
-		else
-		{
-			output->normal = n;
-		}
-
-		return true;
-	}
-
-	return false;
+	b3TriangleShape triangle;
+	triangle.m_radius = m_radius;
+	triangle.m_vertex1 = m_p1->m_position;
+	triangle.m_vertex2 = m_p2->m_position;
+	triangle.m_vertex3 = m_p3->m_position;
+	return triangle.RayCast(output, input);
 }

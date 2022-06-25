@@ -59,12 +59,12 @@ inline void b3BarycentricCoordinates(scalar out[4],
 
 	b3Vec3 AB_x_AC = b3Cross(AB, AC);
 
-	//scalar divisor = b3Dot(AB_x_AC, AB_x_AC);
+	scalar divisor = b3Dot(AB_x_AC, AB_x_AC);
 
 	out[0] = b3Dot(QB_x_QC, AB_x_AC);
 	out[1] = b3Dot(QC_x_QA, AB_x_AC);
 	out[2] = b3Dot(QA_x_QB, AB_x_AC);
-	out[3] = out[0] + out[1] + out[2];
+	out[3] = divisor;
 }
 
 // Convert a point Q from Cartesian coordinates to Barycentric coordinates (u, v, w, x) 
@@ -91,28 +91,6 @@ inline void b3BarycentricCoordinates(scalar out[5],
 	out[2] = sign * b3Det(QA, QB, QD);
 	out[3] = sign * b3Det(QA, QC, QB);
 	out[4] = sign * divisor;
-}
-
-// Project a point onto a segment AB.
-inline b3Vec3 b3ClosestPointOnSegment(const b3Vec3& P, const b3Vec3& A, const b3Vec3& B)
-{
-	scalar wAB[3];
-	b3BarycentricCoordinates(wAB, A, B, P);
-
-	if (wAB[1] <= scalar(0))
-	{
-		return A;
-	}
-
-	if (wAB[0] <= scalar(0))
-	{
-		return B;
-	}
-
-	scalar s = scalar(1) / wAB[2];
-	scalar wA = s * wAB[0];
-	scalar wB = s * wAB[1];
-	return wA * A + wB * B;
 }
 
 #endif
