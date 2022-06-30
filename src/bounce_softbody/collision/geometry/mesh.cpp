@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2016-2019 Irlan Robson 
+* Copyright (c) 2016-2019 Irlan Robson
 *
 * This software is provided 'as-is', without any express or implied
 * warranty.  In no event will the authors be held liable for any damages
@@ -26,29 +26,19 @@ void b3Mesh::BuildTree()
 	{
 		aabbs[i] = GetTriangleAABB(i);
 	}
-	
+
 	// Build the tree. 
 	tree.Build(aabbs, triangleCount);
-	
+
 	b3Free(aabbs);
 }
 
 void b3Mesh::BuildAdjacency()
 {
-	// Assume the edges are open edges.
-	for (uint32 i = 0; i < triangleCount; ++i)
+	for (uint32 i1 = 0; i1 < triangleCount; ++i1)
 	{
-		b3MeshTriangle* triangle = triangles + i;
-		triangle->u1 = B3_NULL_VERTEX;
-		triangle->u2 = B3_NULL_VERTEX;
-		triangle->u3 = B3_NULL_VERTEX;
-	}
+		b3MeshTriangle* t1 = triangles + i1;
 
-	// Connect the edges.
-	for (uint32 i = 0; i < triangleCount; ++i)
-	{
-		b3MeshTriangle* t1 = triangles + i;
-		
 		for (uint32 j1 = 0; j1 < 3; ++j1)
 		{
 			uint32 k1 = j1 + 1 < 3 ? j1 + 1 : 0;
@@ -58,16 +48,19 @@ void b3Mesh::BuildAdjacency()
 
 			uint32& u1 = t1->GetWingVertex(j1);
 
-			if (u1 != B3_NULL_VERTEX)
-			{
-				// The edge is already connected.
-				continue;
-			}
+			// Mark edge as open.
+			u1 = B3_NULL_VERTEX;
 
-			for (uint32 j = i + 1; j < triangleCount; ++j)
+			// Search the first adjacent triangle. 
+			for (uint32 i2 = 0; i2 < triangleCount; ++i2)
 			{
-				b3MeshTriangle* t2 = triangles + j;
-				
+				if (i1 == i2)
+				{
+					continue;
+				}
+
+				b3MeshTriangle* t2 = triangles + i2;
+
 				for (uint32 j2 = 0; j2 < 3; ++j2)
 				{
 					uint32 k2 = j2 + 1 < 3 ? j2 + 1 : 0;
@@ -75,38 +68,14 @@ void b3Mesh::BuildAdjacency()
 					uint32 t2v1 = t2->GetVertex(j2);
 					uint32 t2v2 = t2->GetVertex(k2);
 
-					uint32& u2 = t2->GetWingVertex(j2);
-
 					if (t1v1 == t2v2 && t1v2 == t2v1)
 					{
-						// Both triangles have the same order.
-
-						// The triangles are adjacent.
-						
-						// Non-shared vertex on triangle 1. 
-						uint32 k3 = k1 + 1 < 3 ? k1 + 1 : 0;
-						u2 = t1->GetVertex(k3);
-
-						// Non-shared vertex on triangle 2. 
-						uint32 k4 = k2 + 1 < 3 ? k2 + 1 : 0;
-						u1 = t2->GetVertex(k4);
-
-						break;
-					}
-
-					if (t1v1 == t2v1 && t1v2 == t2v2)
-					{
-						// The triangles have different order.
-
 						// The triangles are adjacent.
 
-						// Non-shared vertex on triangle 1. 
-						uint32 k3 = k1 + 1 < 3 ? k1 + 1 : 0;
-						u2 = t1->GetVertex(k3);
+						// Non-shared vertex on adjacent triangle. 
+						uint32 n2 = k2 + 1 < 3 ? k2 + 1 : 0;
 
-						// Non-shared vertex on triangle 2. 
-						uint32 k4 = k2 + 1 < 3 ? k2 + 1 : 0;
-						u1 = t2->GetVertex(k4);
+						u1 = t2->GetVertex(n2);
 
 						break;
 					}
@@ -114,7 +83,6 @@ void b3Mesh::BuildAdjacency()
 
 				if (u1 != B3_NULL_VERTEX)
 				{
-					// The edge has been connected.
 					break;
 				}
 			}

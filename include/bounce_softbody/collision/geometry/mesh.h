@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2016-2019 Irlan Robson 
+* Copyright (c) 2016-2019 Irlan Robson
 *
 * This software is provided 'as-is', without any express or implied
 * warranty.  In no event will the authors be held liable for any damages
@@ -46,29 +46,31 @@ struct b3MeshTriangle
 	uint32 v1, v2, v3;
 };
 
-// The mesh shape geometry. This supports mesh adjacency for smooth edge collision.
-// If your mesh isn't supported (e.g. a non-manifold mesh) or you don't need smooth edge 
-// collision you must set each triangle wing vertex to B3_NULL_VERTEX when setting up 
-// the mesh triangles and must not call the function BuildAdjacency().
-struct b3Mesh 
+// The mesh shape geometry. 
+// This supports adjacency for smooth edge collisions.
+// If your mesh isn't supported (e.g. have non-manifold edges) or you don't care about  
+// internal edge collisions you must set each triangle wing vertex to B3_NULL_VERTEX 
+// when setting up the mesh triangles and must not call the function BuildAdjacency().
+struct b3Mesh
 {
 	uint32 vertexCount;
 	b3Vec3* vertices;
 	uint32 triangleCount;
 	b3MeshTriangle* triangles;
 	b3StaticTree tree;
-	
+
 	// Build the AABB tree. 
 	void BuildTree();
 
 	// Build mesh adjacency. 
 	// This won't work properly if there are non-manifold edges.
+	// This is a slow operation.
 	void BuildAdjacency();
 
 	const b3Vec3& GetVertex(uint32 index) const;
 	const b3MeshTriangle* GetTriangle(uint32 index) const;
 	const b3StaticTree& GetTree() const;
-	
+
 	b3AABB GetTriangleAABB(uint32 index) const;
 
 	void Scale(const b3Vec3& scale);
@@ -105,8 +107,8 @@ inline b3AABB b3Mesh::GetTriangleAABB(uint32 index) const
 	b3AABB aabb;
 	aabb.lowerBound = b3Min(v1, b3Min(v2, v3));
 	aabb.upperBound = b3Max(v1, b3Max(v2, v3));
-	
-	// Ensure axis aligned triangles have volume.
+
+	// Ensure axis aligned triangles have volume
 	aabb.Extend(B3_LINEAR_SLOP);
 
 	return aabb;
