@@ -37,7 +37,7 @@ void b3Mesh::BuildAdjacency()
 {
 	for (uint32 i1 = 0; i1 < triangleCount; ++i1)
 	{
-		b3MeshTriangle* t1 = triangles + i1;
+		b3Triangle* t1 = triangles + i1;
 
 		for (uint32 j1 = 0; j1 < 3; ++j1)
 		{
@@ -59,7 +59,7 @@ void b3Mesh::BuildAdjacency()
 					continue;
 				}
 
-				b3MeshTriangle* t2 = triangles + i2;
+				b3Triangle* t2 = triangles + i2;
 
 				for (uint32 j2 = 0; j2 < 3; ++j2)
 				{

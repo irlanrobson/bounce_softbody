@@ -23,14 +23,15 @@
 
 #define B3_NULL_VERTEX B3_MAX_U32
 
-// Mesh triangle.
-struct b3MeshTriangle
+// Triangle.
+struct b3Triangle
 {
-	// Write an indexed edge wing vertex to this triangle.
-	uint32& GetWingVertex(uint32 i) { return (&u1)[i]; }
-
-	// Read an indexed edge wing vertex from this triangle.
-	uint32 GetWingVertex(uint32 i) const { return (&u1)[i]; }
+	// The triangle vertices in the mesh.
+	uint32 v1, v2, v3;
+	
+	// The wing vertex of each edge in this triangle.
+	// An edge is a boundary if its wing vertex is set to B3_NULL_VERTEX.
+	uint32 u1, u2, u3;
 
 	// Write an indexed vertex to this triangle.
 	uint32& GetVertex(uint32 i) { return (&v1)[i]; }
@@ -38,12 +39,11 @@ struct b3MeshTriangle
 	// Read an indexed vertex from this triangle.
 	uint32 GetVertex(uint32 i) const { return (&v1)[i]; }
 
-	// The wing vertex of each edge in this triangle.
-	// An edge is a boundary if its wing vertex is set to B3_NULL_VERTEX.
-	uint32 u1, u2, u3;
+	// Write an indexed edge wing vertex to this triangle.
+	uint32& GetWingVertex(uint32 i) { return (&u1)[i]; }
 
-	// The triangle vertices in the mesh.
-	uint32 v1, v2, v3;
+	// Read an indexed edge wing vertex from this triangle.
+	uint32 GetWingVertex(uint32 i) const { return (&u1)[i]; }
 };
 
 // The mesh shape geometry. 
@@ -56,7 +56,7 @@ struct b3Mesh
 	uint32 vertexCount;
 	b3Vec3* vertices;
 	uint32 triangleCount;
-	b3MeshTriangle* triangles;
+	b3Triangle* triangles;
 	b3StaticTree tree;
 
 	// Build the AABB tree. 
@@ -68,7 +68,7 @@ struct b3Mesh
 	void BuildAdjacency();
 
 	const b3Vec3& GetVertex(uint32 index) const;
-	const b3MeshTriangle* GetTriangle(uint32 index) const;
+	const b3Triangle* GetTriangle(uint32 index) const;
 	const b3StaticTree& GetTree() const;
 
 	b3AABB GetTriangleAABB(uint32 index) const;
@@ -86,7 +86,7 @@ inline const b3Vec3& b3Mesh::GetVertex(uint32 index) const
 	return vertices[index];
 }
 
-inline const b3MeshTriangle* b3Mesh::GetTriangle(uint32 index) const
+inline const b3Triangle* b3Mesh::GetTriangle(uint32 index) const
 {
 	return triangles + index;
 }
@@ -98,7 +98,7 @@ inline const b3StaticTree& b3Mesh::GetTree() const
 
 inline b3AABB b3Mesh::GetTriangleAABB(uint32 index) const
 {
-	const b3MeshTriangle* triangle = triangles + index;
+	const b3Triangle* triangle = triangles + index;
 
 	b3Vec3 v1 = vertices[triangle->v1];
 	b3Vec3 v2 = vertices[triangle->v2];

@@ -124,7 +124,7 @@ bool b3MeshShape::CollideSphere(b3SphereManifold* manifold, const b3Sphere& sphe
 void b3MeshShape::GetChildTriangle(b3TriangleShape* triangleShape, uint32 index) const
 {
 	B3_ASSERT(index < m_mesh->triangleCount);
-	b3MeshTriangle* triangle = m_mesh->triangles + index;
+	b3Triangle* triangle = m_mesh->triangles + index;
 	
 	uint32 u1 = triangle->u1;
 	uint32 u2 = triangle->u2;
@@ -162,7 +162,7 @@ void b3MeshShape::Draw(b3Draw* draw) const
 {
 	for (uint32 i = 0; i < m_mesh->triangleCount; ++i)
 	{
-		b3MeshTriangle* triangle = m_mesh->triangles + i;
+		b3Triangle* triangle = m_mesh->triangles + i;
 
 		b3Vec3 A = m_xf * b3Mul(m_scale, m_mesh->vertices[triangle->v1]);
 		b3Vec3 B = m_xf * b3Mul(m_scale, m_mesh->vertices[triangle->v2]);

@@ -27,7 +27,7 @@ template<uint32 H = 1, uint32 W = 1>
 struct b3GridMesh : public b3Mesh
 {
 	b3Vec3 gridVertices[(H + 1) * (W + 1)];
-	b3MeshTriangle gridTriangles[2 * H * W];
+	b3Triangle gridTriangles[2 * H * W];
 
 	// Set this grid to a W (width) per H (height) dimensioned grid centered at the origin and aligned
 	// with the world x-z axes.
@@ -69,7 +69,7 @@ struct b3GridMesh : public b3Mesh
 				uint32 v3 = GetVertex(i + 1, j + 1);
 				uint32 v4 = GetVertex(i, j + 1);
 
-				b3MeshTriangle* t1 = gridTriangles + triangleCount++;
+				b3Triangle* t1 = gridTriangles + triangleCount++;
 				t1->v1 = v1;
 				t1->v2 = v2;
 				t1->v3 = v3;
@@ -78,7 +78,7 @@ struct b3GridMesh : public b3Mesh
 				t1->u2 = B3_NULL_VERTEX;
 				t1->u3 = B3_NULL_VERTEX;
 
-				b3MeshTriangle* t2 = gridTriangles + triangleCount++;
+				b3Triangle* t2 = gridTriangles + triangleCount++;
 				t2->v1 = v3;
 				t2->v2 = v4;
 				t2->v3 = v1;
