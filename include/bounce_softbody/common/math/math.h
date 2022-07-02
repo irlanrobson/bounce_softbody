@@ -68,6 +68,12 @@ inline T b3Clamp(T a, T low, T high)
 }
 
 template <class T>
+T b3LinearInterpolation(T x, T a, T b) 
+{
+	return (T(1) - x) * a + x * b;
+}
+
+template <class T>
 inline void b3Swap(T& a, T& b) 
 {
 	T tmp = a;

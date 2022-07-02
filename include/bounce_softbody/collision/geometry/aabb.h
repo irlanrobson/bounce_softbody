@@ -29,6 +29,22 @@ struct b3AABB
 	// Constructor. Does nothing for performance. 
 	b3AABB() { }
 
+	// Construct this AABB from center point and radius vector (half-extents).
+	b3AABB(const b3Vec3& center, const b3Vec3& radius)
+	{
+		lowerBound = center - radius;
+		upperBound = center + radius;
+	}
+
+	// Get relative position given a point. 
+	// The point must be inside this AABB.
+	// The closer the point is to lowerBound, closer the result is to (0, 0, 0).
+	// The closer the point is to upperBound, closer the result is to (1, 1, 1).
+	b3Vec3 GetRelativePosition(const b3Vec3& point) const
+	{
+		return (point - lowerBound) / GetDimensions();
+	}
+
 	// Get the support vertex in a given direction.
 	b3Vec3 GetSupportVertex(const b3Vec3& direction) const
 	{
@@ -145,6 +161,12 @@ struct b3AABB
 	scalar GetDepth() const 
 	{
 		return upperBound.z - lowerBound.z;
+	}
+
+	// Get the dimensions of this AABB.
+	b3Vec3 GetDimensions() const
+	{
+		return b3Vec3(GetWidth(), GetHeight(), GetDepth());
 	}
 
 	// Get the volume of this AABB.

@@ -27,6 +27,7 @@
 typedef signed char	int8;
 typedef signed short int16;
 typedef signed int int32;
+typedef signed long long int64;
 
 typedef unsigned char uint8;
 typedef unsigned short uint16;
@@ -66,7 +67,7 @@ typedef double scalar64;
 #define B3_AABB_EXTENSION scalar(0.2)
 
 // Collision linear tolerance.
-#define B3_LINEAR_SLOP (0.005)
+#define B3_LINEAR_SLOP scalar(0.005)
 
 // This is used to extend AABBs in the broad-phase. 
 // Is used to predict the future position based on the current displacement.

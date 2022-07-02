@@ -154,6 +154,12 @@ inline b3Vec3 operator/(const b3Vec3& v, scalar s)
 	return b3Vec3(v.x / s, v.y / s, v.z / s);
 }
 
+// Divide this vector by another vector.
+inline b3Vec3 operator/(const b3Vec3& a, const b3Vec3& b)
+{
+	return b3Vec3(a.x / b.x, a.y / b.y, a.z / b.z);
+}
+
 // Compute the dot product of two vectors.
 inline scalar b3Dot(const b3Vec3& a, const b3Vec3& b)
 {
