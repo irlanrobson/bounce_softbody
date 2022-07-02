@@ -24,6 +24,7 @@
 #include <bounce_softbody/common/graphics/debug_points.h>
 #include <bounce_softbody/common/graphics/debug_lines.h>
 #include <bounce_softbody/common/graphics/debug_triangles.h>
+#include <bounce_softbody/collision/geometry/sphere_mesh.h>
 
 // This contains the primitives to be used by the debug draw utilities.
 // You must setup this structure with the pointers before calling any debug draw function.
@@ -146,100 +147,19 @@ void b3DrawSolidCircle(b3DebugDrawData* data, const b3Vec3& normal, const b3Vec3
 	}
 }
 
-// A (H + 1) x (W + 1) UV sphere mesh stored in row-major order.
-// v(i, j) = i * (W + 1) + j
-template<uint32 H = 1, uint32 W = 1>
-struct b3SphereMesh
-{
-	uint32 vertexCount;
-	b3Vec3 vertices[(H + 1) * (W + 1)];
-	uint32 indexCount;
-	uint32 indices[3 * 2 * H * W];
-	
-	b3SphereMesh()
-	{
-		// Build vertices
-		
-		// Latitude increment in range [0, pi]
-		scalar kThetaInc = B3_PI / scalar(H);
-		
-		// Longitude increment in range [0, 2*pi]
-		scalar kPhiInc = scalar(2) * B3_PI / scalar(W);
-		
-		vertexCount = 0;
-		for (uint32 i = 0; i < H + 1; ++i)
-		{
-			// Plane to spherical coordinates
-			scalar theta = scalar(i) * kThetaInc;
-			scalar cos_theta = cos(theta);
-			scalar sin_theta = sin(theta);
-				
-			for (uint32 j = 0; j < W + 1; ++j)
-			{
-				scalar phi = scalar(j) * kPhiInc;	
-				scalar cos_phi = cos(phi);
-				scalar sin_phi = sin(phi);
-				
-				// Spherical to Cartesian coordinates		
-				b3Vec3 p;
-				p.x = sin_theta * sin_phi;
-				p.y = cos_theta;
-				p.z = sin_theta * cos_phi;
-				
-				uint32 vertex = GetVertex(i, j);
-				vertices[vertex] = p;
-				++vertexCount;
-			}
-		}
-		
-		B3_ASSERT(vertexCount == (H + 1) * (W + 1));
-		
-		// Build triangles
-		indexCount = 0;
-		for (uint32 i = 0; i < H; ++i)
-		{
-			for (uint32 j = 0; j < W; ++j)
-			{
-				// 1*|----|*4
-				//   |----|
-				// 2*|----|*3
-				uint32 v1 = GetVertex(i, j);
-				uint32 v2 = GetVertex(i + 1, j);
-				uint32 v3 = GetVertex(i + 1, j + 1);
-				uint32 v4 = GetVertex(i, j + 1);
-
-				indices[indexCount++] = v1;
-				indices[indexCount++] = v2;
-				indices[indexCount++] = v3;
-
-				indices[indexCount++] = v3;
-				indices[indexCount++] = v4;
-				indices[indexCount++] = v1;
-			}
-		}
-
-		B3_ASSERT(indexCount == 3 * 2 * H * W);
-	}
-
-	uint32 GetVertex(uint32 i, uint32 j)
-	{
-		B3_ASSERT(i < H + 1);
-		B3_ASSERT(j < W + 1);
-		return i * (W + 1) + j;
-	}
-};
-
 // Draw a sphere.
 template<uint32 H = 20, uint32 W = 20>
 inline void b3DrawSphere(b3DebugDrawData* data, const b3Vec3& center, scalar radius, const b3Color& color, bool depthEnabled = true)
 {
 	b3SphereMesh<H, W> sphere;
 	
-	for (uint32 i = 0; i < sphere.indexCount / 3; ++i)
+	for (uint32 i = 0; i < sphere.triangleCount; ++i)
 	{
-		uint32 v1 = sphere.indices[3 * i];
-		uint32 v2 = sphere.indices[3 * i + 1];
-		uint32 v3 = sphere.indices[3 * i + 2];
+		b3Triangle* triangle = sphere.triangles + i;
+
+		uint32 v1 = triangle->v1;
+		uint32 v2 = triangle->v2;
+		uint32 v3 = triangle->v3;
 
 		b3Vec3 p1 = sphere.vertices[v1];
 		p1 *= radius;
@@ -267,11 +187,13 @@ inline void b3DrawSolidSphere(b3DebugDrawData* data, const b3Quat& rotation, con
 	xf.rotation = rotation;
 	xf.translation = center;
 
-	for (uint32 i = 0; i < sphere.indexCount / 3; ++i)
+	for (uint32 i = 0; i < sphere.triangleCount; ++i)
 	{
-		uint32 v1 = sphere.indices[3 * i];
-		uint32 v2 = sphere.indices[3 * i + 1];
-		uint32 v3 = sphere.indices[3 * i + 2];
+		b3Triangle* triangle = sphere.triangles + i;
+
+		uint32 v1 = triangle->v1;
+		uint32 v2 = triangle->v2;
+		uint32 v3 = triangle->v3;
 
 		b3Vec3 p1 = sphere.vertices[v1];
 		
@@ -407,7 +329,7 @@ struct b3CylinderMesh
 		B3_ASSERT(indexCount == 3 * 2 * H * W + 3 * 2 * (((W + 1) - 1) - 1));
 	}
 	
-	uint32 GetVertex(uint32 i, uint32 j)
+	uint32 GetVertex(uint32 i, uint32 j) const
 	{
 		B3_ASSERT(i < H + 1);
 		B3_ASSERT(j < W + 1);

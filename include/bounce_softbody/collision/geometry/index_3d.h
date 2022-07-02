@@ -44,7 +44,7 @@ struct b3Index3D
 			k * iSize * jSize;
 	}
 
-	// Thre three indices.
+	// The three indices.
 	int64 i, j, k;
 };
 

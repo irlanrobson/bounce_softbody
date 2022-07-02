@@ -86,7 +86,7 @@ public:
 
 		m_indexer = b3RegularGridIndexer(aabb, width - 1, height - 1, depth - 1);
 		m_voxelCount = width * height * depth;
-		m_voxels = b3Alloc(m_voxelCount * sizeof(T));
+		m_voxels = (T*)b3Alloc(m_voxelCount * sizeof(T));
 	}
 
 	// Return he width of this grid in number of voxels.
@@ -136,7 +136,7 @@ public:
 	// Write the voxel at a given 3D index.
 	void SetVoxel(const b3Index3D& index, const T& value)
 	{
-		B3_ASSERT(Contains(index));
+		B3_ASSERT(ContainsVoxel(index));
 		uint32 voxelIndex = GetVoxelIndex(index);
 		B3_ASSERT(voxelIndex < m_voxelCount);
 		m_voxels[voxelIndex] = value;
@@ -145,7 +145,7 @@ public:
 	// Read the voxel at a given 3D index.
 	const T& GetVoxel(const b3Index3D& index) const
 	{
-		B3_ASSERT(Contains(index));
+		B3_ASSERT(ContainsVoxel(index));
 		uint32 voxelIndex = GetVoxelIndex(index);
 		B3_ASSERT(voxelIndex < m_voxelCount);
 		return m_voxels[voxelIndex];
@@ -154,7 +154,7 @@ public:
 	// Return the position in for the voxel at the given voxel index.
 	b3Vec3 GetVoxelPosition(const b3Index3D& index) const
 	{
-		B3_ASSERT(Contains(index));
+		B3_ASSERT(ContainsVoxel(index));
 		return m_indexer.GetCellAABB(index).lowerBound;
 	}
 
@@ -165,14 +165,14 @@ public:
 		b3Index3D cellIndex = m_indexer.GetCellIndex(point);
 		B3_ASSERT(m_indexer.Contains(cellIndex));
 
-		b3AABB cellAABB = GetCellAABB(index);
-		b3Vec3 relativePoint = cellAABB.GetRelativePosition(point);
+		b3AABB cellAABB = GetCellAABB(cellIndex);
+		b3Vec3 relPoint = cellAABB.GetRelativePosition(point);
 
 		T cellVoxels[8];
-		GetCellVoxels(cellVoxels, index);
+		GetCellVoxels(cellVoxels, cellIndex);
 
 		// Lerp 
-		return InterpolateVoxel(relativePoint, cellVoxels);
+		return InterpolateVoxel(relPoint, cellVoxels);
 	}
 
 	// Return an interpolated gradient at the given point inside this grid.
@@ -184,15 +184,15 @@ public:
 		B3_ASSERT(m_indexer.Contains(cellIndex));
 
 		b3AABB cellAABB = GetCellAABB(cellIndex);
-		b3Vec3 relativePoint = cellAABB.GetRelativePosition(point);
+		b3Vec3 relPoint = cellAABB.GetRelativePosition(point);
 
 		T cellVoxels[8];
 		GetCellVoxels(cellVoxels, cellIndex);
 
 		b3Vec3 gradient;
-		gradient.x = InterpolateVoxel(b3Vec3(1, relPoint.y, relPoint.z), voxels) - InterpolateVoxel(b3Vec3(0, relPoint.y, relPoint.z), voxels);
-		gradient.y = InterpolateVoxel(b3Vec3(relPoint.x, 1, relPoint.z), voxels) - InterpolateVoxel(b3Vec3(relPoint.x, 0, relPoint.z), voxels);
-		gradient.z = InterpolateVoxel(b3Vec3(relPoint.x, relPoint.y, 1), voxels) - InterpolateVoxel(b3Vec3(relPoint.x, relPoint.y, 0), voxels);
+		gradient.x = InterpolateVoxel(b3Vec3(1, relPoint.y, relPoint.z), cellVoxels) - InterpolateVoxel(b3Vec3(0, relPoint.y, relPoint.z), cellVoxels);
+		gradient.y = InterpolateVoxel(b3Vec3(relPoint.x, 1, relPoint.z), cellVoxels) - InterpolateVoxel(b3Vec3(relPoint.x, 0, relPoint.z), cellVoxels);
+		gradient.z = InterpolateVoxel(b3Vec3(relPoint.x, relPoint.y, 1), cellVoxels) - InterpolateVoxel(b3Vec3(relPoint.x, relPoint.y, 0), cellVoxels);
 		return gradient;
 	}
 
@@ -223,14 +223,14 @@ public:
 		b3Index3D::IndexType j = cellIndex.j;
 		b3Index3D::IndexType k = cellIndex.k;
 
-		voxels[0] = getVoxel(Index3D(i, j, k));
-		voxels[1] = getVoxel(Index3D(i, j, k + 1));
-		voxels[2] = getVoxel(Index3D(i, j + 1, k));
-		voxels[3] = getVoxel(Index3D(i, j + 1, k + 1));
-		voxels[4] = getVoxel(Index3D(i + 1, j, k));
-		voxels[5] = getVoxel(Index3D(i + 1, j, k + 1));
-		voxels[6] = getVoxel(Index3D(i + 1, j + 1, k));
-		voxels[7] = getVoxel(Index3D(i + 1, j + 1, k + 1));
+		voxels[0] = GetVoxel(b3Index3D(i, j, k));
+		voxels[1] = GetVoxel(b3Index3D(i, j, k + 1));
+		voxels[2] = GetVoxel(b3Index3D(i, j + 1, k));
+		voxels[3] = GetVoxel(b3Index3D(i, j + 1, k + 1));
+		voxels[4] = GetVoxel(b3Index3D(i + 1, j, k));
+		voxels[5] = GetVoxel(b3Index3D(i + 1, j, k + 1));
+		voxels[6] = GetVoxel(b3Index3D(i + 1, j + 1, k));
+		voxels[7] = GetVoxel(b3Index3D(i + 1, j + 1, k + 1));
 	}
 
 	// Return he AABB of the cell specified by cellIndex.
@@ -287,9 +287,9 @@ private:
 	T InterpolateVoxel(const b3Vec3& relativePointInCell, const T voxels[8]) const
 	{
 		// Ensure the point is inside the cell AABB.
-		scalar x = b3Clamp(relativePointInCell.x, 0, 1);
-		scalar y = b3Clamp(relativePointInCell.y, 0, 1);
-		scalar z = b3Clamp(relativePointInCell.z, 0, 1);
+		scalar x = b3Clamp(relativePointInCell.x, scalar(0), scalar(1));
+		scalar y = b3Clamp(relativePointInCell.y, scalar(0), scalar(1));
+		scalar z = b3Clamp(relativePointInCell.z, scalar(0), scalar(1));
 
 		// x interpolation
 		scalar c00 = b3LinearInterpolation(x, voxels[0], voxels[4]);

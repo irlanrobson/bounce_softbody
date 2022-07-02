@@ -70,8 +70,9 @@ struct b3Mesh
 	const b3Vec3& GetVertex(uint32 index) const;
 	const b3Triangle* GetTriangle(uint32 index) const;
 	const b3StaticTree& GetTree() const;
-
 	b3AABB GetTriangleAABB(uint32 index) const;
+
+	b3AABB ComputeAABB() const;
 
 	void Scale(const b3Vec3& scale);
 	void Rotate(const b3Quat& rotation);
@@ -111,6 +112,13 @@ inline b3AABB b3Mesh::GetTriangleAABB(uint32 index) const
 	// Ensure axis aligned triangles have volume
 	aabb.Extend(B3_LINEAR_SLOP);
 
+	return aabb;
+}
+
+inline b3AABB b3Mesh::ComputeAABB() const
+{
+	b3AABB aabb;
+	aabb.Compute(vertices, vertexCount);
 	return aabb;
 }
 
