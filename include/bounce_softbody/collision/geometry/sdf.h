@@ -77,7 +77,7 @@ protected:
 	// The mesh pointer.
 	const b3Mesh* m_mesh;
 
-	// Voxel grid containing point distances.
+	// Voxel grid containing signed distances at voxel vertices.
 	b3ScalarVoxelGrid m_voxelGrid;
 };
 
