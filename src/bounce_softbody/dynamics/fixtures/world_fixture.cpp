@@ -23,6 +23,7 @@
 #include <bounce_softbody/collision/shapes/triangle_shape.h>
 #include <bounce_softbody/collision/shapes/box_shape.h>
 #include <bounce_softbody/collision/shapes/mesh_shape.h>
+#include <bounce_softbody/collision/shapes/sdf_shape.h>
 #include <bounce_softbody/common/memory/block_allocator.h>
 
 b3WorldFixture::b3WorldFixture()
@@ -78,6 +79,13 @@ void b3WorldFixture::Destroy(b3BlockAllocator* allocator)
 		b3MeshShape* s = (b3MeshShape*)m_shape;
 		s->~b3MeshShape();
 		allocator->Free(s, sizeof(b3MeshShape));
+		break;
+	}
+	case b3Shape::e_sdf:
+	{
+		b3SDFShape* s = (b3SDFShape*)m_shape;
+		s->~b3SDFShape();
+		allocator->Free(s, sizeof(b3SDFShape));
 		break;
 	}
 	default:

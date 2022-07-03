@@ -246,7 +246,7 @@ public:
 	}
 
 	// Get the bounding box for this grid.
-	b3AABB GetAABB() const
+	const b3AABB& GetAABB() const
 	{
 		return m_indexer.aabb;
 	}
@@ -254,7 +254,7 @@ public:
 	// Does the given cell index point to a cell that is logically inside this grid?
 	bool ContainsCell(const b3Index3D& cellIndex) const
 	{
-		m_indexer.Contains(cellIndex);
+		return m_indexer.Contains(cellIndex);
 	}
 
 	// Does the given cell index point to a cell that is logically inside this grid?

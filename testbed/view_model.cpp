@@ -28,6 +28,7 @@
 #include "tests/triangle_contact.h"
 #include "tests/box_contact.h"
 #include "tests/grid_contact.h"
+#include "tests/sdf_contact.h"
 #include "tests/pinned_cloth.h"
 #include "tests/particle_types.h"
 #include "tests/stretch_mapping.h"
@@ -50,6 +51,7 @@ ViewModel::ViewModel(Model* model, GLFWwindow* window)
 	m_settings.RegisterTest("Triangle Contact", &TriangleContact::Create);
 	m_settings.RegisterTest("Box Contact", &BoxContact::Create);
 	m_settings.RegisterTest("Grid Contact", &GridContact::Create);
+	m_settings.RegisterTest("SDF Contact", &SDFContact::Create);
 	m_settings.RegisterTest("Pinned Cloth", &PinnedCloth::Create );
 	m_settings.RegisterTest("Particle Types", &ParticleTypes::Create);
 	m_settings.RegisterTest("Stretch Mapping", &StretchMapping::Create);

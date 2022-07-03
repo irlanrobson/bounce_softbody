@@ -46,7 +46,8 @@ public:
 		e_triangle = 2,
 		e_box = 3,
 		e_mesh = 4,
-		e_typeCount = 5
+		e_sdf = 5,
+		e_typeCount = 6
 	};
 
 	// Default dtor.

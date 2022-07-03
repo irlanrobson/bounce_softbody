@@ -23,6 +23,7 @@
 
 struct b3Mesh;
 
+// This binds a triangle mesh to a signed distance field (SDF).
 class b3SDF
 {
 public:
@@ -36,9 +37,12 @@ public:
 	// Get the associated voxel grid.
 	const b3ScalarVoxelGrid& GetVoxelGrid() const { return m_voxelGrid; }
 
-	// Create the signed distance field from a given mesh and resolution.    
+	// Create the signed distance field from a given mesh and cell size.    
 	// This is a very slow operation.
 	void Create(const b3Mesh* mesh, const b3Vec3& cellSize, scalar aabbExtension = scalar(1));
+
+	// Return the AABB of the voxel grid.
+	const b3AABB& GetAABB() const { return m_voxelGrid.GetAABB(); }
 
 	// Check if the given point is inside this grid AABB.
 	bool Contains(const b3Vec3& point) const
@@ -64,7 +68,7 @@ public:
 		b3Vec3 gradient = m_voxelGrid.SampleGradient(point);
 		return b3Normalize(gradient);
 	}
-private:
+protected:
 	// Compute the signed distances and associate them to voxel grid. 
 	// This is very ineffective.
 	// Use AABB tree to faster queries?

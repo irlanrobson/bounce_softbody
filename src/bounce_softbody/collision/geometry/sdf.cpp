@@ -209,7 +209,7 @@ void b3SDF::ComputeDistances()
 
 		if ((progress - lastProgress) >= scalar(1)) 
 		{
-			b3Log("[b3SDF] Calculating distances ... %.0f%% - %d/%d\n", progress, count, m_voxelGrid.GetVoxelCount());
+			b3Log("[b3SDF] Calculating distances... %.0f%% - %d/%d\n", progress, count, m_voxelGrid.GetVoxelCount());
 			lastProgress = progress;
 		}
 	};
