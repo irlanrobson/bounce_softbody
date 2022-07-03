@@ -80,6 +80,7 @@ public:
 	void Create(const b3AABB& aabb, uint32 width, uint32 height, uint32 depth)
 	{
 		B3_ASSERT(m_voxels == nullptr && m_voxelCount == 0);
+		
 		B3_ASSERT(width > 1);
 		B3_ASSERT(height > 1);
 		B3_ASSERT(depth > 1);
@@ -305,7 +306,7 @@ private:
 		return b3LinearInterpolation(z, c0, c1);
 	}
 
-	// Cell indexer.
+	// Cells indexer.
 	b3RegularGridIndexer m_indexer;
 
 	// The voxel data. Owned by this class.

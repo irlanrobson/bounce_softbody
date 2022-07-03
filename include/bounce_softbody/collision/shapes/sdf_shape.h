@@ -39,6 +39,9 @@ public:
 
 	// The shared SDF pointer. This must remaing in scope while the shape is being used.
 	const b3SDF* m_sdf;
+
+	// Transform.
+	b3Transform m_xf;
 };
 
 #endif

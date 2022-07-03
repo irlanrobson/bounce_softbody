@@ -24,7 +24,7 @@ class SDFContact : public Body
 public:
 	SDFContact()
 	{
-		m_sphereMesh.Scale(b3Vec3(3.0f, 3.0f, 3.0f));
+		m_sphereMesh.Scale(b3Vec3(6.0f, 3.0f, 3.0f));
 		m_sdf.Create(&m_sphereMesh, b3Vec3(1.0f, 1.0f, 1.0f), 1.0f);
 
 		m_clothMesh.Translate(b3Vec3(0.0f, 10.0f, 0.0f));
@@ -38,6 +38,7 @@ public:
 		b3SDFShape sdfShape;
 		sdfShape.m_sdf = &m_sdf;
 		sdfShape.m_radius = 0.2f;
+		sdfShape.m_xf.rotation = b3QuatRotationY(0.25f * B3_PI);
 
 		b3WorldFixtureDef fixtureDef;
 		fixtureDef.shape = &sdfShape;

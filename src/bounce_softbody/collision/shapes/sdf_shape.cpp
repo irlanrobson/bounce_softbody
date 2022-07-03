@@ -27,6 +27,7 @@ b3SDFShape::b3SDFShape()
 	m_type = e_sdf;
 	m_radius = scalar(0);
 	m_sdf = nullptr;
+	m_xf.SetIdentity();
 }
 
 b3Shape* b3SDFShape::Clone(b3BlockAllocator* allocator) const
@@ -39,12 +40,15 @@ b3Shape* b3SDFShape::Clone(b3BlockAllocator* allocator) const
 
 b3AABB b3SDFShape::ComputeAABB() const
 {
-	return m_sdf->GetAABB();
+	b3AABB aabb = m_sdf->GetAABB();
+	aabb.Transform(m_xf);
+	return aabb;
 }
 
 bool b3SDFShape::CollideSphere(b3SphereManifold* manifold, const b3Sphere& sphere) const
 {
-	b3Vec3 center = sphere.vertex;
+	// Convert the sphere center to local space of SDF.
+	b3Vec3 center = b3MulT(m_xf, sphere.vertex);
 	scalar radius = sphere.radius + m_radius;
 
 	// The sphere center must be contained in the SDF's AABB.
@@ -59,11 +63,11 @@ bool b3SDFShape::CollideSphere(b3SphereManifold* manifold, const b3Sphere& spher
 		return false;
 	}
 	
-	b3Vec3 normal = m_sdf->GetSurfaceNormal(center);
-	b3Vec3 closestPoint = center - distance * normal;
+	b3Vec3 normal = m_sdf->GetNormal(center);
+	b3Vec3 surfacePoint = center - distance * normal;
 
-	manifold->point = closestPoint;
-	manifold->normal = normal;
+	manifold->point = b3Mul(m_xf, surfacePoint);
+	manifold->normal = b3Mul(m_xf.rotation, normal);
 	return true;
 }
 
@@ -74,9 +78,9 @@ void b3SDFShape::Draw(b3Draw* draw) const
 	{
 		b3Triangle* triangle = mesh->triangles + i;
 
-		b3Vec3 A = mesh->vertices[triangle->v1];
-		b3Vec3 B = mesh->vertices[triangle->v2];
-		b3Vec3 C = mesh->vertices[triangle->v3];
+		b3Vec3 A = m_xf * mesh->vertices[triangle->v1];
+		b3Vec3 B = m_xf * mesh->vertices[triangle->v2];
+		b3Vec3 C = m_xf * mesh->vertices[triangle->v3];
 
 		draw->DrawTriangle(A, B, C, b3Color_black);
 
@@ -88,7 +92,9 @@ void b3SDFShape::Draw(b3Draw* draw) const
 	}
 
 	const b3ScalarVoxelGrid& voxelGrid = m_sdf->GetVoxelGrid();
-	draw->DrawAABB(voxelGrid.GetAABB(), b3Color_pink);
+	b3AABB aabb = voxelGrid.GetAABB();
+	aabb.Transform(m_xf);
+	draw->DrawAABB(aabb, b3Color_pink);
 	
 	for (uint32 i = 0; i < voxelGrid.GetWidthInCells(); ++i)
 	{
@@ -98,19 +104,17 @@ void b3SDFShape::Draw(b3Draw* draw) const
 			{
 				b3Index3D cellIndex = b3Index3D(i, j, k);
 				b3AABB cellAABB = voxelGrid.GetCellAABB(cellIndex);
-				
-				draw->DrawAABB(cellAABB, b3Color_pink);
-
 				b3Vec3 cellCenter = cellAABB.GetCenter();
 				scalar distance = voxelGrid.Sample(cellCenter);
 
+				b3Vec3 center = b3Mul(m_xf, cellCenter);
 				if (distance <= scalar(0))
 				{
-					draw->DrawPoint(cellCenter, scalar(4), b3Color_red, false);
+					draw->DrawPoint(center, scalar(4), b3Color_red, false);
 				}
 				else
 				{
-					draw->DrawPoint(cellCenter, scalar(4), b3Color_green, false);
+					draw->DrawPoint(center, scalar(4), b3Color_green, false);
 				}
 			}
 		}

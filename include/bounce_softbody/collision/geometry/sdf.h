@@ -59,10 +59,10 @@ public:
 		return m_voxelGrid.Sample(point);
 	}
 
-	// Return the surface normal of a given point to the mesh.
+	// Return the outward pointing normal of a given point to the mesh.
 	// The point must be inside the grid AABB. Check if the point is inside 
 	// using Contains().
-	b3Vec3 GetSurfaceNormal(const b3Vec3& point) const
+	b3Vec3 GetNormal(const b3Vec3& point) const
 	{
 		B3_ASSERT(m_voxelGrid.Contains(point));
 		b3Vec3 gradient = m_voxelGrid.SampleGradient(point);
