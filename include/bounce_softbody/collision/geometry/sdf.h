@@ -30,16 +30,16 @@ public:
 	// Default ctor.
 	b3SDF() : m_mesh(nullptr) { }
 
+	// Create the signed distance field from a given mesh and cell size.    
+	// This is a very slow operation.
+	void Create(const b3Mesh* mesh, const b3Vec3& cellSize, scalar aabbExtension = scalar(1));
+
 	// Get the associated mesh.
 	const b3Mesh* GetMesh() { return m_mesh; }
 	const b3Mesh* GetMesh() const { return m_mesh; }
 
 	// Get the associated voxel grid.
 	const b3ScalarVoxelGrid& GetVoxelGrid() const { return m_voxelGrid; }
-
-	// Create the signed distance field from a given mesh and cell size.    
-	// This is a very slow operation.
-	void Create(const b3Mesh* mesh, const b3Vec3& cellSize, scalar aabbExtension = scalar(1));
 
 	// Return the AABB of the voxel grid.
 	const b3AABB& GetAABB() const { return m_voxelGrid.GetAABB(); }
@@ -70,8 +70,7 @@ public:
 	}
 protected:
 	// Compute the signed distances and associate them to voxel grid. 
-	// This is very ineffective.
-	// Use AABB tree to faster queries?
+	// This is very ineffective. Consider saving and loading the voxel grid. 
 	void ComputeDistances();
 
 	// The mesh pointer.
