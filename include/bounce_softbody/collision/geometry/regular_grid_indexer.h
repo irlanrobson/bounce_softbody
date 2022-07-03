@@ -37,7 +37,7 @@ struct b3RegularGridIndexer
 		depth = 0;
 	}
 	
-	// Creates a grid from AABB and cell dimensions.
+	// Creates a grid from AABB and grid dimensions.
 	b3RegularGridIndexer(const b3AABB& _aabb, uint32 _width, uint32 _height, uint32 _depth)
 	{
 		aabb = _aabb;
@@ -46,7 +46,7 @@ struct b3RegularGridIndexer
 		depth = _depth;
 	}
 
-	// Does the given cell contains this index.
+	// Does the given cell contains this index?
 	bool Contains(const b3Index3D& index) const
 	{
 		return index.i >= 0 && index.i < width &&
@@ -84,7 +84,7 @@ struct b3RegularGridIndexer
 		return GetCellSize() / scalar(2);
 	}
 
-	// The center of the cell at the given index.
+	// Get the center of the cell at the given index.
 	b3Vec3 GetCellCenter(const b3Index3D& index) const
 	{
 		b3Vec3 cellSize = GetCellSize();
@@ -114,10 +114,10 @@ struct b3RegularGridIndexer
 		return index.GetOneDimensionalIndex(width, height, depth);
 	}
 
-	// Bounding box.
+	// Grid bounding box.
 	b3AABB aabb;
 	
-	// Dimensions.
+	// Grid dimensions.
 	uint32 width;
 	uint32 height;
 	uint32 depth;
