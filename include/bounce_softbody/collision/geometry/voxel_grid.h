@@ -89,19 +89,19 @@ public:
 		m_voxels = (T*)b3Alloc(m_voxelCount * sizeof(T));
 	}
 
-	// Return he width of this grid in number of voxels.
+	// Return the width of this grid in number of voxels.
 	uint32 GetWidth() const
 	{
 		return m_indexer.width + 1;
 	}
 
-	// Return he height of this grid in number of voxels.
+	// Return the height of this grid in number of voxels.
 	uint32 GetHeight() const
 	{
 		return m_indexer.height + 1;
 	}
 
-	// Return he depth of this grid in number of voxels.
+	// Return the depth of this grid in number of voxels.
 	uint32 GetDepth() const
 	{
 		return m_indexer.depth + 1;
@@ -260,7 +260,7 @@ public:
 	// Does the given cell index point to a cell that is logically inside this grid?
 	bool ContainsVoxel(const b3Index3D& voxelIndex) const
 	{
-		// Note: This converts an unsigned 32 bit integer to a signed 32 bit integer.
+		// Note: This converts an unsigned 32 bit integer to a signed 64 bit integer.
 		return
 			voxelIndex.i >= b3Index3D::IndexType(0) && voxelIndex.i < b3Index3D::IndexType(GetWidth()) &&
 			voxelIndex.j >= b3Index3D::IndexType(0) && voxelIndex.j < b3Index3D::IndexType(GetHeight()) &&
