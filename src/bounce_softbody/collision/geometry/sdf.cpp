@@ -21,6 +21,8 @@
 #include <bounce_softbody/collision/geometry/geometry.h>
 #include <bounce_softbody/collision/shapes/triangle_shape.h>
 
+// Based on https://github.com/oprogramadorreal/vize's TriangleMeshDistanceFieldBuilder.
+
 static b3Vec3 b3ClosestPointOnTriangle(const b3Vec3& A, const b3Vec3& B, const b3Vec3& C, 
 	const b3Vec3& Q)
 {
@@ -84,37 +86,37 @@ static b3Vec3 b3ClosestPointOnTriangle(const b3Vec3& A, const b3Vec3& B, const b
 	return (wABC[0] * A + wABC[1] * B + wABC[2] * C) / wABC[3];
 }
 
-static bool b3IsPointInsideMesh(const b3Mesh* mesh, const b3Vec3& point, const b3Vec3& farPoint)
-{
-	uint32 count = 0;
-
-	for (uint32 i = 0; i < mesh->triangleCount; ++i)
-	{
-		b3Triangle* triangle = mesh->triangles + i;
-
-		b3TriangleShape triangleShape;
-		triangleShape.m_vertex1 = mesh->vertices[triangle->v1];
-		triangleShape.m_vertex2 = mesh->vertices[triangle->v2];
-		triangleShape.m_vertex3 = mesh->vertices[triangle->v3];
-
-		b3RayCastInput input;
-		input.p1 = point;
-		input.p2 = farPoint;
-		input.maxFraction = scalar(1);
-
-		b3RayCastOutput output;
-		if (triangleShape.RayCast(&output, input))
-		{
-			++count;
-		}
-	}
-
-	// If number of intersections is odd, point is inside.
-	return (count % 2) != 0; 
-}
-
 static bool b3IsPointInsideMesh(const b3Mesh* mesh, const b3Vec3& point, scalar farDistance)
 {
+	const auto isInside = [&mesh, &point](const b3Vec3& farPoint) -> bool 
+	{
+		uint32 counter = 0;
+
+		for (uint32 i = 0; i < mesh->triangleCount; ++i)
+		{
+			b3Triangle* triangle = mesh->triangles + i;
+
+			b3TriangleShape triangleShape;
+			triangleShape.m_vertex1 = mesh->vertices[triangle->v1];
+			triangleShape.m_vertex2 = mesh->vertices[triangle->v2];
+			triangleShape.m_vertex3 = mesh->vertices[triangle->v3];
+
+			b3RayCastInput input;
+			input.p1 = point;
+			input.p2 = farPoint;
+			input.maxFraction = scalar(1);
+
+			b3RayCastOutput output;
+			if (triangleShape.RayCast(&output, input))
+			{
+				++counter;
+			}
+		}
+
+		// If number of intersections is odd, point is inside.
+		return (counter % 2) != 0;
+	};
+
 	// Test different directions to be sure.
 	const b3Vec3 farPoints[5] =
 	{
@@ -129,7 +131,7 @@ static bool b3IsPointInsideMesh(const b3Mesh* mesh, const b3Vec3& point, scalar 
 
 	for (uint32 i = 0; i < 5 && inCount < 3; ++i) 
 	{
-		if (b3IsPointInsideMesh(mesh, point, farPoints[i])) 
+		if (isInside(farPoints[i])) 
 		{
 			++inCount;
 		}
@@ -174,14 +176,14 @@ static scalar b3SignedDistance(const b3Mesh* mesh, const b3Vec3& point, scalar f
 	return closestDistance;
 }
 
-void b3SDF::Create(const b3Mesh* mesh, const b3Vec3& cellSize, scalar aabbExtension)
+void b3SDF::Create(const b3Mesh* mesh, const b3Vec3& cellSize, scalar aabbVolumeExtension)
 {
 	B3_ASSERT(m_mesh == nullptr);
 	m_mesh = mesh;
 
 	b3AABB aabb = m_mesh->ComputeAABB();
-	aabb.Extend(aabbExtension);
-
+	aabb.Extend(aabbVolumeExtension);
+	
 	b3Vec3 aabbSize = aabb.GetDimensions();
 
 	uint32 widthInCells = uint32(std::ceil(aabbSize.x / cellSize.x));
@@ -195,7 +197,6 @@ void b3SDF::Create(const b3Mesh* mesh, const b3Vec3& cellSize, scalar aabbExtens
 	ComputeDistances();
 }
 
-// From https://github.com/oprogramadorreal/vize
 void b3SDF::ComputeDistances()
 {
 	scalar farDistance = m_voxelGrid.GetAABB().GetVolume();

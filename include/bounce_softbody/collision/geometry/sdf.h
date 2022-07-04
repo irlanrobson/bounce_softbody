@@ -31,8 +31,8 @@ public:
 	b3SDF() : m_mesh(nullptr) { }
 
 	// Create the signed distance field from a given mesh and cell size.    
-	// This is a very slow operation.
-	void Create(const b3Mesh* mesh, const b3Vec3& cellSize, scalar aabbExtension = scalar(1));
+	// This is very ineffective. Consider saving and loading the voxel grid. 
+	void Create(const b3Mesh* mesh, const b3Vec3& cellSize, scalar aabbVolumeExtension = scalar(1));
 
 	// Get the associated mesh.
 	const b3Mesh* GetMesh() { return m_mesh; }
@@ -70,7 +70,7 @@ public:
 	}
 protected:
 	// Compute the signed distances and associate them to voxel grid. 
-	// This is very ineffective. Consider saving and loading the voxel grid. 
+	// This is very ineffective.
 	void ComputeDistances();
 
 	// The mesh pointer.
