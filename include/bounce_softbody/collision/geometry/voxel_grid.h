@@ -48,7 +48,7 @@
 // A regular grid of "voxels" aka "3D pixels". 
 // See https://en.wikipedia.org/wiki/Voxel.
 // Based on https://github.com/oprogramadorreal/vize's VoxelGrid. 
-// O Programador's license is copied over above. 
+// VIZE's license is copied over above. 
 template <typename T>
 class b3VoxelGrid 
 {
@@ -85,30 +85,30 @@ public:
 		B3_ASSERT(height > 1);
 		B3_ASSERT(depth > 1);
 
-		m_indexer = b3RegularGridIndexer(aabb, width - 1, height - 1, depth - 1);
+		m_cellsIndexer = b3RegularGridIndexer(aabb, width - 1, height - 1, depth - 1);
 		m_voxelCount = width * height * depth;
 		m_voxels = (T*)b3Alloc(m_voxelCount * sizeof(T));
 	}
 
-	// Return the width of this grid in number of voxels.
+	// Get the width of this grid in number of voxels.
 	uint32 GetWidth() const
 	{
-		return m_indexer.width + 1;
+		return m_cellsIndexer.width + 1;
 	}
 
-	// Return the height of this grid in number of voxels.
+	// Get the height of this grid in number of voxels.
 	uint32 GetHeight() const
 	{
-		return m_indexer.height + 1;
+		return m_cellsIndexer.height + 1;
 	}
 
-	// Return the depth of this grid in number of voxels.
+	// Get the depth of this grid in number of voxels.
 	uint32 GetDepth() const
 	{
-		return m_indexer.depth + 1;
+		return m_cellsIndexer.depth + 1;
 	}
 
-	// Return the voxel data.
+	// Get the raw pointer to the voxel data.
 	const T* GetVoxelData() const
 	{
 		return m_voxels;
@@ -120,51 +120,51 @@ public:
 		return m_voxelCount;
 	}
 
-	// Write the voxel at a given index.
-	void SetVoxel(uint32 index, const T& value)
+	// Set the voxel value at the given voxel index.
+	void SetVoxel(uint32 voxelIndex, const T& voxelValue)
 	{
-		B3_ASSERT(index < m_voxelCount);
-		m_voxels[index] = value;
-	}
-
-	// Read the voxel at a given index.
-	const T& GetVoxel(uint32 index) const
-	{
-		B3_ASSERT(index < m_voxelCount);
-		return m_voxels[index];
-	}
-
-	// Write the voxel at a given 3D index.
-	void SetVoxel(const b3Index3D& index, const T& value)
-	{
-		B3_ASSERT(ContainsVoxel(index));
-		uint32 voxelIndex = GetVoxelIndex(index);
 		B3_ASSERT(voxelIndex < m_voxelCount);
-		m_voxels[voxelIndex] = value;
+		m_voxels[voxelIndex] = voxelValue;
 	}
 
-	// Read the voxel at a given 3D index.
-	const T& GetVoxel(const b3Index3D& index) const
+	// Get the voxel value at the given voxel index.
+	const T& GetVoxel(uint32 voxelIndex) const
 	{
-		B3_ASSERT(ContainsVoxel(index));
-		uint32 voxelIndex = GetVoxelIndex(index);
 		B3_ASSERT(voxelIndex < m_voxelCount);
 		return m_voxels[voxelIndex];
 	}
 
-	// Return the position in for the voxel at the given voxel index.
-	b3Vec3 GetVoxelPosition(const b3Index3D& index) const
+	// Set the voxel value at the given 3D voxel index.
+	void SetVoxel(const b3Index3D& voxelIndex, const T& voxelValue)
 	{
-		B3_ASSERT(ContainsVoxel(index));
-		return m_indexer.GetCellAABB(index).lowerBound;
+		B3_ASSERT(Contains(voxelIndex));
+		uint32 index1D = GetIndexInVoxelsArray(voxelIndex);
+		B3_ASSERT(index1D < m_voxelCount);
+		m_voxels[index1D] = voxelValue;
 	}
 
-	// Return an interpolated voxel value at the given point inside this grid.
+	// Get the voxel value at the given 3D voxel index.
+	const T& GetVoxel(const b3Index3D& voxelIndex) const
+	{
+		B3_ASSERT(Contains(voxelIndex));
+		uint32 index1D = GetIndexInVoxelsArray(voxelIndex);
+		B3_ASSERT(index1D < m_voxelCount);
+		return m_voxels[index1D];
+	}
+
+	// Get the 3D position of the voxel at the given voxel index.
+	b3Vec3 GetVoxelPosition(const b3Index3D& voxelIndex) const
+	{
+		B3_ASSERT(Contains(voxelIndex));
+		return m_cellsIndexer.GetCellAABB(voxelIndex).lowerBound;
+	}
+
+	// Return an interpolated voxel value at the given point.
 	// The point must be inside this grid. Call Contains() to verify if the point is inside the grid.
 	T Sample(const b3Vec3& point) const
 	{
-		b3Index3D cellIndex = m_indexer.GetCellIndex(point);
-		B3_ASSERT(m_indexer.Contains(cellIndex));
+		b3Index3D cellIndex = m_cellsIndexer.GetCellIndex(point);
+		B3_ASSERT(m_cellsIndexer.Contains(cellIndex));
 
 		b3AABB cellAABB = GetCellAABB(cellIndex);
 		b3Vec3 relPoint = cellAABB.GetRelativePosition(point);
@@ -172,17 +172,16 @@ public:
 		T cellVoxels[8];
 		GetCellVoxels(cellVoxels, cellIndex);
 
-		// Lerp 
-		return InterpolateVoxel(relPoint, cellVoxels);
+		return InterpolateVoxelValue(relPoint, cellVoxels);
 	}
 
-	// Return an interpolated gradient at the given point inside this grid.
+	// Return an interpolated gradient at the given point.
 	// The point must be inside this grid. Call Contains() to verify if the point is inside the grid.
-	// Note: If the gradient is a surface normal don't forget to normalize the value!
+	// Note: If the gradient is a surface normal you must normalize the gradient vector.
 	b3Vec3 SampleGradient(const b3Vec3& point) const
 	{
-		b3Index3D cellIndex = m_indexer.GetCellIndex(point);
-		B3_ASSERT(m_indexer.Contains(cellIndex));
+		b3Index3D cellIndex = m_cellsIndexer.GetCellIndex(point);
+		B3_ASSERT(m_cellsIndexer.Contains(cellIndex));
 
 		b3AABB cellAABB = GetCellAABB(cellIndex);
 		b3Vec3 relPoint = cellAABB.GetRelativePosition(point);
@@ -191,38 +190,38 @@ public:
 		GetCellVoxels(cellVoxels, cellIndex);
 
 		b3Vec3 gradient;
-		gradient.x = InterpolateVoxel(b3Vec3(1, relPoint.y, relPoint.z), cellVoxels) - InterpolateVoxel(b3Vec3(0, relPoint.y, relPoint.z), cellVoxels);
-		gradient.y = InterpolateVoxel(b3Vec3(relPoint.x, 1, relPoint.z), cellVoxels) - InterpolateVoxel(b3Vec3(relPoint.x, 0, relPoint.z), cellVoxels);
-		gradient.z = InterpolateVoxel(b3Vec3(relPoint.x, relPoint.y, 1), cellVoxels) - InterpolateVoxel(b3Vec3(relPoint.x, relPoint.y, 0), cellVoxels);
+		gradient.x = InterpolateVoxelValue(b3Vec3(scalar(1), relPoint.y, relPoint.z), cellVoxels) - InterpolateVoxelValue(b3Vec3(scalar(0), relPoint.y, relPoint.z), cellVoxels);
+		gradient.y = InterpolateVoxelValue(b3Vec3(relPoint.x, scalar(1), relPoint.z), cellVoxels) - InterpolateVoxelValue(b3Vec3(relPoint.x, scalar(0), relPoint.z), cellVoxels);
+		gradient.z = InterpolateVoxelValue(b3Vec3(relPoint.x, relPoint.y, scalar(1)), cellVoxels) - InterpolateVoxelValue(b3Vec3(relPoint.x, relPoint.y, scalar(0)), cellVoxels);
 		return gradient;
 	}
 
 	// Get the width of this grid in number of cells.
 	uint32 GetWidthInCells() const
 	{
-		return m_indexer.width;
+		return m_cellsIndexer.width;
 	}
 	
 	// Get the height of this grid in number of cells.
 	uint32 GetHeightInCells() const
 	{
-		return m_indexer.height;
+		return m_cellsIndexer.height;
 	}
 	
 	// Get the depth of this grid in number of cells.
 	uint32 GetDepthInCells() const
 	{
-		return m_indexer.depth;
+		return m_cellsIndexer.depth;
 	}
 	
-	// Get one full cell (8 voxels) of this grid.
+	// Get one cell (8 voxels) of this grid.
 	void GetCellVoxels(T voxels[8], const b3Index3D& cellIndex) const
 	{
 		B3_ASSERT(ContainsCell(cellIndex));
 
-		b3Index3D::IndexType i = cellIndex.i;
-		b3Index3D::IndexType j = cellIndex.j;
-		b3Index3D::IndexType k = cellIndex.k;
+		b3Index3D::ValueType i = cellIndex.i;
+		b3Index3D::ValueType j = cellIndex.j;
+		b3Index3D::ValueType k = cellIndex.k;
 
 		voxels[0] = GetVoxel(b3Index3D(i, j, k));
 		voxels[1] = GetVoxel(b3Index3D(i, j, k + 1));
@@ -234,38 +233,37 @@ public:
 		voxels[7] = GetVoxel(b3Index3D(i + 1, j + 1, k + 1));
 	}
 
-	// Return he AABB of the cell specified by cellIndex.
+	// Get he AABB of the cell specified by cellIndex.
 	b3AABB GetCellAABB(const b3Index3D& cellIndex) const
 	{
-		return m_indexer.GetCellAABB(cellIndex);
+		return m_cellsIndexer.GetCellAABB(cellIndex);
 	}
 
 	// Get the index of the cell where point lies in.
 	b3Index3D GetCellIndexOfPoint(const b3Vec3& point) const
 	{
-		return m_indexer.GetCellIndex(point);
+		return m_cellsIndexer.GetCellIndex(point);
 	}
 
 	// Get the bounding box for this grid.
 	const b3AABB& GetAABB() const
 	{
-		return m_indexer.aabb;
+		return m_cellsIndexer.aabb;
 	}
 
 	// Does the given cell index point to a cell that is logically inside this grid?
 	bool ContainsCell(const b3Index3D& cellIndex) const
 	{
-		return m_indexer.Contains(cellIndex);
+		return m_cellsIndexer.Contains(cellIndex);
 	}
 
-	// Does the given cell index point to a cell that is logically inside this grid?
-	bool ContainsVoxel(const b3Index3D& voxelIndex) const
+	// Does the given voxel index points to a voxel that is logically inside this grid?
+	bool Contains(const b3Index3D& voxelIndex) const
 	{
-		// Note: This converts an unsigned 32 bit integer to a signed 64 bit integer.
 		return
-			voxelIndex.i >= b3Index3D::IndexType(0) && voxelIndex.i < b3Index3D::IndexType(GetWidth()) &&
-			voxelIndex.j >= b3Index3D::IndexType(0) && voxelIndex.j < b3Index3D::IndexType(GetHeight()) &&
-			voxelIndex.k >= b3Index3D::IndexType(0) && voxelIndex.k < b3Index3D::IndexType(GetDepth());
+			voxelIndex.i >= b3Index3D::ValueType(0) && voxelIndex.i < b3Index3D::ValueType(GetWidth()) &&
+			voxelIndex.j >= b3Index3D::ValueType(0) && voxelIndex.j < b3Index3D::ValueType(GetHeight()) &&
+			voxelIndex.k >= b3Index3D::ValueType(0) && voxelIndex.k < b3Index3D::ValueType(GetDepth());
 	}
 
 	 // Is the given point inside the AABB of this grid?
@@ -274,40 +272,36 @@ public:
 		return ContainsCell(GetCellIndexOfPoint(point));
 	}
 private:
-	// Convert a given 3D index to a 1D voxel index.
-	uint32 GetVoxelIndex(const b3Index3D& index) const
+	// Converts a given 3D index to a 1D index to be used in the voxels array.
+	uint32 GetIndexInVoxelsArray(const b3Index3D& index) const
 	{
-		// Note: This converts an signed 64 bit integer to an unsigned 32 bit integer.
-		uint32 index1D = index.GetOneDimensionalIndex(GetWidth(), GetHeight(), GetDepth());
-		B3_ASSERT(index1D >= 0);
-		return index1D;
+		return uint32(index.GetOneDimensionalIndex(GetWidth(), GetHeight()));
 	}
 
 	// Trilinear interpolation given relative point inside the cell AABB and 8 voxels around the point.
 	// Based on http://en.wikipedia.org/wiki/Trilinear_interpolation
-	T InterpolateVoxel(const b3Vec3& relativePointInCell, const T voxels[8]) const
+	T InterpolateVoxelValue(const b3Vec3& relativePointInCell, const T voxels[8]) const
 	{
-		// Ensure the point is inside the cell AABB.
 		scalar x = b3Clamp(relativePointInCell.x, scalar(0), scalar(1));
 		scalar y = b3Clamp(relativePointInCell.y, scalar(0), scalar(1));
 		scalar z = b3Clamp(relativePointInCell.z, scalar(0), scalar(1));
 
-		// x interpolation
+		// x interpolation:
 		scalar c00 = b3LinearInterpolation(x, voxels[0], voxels[4]);
 		scalar c10 = b3LinearInterpolation(x, voxels[2], voxels[6]);
 		scalar c01 = b3LinearInterpolation(x, voxels[1], voxels[5]);
 		scalar c11 = b3LinearInterpolation(x, voxels[3], voxels[7]);
 
-		// y interpolation
+		// y interpolation:
 		scalar c0 = b3LinearInterpolation(y, c00, c10);
 		scalar c1 = b3LinearInterpolation(y, c01, c11);
 
-		// z interpolation
+		// z interpolation:
 		return b3LinearInterpolation(z, c0, c1);
 	}
 
 	// Cells indexer.
-	b3RegularGridIndexer m_indexer;
+	b3RegularGridIndexer m_cellsIndexer;
 
 	// The voxel data. Owned by this class.
 	T* m_voxels;

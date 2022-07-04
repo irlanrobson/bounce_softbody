@@ -21,23 +21,26 @@
 
 #include <bounce_softbody/common/settings.h>
 
+// The index of an element in a generic three-dimensional matrix structure.
 struct b3Index3D
 {
-	using IndexType = int64;
+	// The actual integer type of the stored indices.
+	using ValueType = int64;
 
-	// Default constructor does nothing from performance.
+	// Default constructor does nothing for performance.
 	b3Index3D() { }
 
-	// Construct this 3D index from indices.
-	b3Index3D(IndexType _i, IndexType _j, IndexType _k)
+	// Construct this 3D index from three values.
+	b3Index3D(ValueType _i, ValueType _j, ValueType _k)
 	{
 		i = _i;
 		j = _j;
 		k = _k;
 	}
 
-	// Converts this 3D index into an unidimensional index.
-	IndexType GetOneDimensionalIndex(IndexType iSize, IndexType jSize, IndexType kSize) const
+	// Converts this three-dimensional index into an unidimensional value.
+	// This is usefull if you store your matrix data in a single unidimensional array.
+	ValueType GetOneDimensionalIndex(ValueType iSize, ValueType jSize) const
 	{
 		return i +
 			j * iSize +
@@ -45,7 +48,7 @@ struct b3Index3D
 	}
 
 	// The three indices.
-	int64 i, j, k;
+	ValueType i, j, k;
 };
 
 #endif

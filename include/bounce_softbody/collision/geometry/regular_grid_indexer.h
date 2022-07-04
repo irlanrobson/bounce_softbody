@@ -22,12 +22,13 @@
 #include <bounce_softbody/collision/geometry/aabb.h>
 #include <bounce_softbody/collision/geometry/index_3d.h>
 
-// Helper structure to handle the cells in a regular grid.
+// Cells indexer.
+// This is a helper structure to handle the cells in a regular grid.
 // This grid indexer does not contain any grid data. It was designed  
 // to be used in an actual regular grid implementation.
 struct b3RegularGridIndexer 
 {
-	// Default ctor sets all data to zero.
+	// Default ctor creates an invalid indexer.
 	b3RegularGridIndexer() 
 	{
 		aabb.lowerBound.SetZero();
@@ -37,7 +38,7 @@ struct b3RegularGridIndexer
 		depth = 0;
 	}
 	
-	// Creates a grid from AABB and grid dimensions.
+	// Construct this grid from AABB and dimensions.
 	b3RegularGridIndexer(const b3AABB& _aabb, uint32 _width, uint32 _height, uint32 _depth)
 	{
 		aabb = _aabb;
@@ -46,7 +47,7 @@ struct b3RegularGridIndexer
 		depth = _depth;
 	}
 
-	// Does the given cell contains this index?
+	// Does the given index points to a cell that is inside this grid?
 	bool Contains(const b3Index3D& index) const
 	{
 		return index.i >= 0 && index.i < width &&
@@ -54,7 +55,7 @@ struct b3RegularGridIndexer
 			index.k >= 0 && index.k < depth;
 	}
 
-	// Returns the origin of this grid.
+	// Get the origin of this grid.
 	b3Vec3 GetOrigin() const
 	{
 		return aabb.lowerBound;
@@ -98,7 +99,7 @@ struct b3RegularGridIndexer
 		return b3AABB(GetCellCenter(index), GetCellRadius());
 	}
 
-	// Return the index of the cell where the given point is in.
+	// Get the index of the cell where the given point is in.
 	b3Index3D GetCellIndex(const b3Vec3& point) const
 	{
 		b3Vec3 cellSize = GetCellSize();
@@ -107,17 +108,15 @@ struct b3RegularGridIndexer
 		return b3Index3D(floor(cellPoint.x), floor(cellPoint.y), floor(cellPoint.z));
 	}
 
-	// Convert a 3D cell index to an unidimensional value.
+	// Converts a three-dimensional cell index to an unidimensional value.
+	// This is usefull if you store all your grid data in a single unidimensional array.
 	uint32 GetOneDimensionalIndex(const b3Index3D& index) const
 	{
 		B3_ASSERT(Contains(index));
-		return index.GetOneDimensionalIndex(width, height, depth);
+		return uint32(index.GetOneDimensionalIndex(width, height));
 	}
 
-	// Grid bounding box.
 	b3AABB aabb;
-	
-	// Grid dimensions.
 	uint32 width;
 	uint32 height;
 	uint32 depth;
