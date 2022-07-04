@@ -57,13 +57,13 @@ bool b3SDFShape::CollideSphere(b3SphereManifold* manifold, const b3Sphere& spher
 		return false;
 	}
 
-	scalar distance = m_sdf->GetDistance(center);
+	scalar distance = m_sdf->Distance(center);
 	if (distance > radius)
 	{
 		return false;
 	}
 	
-	b3Vec3 normal = m_sdf->GetNormal(center);
+	b3Vec3 normal = m_sdf->Normal(center);
 	b3Vec3 surfacePoint = center - distance * normal;
 
 	manifold->point = b3Mul(m_xf, surfacePoint);

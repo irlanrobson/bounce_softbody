@@ -53,7 +53,7 @@ public:
 	// Return the signed distance from a given point to the mesh.
 	// The point must be inside the grid AABB. Check if the point is inside 
 	// using Contains().
-	scalar GetDistance(const b3Vec3& point) const
+	scalar Distance(const b3Vec3& point) const
 	{
 		B3_ASSERT(m_voxelGrid.Contains(point));
 		return m_voxelGrid.Sample(point);
@@ -62,7 +62,7 @@ public:
 	// Return the outward pointing normal of a given point to the mesh.
 	// The point must be inside the grid AABB. Check if the point is inside 
 	// using Contains().
-	b3Vec3 GetNormal(const b3Vec3& point) const
+	b3Vec3 Normal(const b3Vec3& point) const
 	{
 		B3_ASSERT(m_voxelGrid.Contains(point));
 		b3Vec3 gradient = m_voxelGrid.SampleGradient(point);
