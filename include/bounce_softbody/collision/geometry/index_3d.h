@@ -22,16 +22,14 @@
 #include <bounce_softbody/common/settings.h>
 
 // The index of an element in a generic three-dimensional matrix structure.
+// This uses 64-bit signed integers for storing indices.
 struct b3Index3D
 {
-	// The actual integer type of the stored indices.
-	using ValueType = int64;
-
 	// Default constructor does nothing for performance.
 	b3Index3D() { }
 
 	// Construct this 3D index from three values.
-	b3Index3D(ValueType _i, ValueType _j, ValueType _k)
+	b3Index3D(int64 _i, int64 _j, int64 _k)
 	{
 		i = _i;
 		j = _j;
@@ -40,7 +38,7 @@ struct b3Index3D
 
 	// Converts this three-dimensional index into an unidimensional value.
 	// This is usefull if you store your matrix data in a single unidimensional array.
-	ValueType GetOneDimensionalIndex(ValueType iSize, ValueType jSize) const
+	int64 GetOneDimensionalIndex(uint32 iSize, uint32 jSize) const
 	{
 		return i +
 			j * iSize +
@@ -48,7 +46,7 @@ struct b3Index3D
 	}
 
 	// The three indices.
-	ValueType i, j, k;
+	int64 i, j, k;
 };
 
 #endif

@@ -23,61 +23,65 @@
 
 struct b3Mesh;
 
-// This binds a triangle mesh to a signed distance field (SDF).
+// For a given triangle mesh, implements the abstraction called "distance field" (aka "distance volume" or "distance function").
+// It provides very fast triangle mesh distance queries for 3D points. It returns negative distances if the point is inside the mesh volume.
+// This class also knows how to build the distance field for a triangle mesh.
 class b3SDF
 {
 public:
-	// Default ctor.
-	b3SDF() : m_mesh(nullptr) { }
+	// Build the signed distance field from a given mesh and cell size. You must also provide 
+	// a extension value that tells how much the mesh AABB should be extended by. 
+	// Currently this is very ineffective. Consider saving an instance of this object after building it. 
+	void Build(const b3Mesh* mesh, const b3Vec3& cellSize, scalar aabbVolumeExtension = scalar(1));
 
-	// Create the signed distance field from a given mesh and cell size.    
-	// This is very ineffective. Consider saving and loading the voxel grid. 
-	void Create(const b3Mesh* mesh, const b3Vec3& cellSize, scalar aabbVolumeExtension = scalar(1));
-
-	// Get the associated mesh.
-	const b3Mesh* GetMesh() { return m_mesh; }
+	// Get the triangle mesh.
 	const b3Mesh* GetMesh() const { return m_mesh; }
 
-	// Get the associated voxel grid.
+	// Get the voxel grid.
 	const b3ScalarVoxelGrid& GetVoxelGrid() const { return m_voxelGrid; }
 
-	// Return the AABB of the voxel grid.
-	const b3AABB& GetAABB() const { return m_voxelGrid.GetAABB(); }
+	// Get the AABB of the voxel grid.
+	const b3AABB& GetAABB() const;
 
-	// Check if the given point is inside this grid AABB.
-	bool Contains(const b3Vec3& point) const
-	{
-		return m_voxelGrid.Contains(point);
-	}
+	// Check if the given point is inside the voxel grid.
+	bool Contains(const b3Vec3& point) const;
 
-	// Return the signed distance from a given point to the mesh.
-	// The point must be inside the grid AABB. Check if the point is inside 
+	// Return the signed distance from a given point to the mesh. Distances are negative for internal points.
+	// The point must be inside the voxel grid. Check if the point is inside the voxel grid  
 	// using Contains().
-	scalar Distance(const b3Vec3& point) const
-	{
-		B3_ASSERT(m_voxelGrid.Contains(point));
-		return m_voxelGrid.Sample(point);
-	}
+	scalar Distance(const b3Vec3& point) const;
 
 	// Return the outward pointing normal of a given point to the mesh.
-	// The point must be inside the grid AABB. Check if the point is inside 
+	// The point must be inside the voxel grid. Check if the point is inside the voxel grid 
 	// using Contains().
-	b3Vec3 Normal(const b3Vec3& point) const
-	{
-		B3_ASSERT(m_voxelGrid.Contains(point));
-		b3Vec3 gradient = m_voxelGrid.SampleGradient(point);
-		return b3Normalize(gradient);
-	}
+	b3Vec3 Normal(const b3Vec3& point) const;
 protected:
-	// Compute the signed distances and associate them to voxel grid. 
-	// This is very ineffective.
 	void ComputeDistances();
 
-	// The mesh pointer.
-	const b3Mesh* m_mesh;
-
-	// Voxel grid containing signed distances at voxel vertices.
+	const b3Mesh* m_mesh = nullptr;
 	b3ScalarVoxelGrid m_voxelGrid;
 };
 
+inline const b3AABB& b3SDF::GetAABB() const 
+{ 
+	return m_voxelGrid.GetAABB(); 
+}
+
+inline bool b3SDF::Contains(const b3Vec3& point) const
+{
+	return m_voxelGrid.Contains(point);
+}
+
+inline scalar b3SDF::Distance(const b3Vec3& point) const
+{
+	B3_ASSERT(m_voxelGrid.Contains(point));
+	return m_voxelGrid.Sample(point);
+}
+
+inline b3Vec3 b3SDF::Normal(const b3Vec3& point) const
+{
+	B3_ASSERT(m_voxelGrid.Contains(point));
+	b3Vec3 gradient = m_voxelGrid.SampleGradient(point);
+	return b3Normalize(gradient);
+}
 #endif

@@ -50,7 +50,8 @@ struct b3RegularGridIndexer
 	// Does the given index points to a cell that is inside this grid?
 	bool Contains(const b3Index3D& index) const
 	{
-		return index.i >= 0 && index.i < width &&
+		return 
+			index.i >= 0 && index.i < width &&
 			index.j >= 0 && index.j < height &&
 			index.k >= 0 && index.k < depth;
 	}
@@ -105,7 +106,7 @@ struct b3RegularGridIndexer
 		b3Vec3 cellSize = GetCellSize();
 		b3Vec3 localPoint = point - GetOrigin();
 		b3Vec3 cellPoint = localPoint / cellSize;
-		return b3Index3D(floor(cellPoint.x), floor(cellPoint.y), floor(cellPoint.z));
+		return b3Index3D(std::floor(cellPoint.x), std::floor(cellPoint.y), std::floor(cellPoint.z));
 	}
 
 	// Converts a three-dimensional cell index to an unidimensional value.

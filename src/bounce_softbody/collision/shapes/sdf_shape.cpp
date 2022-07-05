@@ -48,23 +48,23 @@ b3AABB b3SDFShape::ComputeAABB() const
 bool b3SDFShape::CollideSphere(b3SphereManifold* manifold, const b3Sphere& sphere) const
 {
 	// Convert the sphere center to local space of SDF.
-	b3Vec3 center = b3MulT(m_xf, sphere.vertex);
+	b3Vec3 point = b3MulT(m_xf, sphere.vertex);
 	scalar radius = sphere.radius + m_radius;
 
 	// The sphere center must be contained in the SDF's AABB.
-	if (m_sdf->Contains(center) == false)
+	if (m_sdf->Contains(point) == false)
 	{
 		return false;
 	}
 
-	scalar distance = m_sdf->Distance(center);
+	scalar distance = m_sdf->Distance(point);
 	if (distance > radius)
 	{
 		return false;
 	}
 	
-	b3Vec3 normal = m_sdf->Normal(center);
-	b3Vec3 surfacePoint = center - distance * normal;
+	b3Vec3 normal = m_sdf->Normal(point);
+	b3Vec3 surfacePoint = point - distance * normal;
 
 	manifold->point = b3Mul(m_xf, surfacePoint);
 	manifold->normal = b3Mul(m_xf.rotation, normal);
@@ -90,12 +90,11 @@ void b3SDFShape::Draw(b3Draw* draw) const
 		draw->DrawSolidTriangle(N, A, B, C, b3Color_gray);
 		draw->DrawSolidTriangle(-N, A, C, B, b3Color_gray);
 	}
-
-	const b3ScalarVoxelGrid& voxelGrid = m_sdf->GetVoxelGrid();
-	b3AABB aabb = voxelGrid.GetAABB();
-	aabb.Transform(m_xf);
+	
+	b3AABB aabb = ComputeAABB();
 	draw->DrawAABB(aabb, b3Color_pink);
 	
+	const b3ScalarVoxelGrid& voxelGrid = m_sdf->GetVoxelGrid();
 	for (uint32 i = 0; i < voxelGrid.GetWidthInCells(); ++i)
 	{
 		for (uint32 j = 0; j < voxelGrid.GetHeightInCells(); ++j)

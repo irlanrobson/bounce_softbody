@@ -25,7 +25,8 @@ public:
 	SDFContact()
 	{
 		m_sphereMesh.Scale(b3Vec3(6.0f, 3.0f, 3.0f));
-		m_sdf.Create(&m_sphereMesh, b3Vec3(1.0f, 1.0f, 1.0f), 1.0f);
+		
+		m_sdf.Build(&m_sphereMesh, b3Vec3(1.0f, 1.0f, 1.0f), 1.0f);
 
 		m_clothMesh.Translate(b3Vec3(0.0f, 10.0f, 0.0f));
 

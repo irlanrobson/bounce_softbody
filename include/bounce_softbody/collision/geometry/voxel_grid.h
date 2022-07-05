@@ -16,6 +16,8 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
+// Based on https://github.com/oprogramadorreal/vize's VoxelGrid. VIZE's license:
+
 /*
 * MIT License
 *
@@ -45,10 +47,10 @@
 
 #include <bounce_softbody/collision/geometry/regular_grid_indexer.h>
 
-// A regular grid of "voxels" aka "3D pixels". 
+// A regular grid of "voxels" (aka "3D pixels"). 
+// This can be seen as a "volumetric image".
+// According to Wikipedia: "A voxel represents a value on a regular grid in three-dimensional space."
 // See https://en.wikipedia.org/wiki/Voxel.
-// Based on https://github.com/oprogramadorreal/vize's VoxelGrid. 
-// VIZE's license is copied over above. 
 template <typename T>
 class b3VoxelGrid 
 {
@@ -172,7 +174,7 @@ public:
 		T cellVoxels[8];
 		GetCellVoxels(cellVoxels, cellIndex);
 
-		return InterpolateVoxelValue(relPoint, cellVoxels);
+		return InterpolatedVoxelValue(relPoint, cellVoxels);
 	}
 
 	// Return an interpolated gradient at the given point.
@@ -190,9 +192,9 @@ public:
 		GetCellVoxels(cellVoxels, cellIndex);
 
 		b3Vec3 gradient;
-		gradient.x = InterpolateVoxelValue(b3Vec3(scalar(1), relPoint.y, relPoint.z), cellVoxels) - InterpolateVoxelValue(b3Vec3(scalar(0), relPoint.y, relPoint.z), cellVoxels);
-		gradient.y = InterpolateVoxelValue(b3Vec3(relPoint.x, scalar(1), relPoint.z), cellVoxels) - InterpolateVoxelValue(b3Vec3(relPoint.x, scalar(0), relPoint.z), cellVoxels);
-		gradient.z = InterpolateVoxelValue(b3Vec3(relPoint.x, relPoint.y, scalar(1)), cellVoxels) - InterpolateVoxelValue(b3Vec3(relPoint.x, relPoint.y, scalar(0)), cellVoxels);
+		gradient.x = InterpolatedVoxelValue(b3Vec3(scalar(1), relPoint.y, relPoint.z), cellVoxels) - InterpolatedVoxelValue(b3Vec3(scalar(0), relPoint.y, relPoint.z), cellVoxels);
+		gradient.y = InterpolatedVoxelValue(b3Vec3(relPoint.x, scalar(1), relPoint.z), cellVoxels) - InterpolatedVoxelValue(b3Vec3(relPoint.x, scalar(0), relPoint.z), cellVoxels);
+		gradient.z = InterpolatedVoxelValue(b3Vec3(relPoint.x, relPoint.y, scalar(1)), cellVoxels) - InterpolatedVoxelValue(b3Vec3(relPoint.x, relPoint.y, scalar(0)), cellVoxels);
 		return gradient;
 	}
 
@@ -219,9 +221,9 @@ public:
 	{
 		B3_ASSERT(ContainsCell(cellIndex));
 
-		b3Index3D::ValueType i = cellIndex.i;
-		b3Index3D::ValueType j = cellIndex.j;
-		b3Index3D::ValueType k = cellIndex.k;
+		int64 i = cellIndex.i;
+		int64 j = cellIndex.j;
+		int64 k = cellIndex.k;
 
 		voxels[0] = GetVoxel(b3Index3D(i, j, k));
 		voxels[1] = GetVoxel(b3Index3D(i, j, k + 1));
@@ -261,9 +263,9 @@ public:
 	bool Contains(const b3Index3D& voxelIndex) const
 	{
 		return
-			voxelIndex.i >= b3Index3D::ValueType(0) && voxelIndex.i < b3Index3D::ValueType(GetWidth()) &&
-			voxelIndex.j >= b3Index3D::ValueType(0) && voxelIndex.j < b3Index3D::ValueType(GetHeight()) &&
-			voxelIndex.k >= b3Index3D::ValueType(0) && voxelIndex.k < b3Index3D::ValueType(GetDepth());
+			voxelIndex.i >= int64(0) && voxelIndex.i < int64(GetWidth()) &&
+			voxelIndex.j >= int64(0) && voxelIndex.j < int64(GetHeight()) &&
+			voxelIndex.k >= int64(0) && voxelIndex.k < int64(GetDepth());
 	}
 
 	 // Is the given point inside the AABB of this grid?
@@ -280,7 +282,7 @@ private:
 
 	// Trilinear interpolation given relative point inside the cell AABB and 8 voxels around the point.
 	// Based on http://en.wikipedia.org/wiki/Trilinear_interpolation
-	T InterpolateVoxelValue(const b3Vec3& relativePointInCell, const T voxels[8]) const
+	T InterpolatedVoxelValue(const b3Vec3& relativePointInCell, const T voxels[8]) const
 	{
 		scalar x = b3Clamp(relativePointInCell.x, scalar(0), scalar(1));
 		scalar y = b3Clamp(relativePointInCell.y, scalar(0), scalar(1));

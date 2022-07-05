@@ -176,7 +176,7 @@ static scalar b3SignedDistance(const b3Mesh* mesh, const b3Vec3& point, scalar f
 	return closestDistance;
 }
 
-void b3SDF::Create(const b3Mesh* mesh, const b3Vec3& cellSize, scalar aabbVolumeExtension)
+void b3SDF::Build(const b3Mesh* mesh, const b3Vec3& cellSize, scalar aabbVolumeExtension)
 {
 	B3_ASSERT(m_mesh == nullptr);
 	m_mesh = mesh;
