@@ -29,6 +29,12 @@ struct b3Mesh;
 class b3SDF
 {
 public:
+	// Default ctor.
+	b3SDF() = default;
+	
+	// Default dtor.
+	~b3SDF() = default;
+
 	// Build the signed distance field from a given mesh and cell size. You can also provide 
 	// an extension value that tells how much the mesh AABB should be extended by. 
 	// Currently this is very ineffective. Consider saving an instance of this object after building it. 
