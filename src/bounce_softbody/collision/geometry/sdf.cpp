@@ -23,69 +23,6 @@
 
 // Based on https://github.com/oprogramadorreal/vize's TriangleMeshDistanceFieldBuilder.
 
-static b3Vec3 b3ClosestPointOnTriangle(const b3Vec3& A, const b3Vec3& B, const b3Vec3& C, 
-	const b3Vec3& Q)
-{
-	// Test vertex regions
-	scalar wAB[3], wBC[3], wCA[3];
-	b3BarycentricCoordinates(wAB, A, B, Q);
-	b3BarycentricCoordinates(wBC, B, C, Q);
-	b3BarycentricCoordinates(wCA, C, A, Q);
-
-	// R A
-	if (wAB[1] <= scalar(0) && wCA[0] <= scalar(0))
-	{
-		return A;
-	}
-
-	// R B
-	if (wAB[0] <= scalar(0) && wBC[1] <= scalar(0))
-	{
-		return B;
-	}
-
-	// R C
-	if (wBC[0] <= scalar(0) && wCA[1] <= scalar(0))
-	{
-		return C;
-	}
-
-	// Test edge regions		
-	scalar wABC[4];
-	b3BarycentricCoordinates(wABC, A, B, C, Q);
-	
-	// R AB
-	if (wAB[0] > scalar(0) && wAB[1] > scalar(0) && wABC[3] * wABC[2] <= scalar(0))
-	{
-		B3_ASSERT(wAB[2] > scalar(0));
-		return (wAB[0] * A + wAB[1] * B) / wAB[2];
-	}
-
-	// R BC
-	if (wBC[0] > scalar(0) && wBC[1] > scalar(0) && wABC[3] * wABC[0] <= scalar(0))
-	{
-		B3_ASSERT(wBC[2] > scalar(0));
-		return (wBC[0] * B + wBC[1] * C) / wBC[2];
-	}
-
-	// R CA
-	if (wCA[0] > scalar(0) && wCA[1] > scalar(0) && wABC[3] * wABC[1] <= scalar(0))
-	{
-		B3_ASSERT(wCA[2] > scalar(0));
-		return (wCA[0] * C + wCA[1] * A) / wCA[2];
-	}
-
-	if (wABC[3] == scalar(0))
-	{
-		// Return the closest point on largest segment?
-		return A;
-	}
-
-	// R ABC/ACB
-	B3_ASSERT(wABC[3] > scalar(0));
-	return (wABC[0] * A + wABC[1] * B + wABC[2] * C) / wABC[3];
-}
-
 static bool b3IsPointInsideMesh(const b3Mesh* mesh, const b3Vec3& point, scalar farDistance)
 {
 	const auto isInside = [&mesh, &point](const b3Vec3& farPoint) -> bool 
@@ -128,7 +65,7 @@ static bool b3IsPointInsideMesh(const b3Mesh* mesh, const b3Vec3& point, scalar 
 	};
 
 	uint32 inCount = 0;
-
+	
 	for (uint32 i = 0; i < 5 && inCount < 3; ++i) 
 	{
 		if (isInside(farPoints[i])) 
@@ -210,7 +147,7 @@ void b3SDF::ComputeDistances()
 
 		if ((progress - lastProgress) >= scalar(1)) 
 		{
-			b3Log("[b3SDF] Calculating distances... %.0f%% - %d/%d\n", progress, count, m_voxelGrid.GetVoxelCount());
+			b3Log("[b3SDF] Computing distances... %.0f%% - %d/%d\n", progress, count, m_voxelGrid.GetVoxelCount());
 			lastProgress = progress;
 		}
 	};
