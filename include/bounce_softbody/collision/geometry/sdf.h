@@ -29,8 +29,8 @@ struct b3Mesh;
 class b3SDF
 {
 public:
-	// Build the signed distance field from a given mesh and cell size. You must also provide 
-	// a extension value that tells how much the mesh AABB should be extended by. 
+	// Build the signed distance field from a given mesh and cell size. You can also provide 
+	// an extension value that tells how much the mesh AABB should be extended by. 
 	// Currently this is very ineffective. Consider saving an instance of this object after building it. 
 	void Build(const b3Mesh* mesh, const b3Vec3& cellSize, scalar aabbVolumeExtension = scalar(1));
 
