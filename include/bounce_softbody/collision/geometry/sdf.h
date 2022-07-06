@@ -80,13 +80,11 @@ inline bool b3SDF::Contains(const b3Vec3& point) const
 
 inline scalar b3SDF::Distance(const b3Vec3& point) const
 {
-	B3_ASSERT(m_voxelGrid.Contains(point));
 	return m_voxelGrid.Sample(point);
 }
 
 inline b3Vec3 b3SDF::Normal(const b3Vec3& point) const
 {
-	B3_ASSERT(m_voxelGrid.Contains(point));
 	b3Vec3 gradient = m_voxelGrid.SampleGradient(point);
 	return b3Normalize(gradient);
 }
