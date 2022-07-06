@@ -235,7 +235,7 @@ public:
 		voxels[7] = GetVoxel(b3Index3D(i + 1, j + 1, k + 1));
 	}
 
-	// Get he AABB of the cell specified by cellIndex.
+	// Get the AABB of the cell specified by cellIndex.
 	b3AABB GetCellAABB(const b3Index3D& cellIndex) const
 	{
 		return m_cellsIndexer.GetCellAABB(cellIndex);
