@@ -335,14 +335,13 @@ bool b3TriangleShape::RayCast(b3RayCastOutput* output, const b3RayCastInput& inp
 
 	b3Vec3 v1 = m_vertex1, v2 = m_vertex2, v3 = m_vertex3;
 	b3Vec3 n = b3Cross(v2 - v1, v3 - v1);
-	scalar len = b3Length(n);
-
-	if (len == scalar(0))
+	
+	if (b3LengthSquared(n) < B3_EPSILON * B3_EPSILON)
 	{
 		return false;
 	}
 
-	n /= len;
+	n.Normalize();
 
 	scalar num = b3Dot(n, v1 - p1);
 	scalar den = b3Dot(n, d);
@@ -352,19 +351,17 @@ bool b3TriangleShape::RayCast(b3RayCastOutput* output, const b3RayCastInput& inp
 		return false;
 	}
 
-	scalar fraction = num / den;
+	scalar t = num / den;
 
 	// Is the intersection not on the segment?
-	if (fraction < scalar(0) || maxFraction < fraction)
+	if (t < scalar(0) || maxFraction < t)
 	{
 		return false;
 	}
 
-	b3Vec3 Q = p1 + fraction * d;
+	b3Vec3 Q = p1 + t * d;
 
-	b3Vec3 A = v1;
-	b3Vec3 B = v2;
-	b3Vec3 C = v3;
+	b3Vec3 A = v1, B = v2, C = v3;
 
 	b3Vec3 AB = B - A;
 	b3Vec3 AC = C - A;
@@ -387,7 +384,7 @@ bool b3TriangleShape::RayCast(b3RayCastOutput* output, const b3RayCastInput& inp
 	// Is the intersection on the triangle?
 	if (u >= scalar(0) && v >= scalar(0) && w >= scalar(0))
 	{
-		output->fraction = fraction;
+		output->fraction = t;
 
 		// Does the ray start from below or above the triangle?
 		if (num > scalar(0))
