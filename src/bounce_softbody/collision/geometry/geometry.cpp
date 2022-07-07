@@ -37,8 +37,10 @@ b3Vec3 b3ClosestPointOnSegment(const b3Vec3& A, const b3Vec3& B,
 	{
 		return A;
 	}
-
-	return B;
+	else
+	{
+		return B;
+	}
 }
 
 b3Vec3 b3ClosestPointOnTriangle(const b3Vec3& A, const b3Vec3& B, const b3Vec3& C,
