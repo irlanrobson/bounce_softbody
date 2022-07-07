@@ -67,42 +67,12 @@ inline void b3BarycentricCoordinates(scalar out[4],
 	out[3] = divisor;
 }
 
-// Convert a point Q from Cartesian coordinates to Barycentric coordinates (u, v, w, x) 
-// with respect to a tetrahedron ABCD.
-// The last output value is the (positive) divisor.
-inline void b3BarycentricCoordinates(scalar out[5],
-	const b3Vec3& A, const b3Vec3& B, const b3Vec3& C, const b3Vec3& D,
-	const b3Vec3& Q)
-{
-	b3Vec3 AB = B - A;
-	b3Vec3 AC = C - A;
-	b3Vec3 AD = D - A;
-
-	b3Vec3 QA = A - Q;
-	b3Vec3 QB = B - Q;
-	b3Vec3 QC = C - Q;
-	b3Vec3 QD = D - Q;
-
-	scalar divisor = b3Det(AB, AC, AD);
-	scalar sign = b3Sign(divisor);
-
-	out[0] = sign * b3Det(QB, QC, QD);
-	out[1] = sign * b3Det(QA, QD, QC);
-	out[2] = sign * b3Det(QA, QB, QD);
-	out[3] = sign * b3Det(QA, QC, QB);
-	out[4] = sign * divisor;
-}
-
 // Compute the closest point on a segment AB to a point Q.
 b3Vec3 b3ClosestPointOnSegment(const b3Vec3& A, const b3Vec3& B,
 	const b3Vec3& Q);
 
 // Compute the closest point on a triangle ABC to a point Q.
 b3Vec3 b3ClosestPointOnTriangle(const b3Vec3& A, const b3Vec3& B, const b3Vec3& C,
-	const b3Vec3& Q);
-
-// Compute the closest point on a tetrahedron ABCD to a point Q.
-b3Vec3 b3ClosestPointOnTetrahedron(const b3Vec3& A, const b3Vec3& B, const b3Vec3& C, const b3Vec3& D,
 	const b3Vec3& Q);
 
 #endif

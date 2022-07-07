@@ -21,120 +21,80 @@
 b3Vec3 b3ClosestPointOnSegment(const b3Vec3& A, const b3Vec3& B,
 	const b3Vec3& Q)
 {
+	// Test vertex regions
 	scalar wAB[3];
 	b3BarycentricCoordinates(wAB, A, B, Q);
 
-	// If the point is on the segment return projection.
-	if (wAB[0] > scalar(0) && wAB[1] > scalar(0) && wAB[2] > scalar(0))
-	{
-		return (wAB[0] * A + wAB[1] * B) / wAB[2];
-	}
-
-	scalar dA = b3DistanceSquared(A, Q);
-	scalar dB = b3DistanceSquared(B, Q);
-
-	if (dA < dB)
+	// R A
+	if (wAB[1] <= scalar(0))
 	{
 		return A;
 	}
-	else
+
+	// R B
+	if (wAB[0] <= scalar(0))
 	{
 		return B;
 	}
+
+	// R AB
+	B3_ASSERT(wAB[2] > scalar(0));
+	return (wAB[0] * A + wAB[1] * B) / wAB[2];
 }
 
 b3Vec3 b3ClosestPointOnTriangle(const b3Vec3& A, const b3Vec3& B, const b3Vec3& C,
 	const b3Vec3& Q)
 {
+	// Test vertex regions
+	scalar wAB[3], wBC[3], wCA[3];
+	b3BarycentricCoordinates(wAB, A, B, Q);
+	b3BarycentricCoordinates(wBC, B, C, Q);
+	b3BarycentricCoordinates(wCA, C, A, Q);
+
+	// R A
+	if (wAB[1] <= scalar(0) && wCA[0] <= scalar(0))
+	{
+		return A;
+	}
+
+	// R B
+	if (wAB[0] <= scalar(0) && wBC[1] <= scalar(0))
+	{
+		return B;
+	}
+
+	// R C
+	if (wBC[0] <= scalar(0) && wCA[1] <= scalar(0))
+	{
+		return C;
+	}
+
+	// Test edge regions		
 	scalar wABC[4];
 	b3BarycentricCoordinates(wABC, A, B, C, Q);
 
-	// If the point is on the triangle return projection.
-	if (wABC[0] > scalar(0) && wABC[1] > scalar(0) && wABC[2] > scalar(0) && wABC[3] > scalar(0))
+	// R AB
+	if (wAB[0] > scalar(0) && wAB[1] > scalar(0) && wABC[3] * wABC[2] <= scalar(0))
 	{
-		return (wABC[0] * A + wABC[1] * B + wABC[2] * C) / wABC[3];
+		B3_ASSERT(wAB[2] > scalar(0));
+		return (wAB[0] * A + wAB[1] * B) / wAB[2];
 	}
 
-	b3Vec3 closestPoint = Q;
-	scalar closestDistanceSquared = B3_MAX_SCALAR;
-
-	b3Vec3 cAB = b3ClosestPointOnSegment(A, B, Q);
-	scalar dAB = b3DistanceSquared(cAB, Q);
-	if (dAB < closestDistanceSquared)
+	// R BC
+	if (wBC[0] > scalar(0) && wBC[1] > scalar(0) && wABC[3] * wABC[0] <= scalar(0))
 	{
-		closestDistanceSquared = dAB;
-		closestPoint = cAB;
+		B3_ASSERT(wBC[2] > scalar(0));
+		return (wBC[0] * B + wBC[1] * C) / wBC[2];
 	}
 
-	b3Vec3 cBC = b3ClosestPointOnSegment(B, C, Q);
-	scalar dBC = b3DistanceSquared(cBC, Q);
-	if (dBC < closestDistanceSquared)
+	// R CA
+	if (wCA[0] > scalar(0) && wCA[1] > scalar(0) && wABC[3] * wABC[1] <= scalar(0))
 	{
-		closestDistanceSquared = dBC;
-		closestPoint = cBC;
+		B3_ASSERT(wCA[2] > scalar(0));
+		return (wCA[0] * C + wCA[1] * A) / wCA[2];
 	}
 
-	b3Vec3 cCA = b3ClosestPointOnSegment(C, A, Q);
-	scalar dCA = b3DistanceSquared(cCA, Q);
-	if (dCA < closestDistanceSquared)
-	{
-		closestDistanceSquared = dCA;
-		closestPoint = cCA;
-	}
-
-	return closestPoint;
-}
-
-b3Vec3 b3ClosestPointOnTetrahedron(const b3Vec3& A, const b3Vec3& B, const b3Vec3& C, const b3Vec3& D,
-	const b3Vec3& Q)
-{
-	scalar wABCD[5];
-	b3BarycentricCoordinates(wABCD, A, B, C, D, Q);
-
-	// If the point is inside the tetrahedron return itself.
-	if (wABCD[0] > scalar(0) && wABCD[1] > scalar(0) && wABCD[2] > scalar(0) && wABCD[3] > scalar(0) && wABCD[4] > scalar(0))
-	{
-		return Q;
-	}
-
-	b3Vec3 closestPoint = Q;
-	scalar closestDistanceSquared = B3_MAX_SCALAR;
-
-	// ABC
-	b3Vec3 cABC = b3ClosestPointOnTriangle(Q, A, B, C);
-	scalar dABC = b3DistanceSquared(cABC, Q);
-	if (dABC < closestDistanceSquared)
-	{
-		closestDistanceSquared = dABC;
-		closestPoint = cABC;
-	}
-
-	// ACD
-	b3Vec3 cACD = b3ClosestPointOnTriangle(Q, A, C, D);
-	scalar dACD = b3DistanceSquared(cACD, Q);
-	if (dACD < closestDistanceSquared)
-	{
-		closestDistanceSquared = dACD;
-		closestPoint = cACD;
-	}
-
-	// ADB
-	b3Vec3 cADB = b3ClosestPointOnTriangle(Q, A, D, B);
-	scalar dADB = b3DistanceSquared(cADB, Q);
-	if (dADB < closestDistanceSquared)
-	{
-		closestDistanceSquared = dADB;
-		closestPoint = cADB;
-	}
-
-	// BDC
-	b3Vec3 cBDC = b3ClosestPointOnTriangle(Q, B, D, C);
-	scalar dBDC = b3DistanceSquared(cBDC, Q);
-	if (dBDC < closestDistanceSquared)
-	{
-		closestDistanceSquared = dBDC;
-		closestPoint = cBDC;
-	}
-
-	return closestPoint;
+	// R ABC/ACB
+	B3_ASSERT(wABC[3] > scalar(0));
+	return (wABC[0] * A + wABC[1] * B + wABC[2] * C) / wABC[3];
 }
