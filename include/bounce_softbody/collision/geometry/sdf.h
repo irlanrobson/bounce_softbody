@@ -36,8 +36,8 @@ public:
 	~b3SDF() = default;
 
 	// Build the signed distance field from a given mesh and cell size. 
-	// The mesh is assumed to be healthy (i.e. have non-degenerate triangles). This code doesn't check mesh consistency. 
 	// You can also provide an extension value that tells how much the mesh AABB should be extended by. 
+	// The mesh is assumed to be healthy (i.e. have non-degenerate triangles). This code doesn't check mesh consistency. 
 	// Currently this is very ineffective. Consider saving an instance of this object after building it. 
 	void Build(const b3Mesh* mesh, const b3Vec3& cellSize, scalar aabbVolumeExtension = scalar(1));
 
