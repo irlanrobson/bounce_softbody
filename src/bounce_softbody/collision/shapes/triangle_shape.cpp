@@ -74,11 +74,7 @@ bool b3TriangleShape::CollideSphere(b3SphereManifold* manifold, const b3Sphere& 
 
 	// Use the triangle normal if the closest point is exactly on the triangle plane.
 	b3Vec3 triangleNormal = b3Cross(B - A, C - A);
-	if (triangleNormal.Normalize() <= B3_EPSILON)
-	{
-		// TODO: Revise this to handle slivers.
-		triangleNormal.Set(0, 1, 0);
-	}
+	triangleNormal.Normalize();
 
 	// Test vertex regions
 	scalar wAB[3], wBC[3], wCA[3];
