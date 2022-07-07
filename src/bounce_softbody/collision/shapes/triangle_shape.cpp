@@ -326,12 +326,6 @@ bool b3TriangleShape::RayCast(b3RayCastOutput* output, const b3RayCastInput& inp
 
 	b3Vec3 v1 = m_vertex1, v2 = m_vertex2, v3 = m_vertex3;
 	b3Vec3 n = b3Cross(v2 - v1, v3 - v1);
-	
-	if (b3LengthSquared(n) < B3_EPSILON * B3_EPSILON)
-	{
-		return false;
-	}
-
 	n.Normalize();
 
 	scalar num = b3Dot(n, v1 - p1);
