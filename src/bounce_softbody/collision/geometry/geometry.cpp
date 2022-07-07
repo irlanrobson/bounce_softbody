@@ -21,29 +21,24 @@
 b3Vec3 b3ClosestPointOnSegment(const b3Vec3& A, const b3Vec3& B,
 	const b3Vec3& Q)
 {
-	// Test vertex regions
 	scalar wAB[3];
 	b3BarycentricCoordinates(wAB, A, B, Q);
 
-	if (wAB[2] == scalar(0))
+	// If the point is on the segment return projection.
+	if (wAB[0] > scalar(0) && wAB[1] > scalar(0) && wAB[2] > scalar(0))
+	{
+		return (wAB[0] * A + wAB[1] * B) / wAB[2];
+	}
+
+	scalar dA = b3DistanceSquared(A, Q);
+	scalar dB = b3DistanceSquared(B, Q);
+
+	if (dA < dB)
 	{
 		return A;
 	}
 
-	// R A
-	if (wAB[1] <= scalar(0))
-	{
-		return A;
-	}
-
-	// R B
-	if (wAB[0] <= scalar(0))
-	{
-		return B;
-	}
-
-	// R AB
-	return (wAB[0] * A + wAB[1] * B) / wAB[2];
+	return B;
 }
 
 b3Vec3 b3ClosestPointOnTriangle(const b3Vec3& A, const b3Vec3& B, const b3Vec3& C,
