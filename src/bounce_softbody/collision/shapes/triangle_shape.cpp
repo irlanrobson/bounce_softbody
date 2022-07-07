@@ -292,11 +292,6 @@ bool b3TriangleShape::CollideSphere(b3SphereManifold* manifold, const b3Sphere& 
 	}
 
 	// R ABC/ACB
-	if (wABC[3] == scalar(0))
-	{
-		return false;
-	}
-
 	B3_ASSERT(wABC[3] > scalar(0));
 
 	b3Vec3 P = (wABC[0] * A + wABC[1] * B + wABC[2] * C) / wABC[3];
