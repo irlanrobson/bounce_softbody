@@ -16,13 +16,13 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef SDF_CONTACT_H
-#define SDF_CONTACT_H
+#ifndef SPHERE_MESH_SDF_CONTACT_H
+#define SPHERE_MESH_SDF_CONTACT_H
 
-class SDFContact : public Body
+class SphereMeshSDFContact : public Body
 {
 public:
-	SDFContact()
+	SphereMeshSDFContact()
 	{
 		m_sphereMesh.Scale(b3Vec3(6.0f, 3.0f, 3.0f));
 		
@@ -54,7 +54,7 @@ public:
 
 	static Test* Create()
 	{
-		return new SDFContact;
+		return new SphereMeshSDFContact;
 	}
 
 	GridClothMesh<10, 10> m_clothMesh;

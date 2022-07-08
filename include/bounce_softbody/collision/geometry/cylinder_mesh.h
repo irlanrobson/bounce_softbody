@@ -16,53 +16,46 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef B3_SPHERE_MESH_H
-#define B3_SPHERE_MESH_H
-
 #include <bounce_softbody/collision/geometry/mesh.h>
 
-// A (H + 1) x (W + 1) sphere mesh stored in row-major order.
-// v(i, j) = i * (W + 1) + j
+// A cylinder mesh.
 template<uint32 H = 1, uint32 W = 1>
-struct b3SphereMesh : public b3Mesh
+struct b3CylinderMesh : public b3Mesh
 {
-	b3Vec3 sphereVertices[(H + 1) * (W + 1)];
-	b3Triangle sphereTriangles[2 * H * W];
+	b3Vec3 cylinderVertices[(H + 1) * (W + 1)];
+	b3Triangle cylinderTriangles[2 * H * W + 2 * (((W + 1) - 1) - 1)];
 
-	// Set this grid to a W (width) per H (height) dimensioned grid centered at the origin and aligned
-	// with the world x-z axes.
-	b3SphereMesh()
+	b3CylinderMesh()
 	{
 		// Build vertices
 
-		// Latitude increment in range [0, pi]
-		scalar kThetaInc = B3_PI / scalar(H);
-
-		// Longitude increment in range [0, 2*pi]
+		// Angular increment in range [0, 2*pi]
 		scalar kPhiInc = scalar(2) * B3_PI / scalar(W);
+
+		// Longitude increment in range [0, 1]
+		scalar kYInc = scalar(1) / scalar(H);
 
 		vertexCount = 0;
 		for (uint32 i = 0; i < H + 1; ++i)
 		{
-			// Plane to spherical coordinates
-			scalar theta = scalar(i) * kThetaInc;
-			scalar cos_theta = cos(theta);
-			scalar sin_theta = sin(theta);
+			// Plane to cylindrical coordinates
+			scalar y = scalar(i) * kYInc;
 
 			for (uint32 j = 0; j < W + 1; ++j)
 			{
+				// Plane to cylindrical coordinates
 				scalar phi = scalar(j) * kPhiInc;
 				scalar cos_phi = cos(phi);
 				scalar sin_phi = sin(phi);
 
-				// Spherical to Cartesian coordinates		
+				// Cylindrical to Cartesian coordinates		
 				b3Vec3 p;
-				p.x = sin_theta * sin_phi;
-				p.y = cos_theta;
-				p.z = sin_theta * cos_phi;
+				p.x = cos_phi;
+				p.y = y - scalar(0.5); // Centralize
+				p.z = sin_phi;
 
 				uint32 vertex = GetVertex(i, j);
-				sphereVertices[vertex] = p;
+				cylinderVertices[vertex] = p;
 				++vertexCount;
 			}
 		}
@@ -83,20 +76,20 @@ struct b3SphereMesh : public b3Mesh
 				uint32 v3 = GetVertex(i + 1, j + 1);
 				uint32 v4 = GetVertex(i, j + 1);
 
-				b3Triangle* t1 = sphereTriangles + triangleCount++;
+				b3Triangle* t1 = cylinderTriangles + triangleCount++;
 				t1->v1 = v1;
 				t1->v2 = v2;
 				t1->v3 = v3;
-				
+
 				t1->u1 = B3_NULL_VERTEX;
 				t1->u2 = B3_NULL_VERTEX;
 				t1->u3 = B3_NULL_VERTEX;
 
-				b3Triangle* t2 = sphereTriangles + triangleCount++;
+				b3Triangle* t2 = cylinderTriangles + triangleCount++;
 				t2->v1 = v3;
 				t2->v2 = v4;
 				t2->v3 = v1;
-				
+
 				t2->u1 = B3_NULL_VERTEX;
 				t2->u2 = B3_NULL_VERTEX;
 				t2->u3 = B3_NULL_VERTEX;
@@ -105,8 +98,51 @@ struct b3SphereMesh : public b3Mesh
 
 		B3_ASSERT(triangleCount == 2 * H * W);
 
-		vertices = sphereVertices;
-		triangles = sphereTriangles;
+		// Lower circle
+		uint32 i1 = 0;
+		for (uint32 i2 = i1 + 1; i2 < (W + 1) - 1; ++i2)
+		{
+			uint32 i3 = i2 + 1;
+
+			uint32 v1 = GetVertex(0, i1);
+			uint32 v2 = GetVertex(0, i2);
+			uint32 v3 = GetVertex(0, i3);
+			
+			b3Triangle* t = cylinderTriangles + triangleCount++;
+			t->v1 = v1;
+			t->v2 = v2;
+			t->v3 = v3;
+
+			t->u1 = B3_NULL_VERTEX;
+			t->u2 = B3_NULL_VERTEX;
+			t->u3 = B3_NULL_VERTEX;
+		}
+
+		// Upper circle
+		i1 = 0;
+		for (uint32 i2 = i1 + 1; i2 < (W + 1) - 1; ++i2)
+		{
+			uint32 i3 = i2 + 1;
+
+			uint32 v1 = GetVertex(H, i1);
+			uint32 v2 = GetVertex(H, i2);
+			uint32 v3 = GetVertex(H, i3);
+
+			// Flip order to ensure CCW
+			b3Triangle* t = cylinderTriangles + triangleCount++;
+			t->v1 = v3;
+			t->v2 = v2;
+			t->v3 = v1;
+
+			t->u1 = B3_NULL_VERTEX;
+			t->u2 = B3_NULL_VERTEX;
+			t->u3 = B3_NULL_VERTEX;
+		}
+
+		B3_ASSERT(triangleCount == 2 * H * W + 2 * (((W + 1) - 1) - 1));
+
+		vertices = cylinderVertices;
+		triangles = cylinderTriangles;
 	}
 
 	uint32 GetVertex(uint32 i, uint32 j) const
@@ -116,6 +152,3 @@ struct b3SphereMesh : public b3Mesh
 		return i * (W + 1) + j;
 	}
 };
-
-
-#endif

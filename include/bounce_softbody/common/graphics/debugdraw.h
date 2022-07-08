@@ -25,6 +25,7 @@
 #include <bounce_softbody/common/graphics/debug_lines.h>
 #include <bounce_softbody/common/graphics/debug_triangles.h>
 #include <bounce_softbody/collision/geometry/sphere_mesh.h>
+#include <bounce_softbody/collision/geometry/cylinder_mesh.h>
 
 // This contains the primitives to be used by the debug draw utilities.
 // You must setup this structure with the pointers before calling any debug draw function.
@@ -223,120 +224,6 @@ inline void b3DrawSolidSphere(b3DebugDrawData* data, const b3Quat& rotation, con
 	}
 }
 
-// A cylinder mesh.
-template<uint32 H = 1, uint32 W = 1>
-struct b3CylinderMesh
-{
-	uint32 vertexCount;
-	b3Vec3 vertices[(H + 1) * (W + 1)];
-	uint32 indexCount;
-	uint32 indices[3 * 2 * H * W + 3 * 2 * (((W + 1) - 1) - 1)];
-	
-	b3CylinderMesh()
-	{
-		// Build vertices
-		
-		// Angular increment in range [0, 2*pi]
-		scalar kPhiInc = scalar(2) * B3_PI / scalar(W);
-		
-		// Longitude increment in range [0, 1]
-		scalar kYInc = scalar(1) / scalar(H);
-		
-		vertexCount = 0;
-		for (uint32 i = 0; i < H + 1; ++i)
-		{
-			// Plane to cylindrical coordinates
-			scalar y = scalar(i) * kYInc;
-				
-			for (uint32 j = 0; j < W + 1; ++j)
-			{
-				// Plane to cylindrical coordinates
-				scalar phi = scalar(j) * kPhiInc;	
-				scalar cos_phi = cos(phi);
-				scalar sin_phi = sin(phi);
-				
-				// Cylindrical to Cartesian coordinates		
-				b3Vec3 p;
-				p.x = cos_phi;
-				p.y = y - scalar(0.5); // Centralize
-				p.z = sin_phi;
-				
-				uint32 vertex = GetVertex(i, j);
-				vertices[vertex] = p;
-				++vertexCount;
-			}
-		}
-		
-		B3_ASSERT(vertexCount == (H + 1) * (W + 1));
-		
-		// Build triangles
-		indexCount = 0;
-		for (uint32 i = 0; i < H; ++i)
-		{
-			for (uint32 j = 0; j < W; ++j)
-			{
-				// 1*|----|*4
-				//   |----|
-				// 2*|----|*3
-				uint32 v1 = GetVertex(i, j);
-				uint32 v2 = GetVertex(i + 1, j);
-				uint32 v3 = GetVertex(i + 1, j + 1);
-				uint32 v4 = GetVertex(i, j + 1);
-
-				indices[indexCount++] = v1;
-				indices[indexCount++] = v2;
-				indices[indexCount++] = v3;
-
-				indices[indexCount++] = v3;
-				indices[indexCount++] = v4;
-				indices[indexCount++] = v1;
-			}
-		}
-
-		B3_ASSERT(indexCount == 3 * 2 * H * W);
-		
-		// Lower circle
-		uint32 i1 = 0;
-		for (uint32 i2 = i1 + 1; i2 < (W + 1) - 1; ++i2)
-		{
-			uint32 i3 = i2 + 1;
-			
-			uint32 v1 = GetVertex(0, i1);
-			uint32 v2 = GetVertex(0, i2);
-			uint32 v3 = GetVertex(0, i3);
-			
-			indices[indexCount++] = v1;
-			indices[indexCount++] = v2;
-			indices[indexCount++] = v3;
-		}
-		
-		// Upper circle
-		i1 = 0;
-		for (uint32 i2 = i1 + 1; i2 < (W + 1) - 1; ++i2)
-		{
-			uint32 i3 = i2 + 1;
-			
-			uint32 v1 = GetVertex(H, i1);
-			uint32 v2 = GetVertex(H, i2);
-			uint32 v3 = GetVertex(H, i3);
-			
-			// Flip order to ensure CCW
-			indices[indexCount++] = v3;
-			indices[indexCount++] = v2;
-			indices[indexCount++] = v1;
-		}
-		
-		B3_ASSERT(indexCount == 3 * 2 * H * W + 3 * 2 * (((W + 1) - 1) - 1));
-	}
-	
-	uint32 GetVertex(uint32 i, uint32 j) const
-	{
-		B3_ASSERT(i < H + 1);
-		B3_ASSERT(j < W + 1);
-		return i * (W + 1) + j;
-	}
-};
-
 // Draw a cylinder.
 template<uint32 H = 20, uint32 W = 20>
 inline void b3DrawCylinder(b3DebugDrawData* data, const b3Vec3& axis, const b3Vec3& center, scalar radius, scalar height, const b3Color& color, bool depthEnabled = true)
@@ -347,11 +234,13 @@ inline void b3DrawCylinder(b3DebugDrawData* data, const b3Vec3& axis, const b3Ve
 	xf.rotation = b3QuatRotationBetween(b3Vec3_y, axis);
 	xf.translation = center;
 
-	for (uint32 i = 0; i < cylinder.indexCount / 3; ++i)
+	for (uint32 i = 0; i < cylinder.triangleCount; ++i)
 	{
-		uint32 v1 = cylinder.indices[3 * i];
-		uint32 v2 = cylinder.indices[3 * i + 1];
-		uint32 v3 = cylinder.indices[3 * i + 2];
+		b3Triangle* triangle = cylinder.triangles + i;
+
+		uint32 v1 = triangle->v1;
+		uint32 v2 = triangle->v2;
+		uint32 v3 = triangle->v3;
 
 		b3Vec3 p1 = cylinder.vertices[v1];
 		
@@ -388,11 +277,13 @@ inline void b3DrawSolidCylinder(b3DebugDrawData* data, const b3Vec3& axis, const
 	xf.rotation = b3QuatRotationBetween(b3Vec3_y, axis);
 	xf.translation = center;
 
-	for (uint32 i = 0; i < cylinder.indexCount / 3; ++i)
+	for (uint32 i = 0; i < cylinder.triangleCount; ++i)
 	{
-		uint32 v1 = cylinder.indices[3 * i];
-		uint32 v2 = cylinder.indices[3 * i + 1];
-		uint32 v3 = cylinder.indices[3 * i + 2];
+		b3Triangle* triangle = cylinder.triangles + i;
+
+		uint32 v1 = triangle->v1;
+		uint32 v2 = triangle->v2;
+		uint32 v3 = triangle->v3;
 
 		b3Vec3 p1 = cylinder.vertices[v1];
 		b3Vec3 p2 = cylinder.vertices[v2];
