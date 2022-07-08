@@ -116,6 +116,9 @@ public:
 	uint32 GetUserIndex() const;
 	
 	// Set the user data.
+	void SetUserIndex(uint32 userIndex);
+	
+	// Set the user data.
 	void SetUserData(void* userData);
 
 	// Get the user data.
@@ -273,6 +276,11 @@ inline scalar b3Particle::GetMassDamping() const
 inline uint32 b3Particle::GetUserIndex() const
 {
 	return m_userIndex;
+}
+
+inline void b3Particle::SetUserIndex(uint32 userIndex)
+{
+	m_userIndex = userIndex;
 }
 
 inline void b3Particle::SetUserData(void* userData)
