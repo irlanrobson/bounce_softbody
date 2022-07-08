@@ -109,11 +109,11 @@ void b3SDFShape::Draw(b3Draw* draw) const
 				b3Vec3 center = b3Mul(m_xf, cellCenter);
 				if (distance <= scalar(0))
 				{
-					draw->DrawPoint(center, scalar(4), b3Color_red, false);
+					draw->DrawPoint(center, scalar(2), b3Color_red, false);
 				}
 				else
 				{
-					draw->DrawPoint(center, scalar(4), b3Color_green, false);
+					draw->DrawPoint(center, scalar(2), b3Color_green, false);
 				}
 			}
 		}
