@@ -18,6 +18,9 @@
 
 #include <bounce_softbody/collision/geometry/mesh.h>
 
+#ifndef B3_CYLINDER_MESH_H
+#define B3_CYLINDER_MESH_H
+
 // A cylinder mesh.
 template<uint32 H = 1, uint32 W = 1>
 struct b3CylinderMesh : public b3Mesh
@@ -152,3 +155,5 @@ struct b3CylinderMesh : public b3Mesh
 		return i * (W + 1) + j;
 	}
 };
+
+#endif

@@ -33,17 +33,17 @@ public:
 		ClothDef def;
 		def.mesh = &m_clothMesh;
 		def.thickness = 0.1f;
-		def.friction = 0.8f;
+		def.friction = 0.1f;
 		m_body = new UniformBody(def);
 
 		b3SDFShape sdfShape;
 		sdfShape.m_sdf = &m_sdf;
 		sdfShape.m_radius = 0.2f;
-		sdfShape.m_xf.rotation = b3QuatRotationY(0.25f * B3_PI);
+		sdfShape.m_xf.rotation = b3QuatRotationY(0.5f * B3_PI);
 
 		b3WorldFixtureDef fixtureDef;
 		fixtureDef.shape = &sdfShape;
-		fixtureDef.friction = 0.5f;
+		fixtureDef.friction = 0.1f;
 
 		m_body->CreateFixture(fixtureDef);
 
