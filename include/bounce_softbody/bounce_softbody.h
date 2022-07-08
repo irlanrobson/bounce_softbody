@@ -27,6 +27,7 @@
 #include <bounce_softbody/collision/geometry/mesh.h>
 #include <bounce_softbody/collision/geometry/grid_mesh.h>
 #include <bounce_softbody/collision/geometry/sphere_mesh.h>
+#include <bounce_softbody/collision/geometry/cylinder_mesh.h>
 #include <bounce_softbody/collision/geometry/sdf.h>
 
 #include <bounce_softbody/collision/shapes/sphere_shape.h>
