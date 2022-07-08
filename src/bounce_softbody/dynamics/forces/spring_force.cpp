@@ -37,7 +37,7 @@ void b3SpringForceDef::Initialize(b3Particle* particle1, b3Particle* particle2, 
 b3SpringForce::b3SpringForce(const b3SpringForceDef* def)
 {
 	m_type = e_springForce;
-	m_meshIndex = def->meshIndex;
+	m_userIndex = def->userIndex;
 	m_p1 = def->p1;
 	m_p2 = def->p2;
 	m_L0 = def->restLength;

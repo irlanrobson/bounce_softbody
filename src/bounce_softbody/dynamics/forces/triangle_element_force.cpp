@@ -183,7 +183,7 @@ static B3_FORCE_INLINE void b3SetK(b3Mat22 K[9], scalar Ke[36])
 b3TriangleElementForce::b3TriangleElementForce(const b3TriangleElementForceDef* def)
 {
 	m_type = e_triangleElementForce;
-	m_meshIndex = def->meshIndex;
+	m_userIndex = def->userIndex;
 	m_p1 = def->p1;
 	m_p2 = def->p2;
 	m_p3 = def->p3;

@@ -62,7 +62,7 @@ void b3StretchForceDef::Initialize(const b3Vec3& A, const b3Vec3& B, const b3Vec
 b3StretchForce::b3StretchForce(const b3StretchForceDef* def)
 {
 	m_type = e_stretchForce;
-	m_meshIndex = def->meshIndex;
+	m_userIndex = def->userIndex;
 	m_p1 = def->p1;
 	m_p2 = def->p2;
 	m_p3 = def->p3;

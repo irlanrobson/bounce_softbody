@@ -47,7 +47,7 @@ b3Particle::b3Particle(const b3ParticleDef& def, b3Body* body)
 		m_invMass = scalar(0);
 	}
 
-	m_meshIndex = def.meshIndex;
+	m_userIndex = def.userIndex;
 	m_userData = def.userData;
 	
 	m_prev = nullptr;

@@ -44,7 +44,7 @@ struct b3ParticleDef
 		position.SetZero();
 		velocity.SetZero();
 		massDamping = scalar(0);
-		meshIndex = B3_MAX_U32;
+		userIndex = B3_MAX_U32;
 		userData = nullptr;
 	}
 
@@ -60,8 +60,8 @@ struct b3ParticleDef
 	// Coefficient of mass damping of the particle.
 	scalar massDamping;
 
-	// Optional vertex index in the mesh.
-	uint32 meshIndex;
+	// User index to anything. Typically a vertex.
+	uint32 userIndex;
 
 	// User data pointer to anything.
 	void* userData;
@@ -112,8 +112,8 @@ public:
 	// Get the coefficient of mass damping.
 	scalar GetMassDamping() const;
 
-	// Get the mesh index.
-	uint32 GetMeshIndex() const;
+	// Get the user index.
+	uint32 GetUserIndex() const;
 	
 	// Set the user data.
 	void SetUserData(void* userData);
@@ -176,22 +176,19 @@ private:
 	// Applied translation
 	b3Vec3 m_translation;
 
-	// Mass
-	scalar m_mass;
-
-	// Inverse mass
-	scalar m_invMass;
+	// Mass, inverse mass
+	scalar m_mass, m_invMass;
 
 	// Coefficient of mass damping.
 	scalar m_massDamping;
 
-	// Mesh index. 
-	uint32 m_meshIndex;
-
 	// Solver temp identifier
 	uint32 m_solverId;
 
-	// User data
+	// User index. 
+	uint32 m_userIndex;
+
+	// User data.
 	void* m_userData;
 
 	// Body
@@ -273,9 +270,9 @@ inline scalar b3Particle::GetMassDamping() const
 	return m_massDamping;
 }
 
-inline uint32 b3Particle::GetMeshIndex() const
+inline uint32 b3Particle::GetUserIndex() const
 {
-	return m_meshIndex;
+	return m_userIndex;
 }
 
 inline void b3Particle::SetUserData(void* userData)

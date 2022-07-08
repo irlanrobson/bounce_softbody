@@ -37,7 +37,7 @@ UniformBody::UniformBody(const ClothDef& def)
 		b3ParticleDef pd;
 		pd.type = e_dynamicParticle;
 		pd.position = v;
-		pd.meshIndex = i;
+		pd.userIndex = i;
 
 		b3Particle* p = CreateParticle(pd);
 		m_particles[i] = p;
@@ -97,7 +97,7 @@ UniformBody::UniformBody(const ClothDef& def)
 			fd.poissonRationXY = def.elementPoissonRatio;
 			fd.poissonRationYX = def.elementPoissonRatio;
 			fd.stiffnessDamping = def.elementStiffnessDamping;
-			fd.meshIndex = i;
+			fd.userIndex = i;
 
 			CreateForce(fd);
 		}
@@ -115,7 +115,7 @@ UniformBody::UniformBody(const ClothDef& def)
 			fd.stiffness_v = def.stretchingStiffness;
 			fd.damping_stiffness_v = def.stretchStiffnessDamping;
 			fd.b_v = scalar(1);
-			fd.meshIndex = i;
+			fd.userIndex = i;
 
 			CreateForce(fd);
 		}
@@ -136,7 +136,7 @@ UniformBody::UniformBody(const TetDef& def)
 		b3ParticleDef pd;
 		pd.type = e_dynamicParticle;
 		pd.position = v;
-		pd.meshIndex = i;
+		pd.userIndex = i;
 
 		b3Particle* p = CreateParticle(pd);
 
@@ -230,7 +230,7 @@ UniformBody::UniformBody(const TetDef& def)
 		fd.youngModulus = def.elementYoungModulus;
 		fd.poissonRatio = def.elementPoissonRatio;
 		fd.stiffnessDamping = def.elementStiffnessDamping;
-		fd.meshIndex = i;
+		fd.userIndex = i;
 
 		CreateForce(fd);
 	}

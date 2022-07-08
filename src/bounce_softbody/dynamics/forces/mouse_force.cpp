@@ -25,7 +25,7 @@
 b3MouseForce::b3MouseForce(const b3MouseForceDef* def)
 {
 	m_type = e_mouseForce;
-	m_meshIndex = def->meshIndex;
+	m_userIndex = def->userIndex;
 	m_p1 = def->p1;
 	m_p2 = def->p2;
 	m_p3 = def->p3;

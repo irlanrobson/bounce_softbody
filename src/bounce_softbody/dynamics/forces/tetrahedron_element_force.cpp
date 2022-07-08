@@ -194,7 +194,7 @@ static B3_FORCE_INLINE void b3SetK(b3Mat33 K[16], scalar Ke[144])
 b3TetrahedronElementForce::b3TetrahedronElementForce(const b3TetrahedronElementForceDef* def)
 {
 	m_type = e_tetrahedronElementForce;
-	m_meshIndex = def->meshIndex;
+	m_userIndex = def->userIndex;
 	m_p1 = def->p1;
 	m_p2 = def->p2;
 	m_p3 = def->p3;

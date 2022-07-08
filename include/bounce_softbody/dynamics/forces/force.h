@@ -44,14 +44,14 @@ struct b3ForceDef
 	b3ForceDef()
 	{
 		type = e_unknownForce;
-		meshIndex = B3_MAX_U32;
+		userIndex = B3_MAX_U32;
 	}
 	
 	// Force type.
 	b3ForceType type;
 
-	// Feature index into mesh.
-	uint32 meshIndex;
+	// User index.
+	uint32 userIndex;
 };
 
 // A force acts on a set of particles.
@@ -61,15 +61,15 @@ public:
 	// Get the force type.
 	b3ForceType GetType() const;
 
-	// Has this force a given particle?
+	// Get the user index.
+	uint32 GetUserIndex() const { return m_userIndex; }
+
+	// Does this force contain a given particle?
 	virtual bool HasParticle(const b3Particle* particle) const = 0;
 
 	// Get the next force in the body force list.
 	const b3Force* GetNext() const;
 	b3Force* GetNext();
-
-	// Get the mesh feature index.
-	uint32 GetMeshIndex() const { return m_meshIndex; }
 protected:
 	friend class b3Body;
 	friend class b3Particle;
@@ -92,8 +92,8 @@ protected:
 	// Force type.
 	b3ForceType m_type;
 	
-	// Feature index into mesh.
-	uint32 m_meshIndex;
+	// User index.
+	uint32 m_userIndex;
 
 	// Links to body list.
 	b3Force* m_prev;

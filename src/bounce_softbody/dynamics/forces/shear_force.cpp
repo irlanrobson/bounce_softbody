@@ -51,7 +51,7 @@ void b3ShearForceDef::Initialize(const b3Vec3& A, const b3Vec3& B, const b3Vec3&
 b3ShearForce::b3ShearForce(const b3ShearForceDef* def)
 {
 	m_type = e_shearForce;
-	m_meshIndex = def->meshIndex;
+	m_userIndex = def->userIndex;
 	m_p1 = def->p1;
 	m_p2 = def->p2;
 	m_p3 = def->p3;
