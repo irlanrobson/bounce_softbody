@@ -112,11 +112,11 @@ public:
 	// Get the coefficient of mass damping.
 	scalar GetMassDamping() const;
 
-	// Get the user index.
-	uint32 GetUserIndex() const;
-	
 	// Set the user data.
 	void SetUserIndex(uint32 userIndex);
+
+	// Get the user index.
+	uint32 GetUserIndex() const;
 	
 	// Set the user data.
 	void SetUserData(void* userData);
@@ -273,14 +273,14 @@ inline scalar b3Particle::GetMassDamping() const
 	return m_massDamping;
 }
 
-inline uint32 b3Particle::GetUserIndex() const
-{
-	return m_userIndex;
-}
-
 inline void b3Particle::SetUserIndex(uint32 userIndex)
 {
 	m_userIndex = userIndex;
+}
+
+inline uint32 b3Particle::GetUserIndex() const
+{
+	return m_userIndex;
 }
 
 inline void b3Particle::SetUserData(void* userData)
