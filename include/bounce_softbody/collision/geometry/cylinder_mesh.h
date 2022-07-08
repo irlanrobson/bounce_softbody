@@ -21,7 +21,8 @@
 #ifndef B3_CYLINDER_MESH_H
 #define B3_CYLINDER_MESH_H
 
-// A cylinder mesh.
+// A (H + 1) x (W + 1) cylinder mesh stored in row-major order.
+// v(i, j) = i * (W + 1) + j
 template<uint32 H = 1, uint32 W = 1>
 struct b3CylinderMesh : public b3Mesh
 {

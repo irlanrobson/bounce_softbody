@@ -24,7 +24,7 @@ class SphereMeshSDFContact : public Body
 public:
 	SphereMeshSDFContact()
 	{
-		m_sphereMesh.Scale(b3Vec3(6.0f, 3.0f, 3.0f));
+		m_sphereMesh.Scale(b3Vec3(3.0f, 3.0f, 3.0f));
 		
 		m_sdf.Build(&m_sphereMesh, b3Vec3(1.0f, 1.0f, 1.0f), 1.0f);
 
@@ -32,8 +32,8 @@ public:
 
 		ClothDef def;
 		def.mesh = &m_clothMesh;
-		def.thickness = 0.1f;
-		def.friction = 0.1f;
+		def.thickness = 0.2f;
+		def.friction = 0.5f;
 		m_body = new UniformBody(def);
 
 		b3SDFShape sdfShape;
@@ -43,7 +43,7 @@ public:
 
 		b3WorldFixtureDef fixtureDef;
 		fixtureDef.shape = &sdfShape;
-		fixtureDef.friction = 0.1f;
+		fixtureDef.friction = 0.5f;
 
 		m_body->CreateFixture(fixtureDef);
 
