@@ -62,7 +62,7 @@ b3AABB b3TriangleShape::ComputeAABB() const
 	return aabb;
 }
 
-bool b3TriangleShape::CollideSphere(b3SphereManifold* manifold, const b3Sphere& sphere) const
+bool b3TriangleShape::Collide(b3SphereManifold* manifold, const b3Sphere& sphere) const
 {
 	// The sphere center.
 	b3Vec3 Q = sphere.vertex;

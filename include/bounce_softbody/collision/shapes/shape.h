@@ -64,7 +64,7 @@ public:
 
 	// Generate the contact manifold for a given sphere.
 	// Return true if the given sphere is colliding with this shape, false otherwise.
-	virtual bool CollideSphere(b3SphereManifold* manifold, const b3Sphere& sphere) const = 0;
+	virtual bool Collide(b3SphereManifold* manifold, const b3Sphere& sphere) const = 0;
 
 	// Debug draw this shape.
 	virtual void Draw(b3Draw* draw) const = 0;

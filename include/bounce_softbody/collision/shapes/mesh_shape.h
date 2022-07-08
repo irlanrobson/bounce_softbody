@@ -36,7 +36,7 @@ public:
 
 	b3AABB ComputeAABB() const;
 
-	bool CollideSphere(b3SphereManifold* manifold, const b3Sphere& sphere) const;
+	bool Collide(b3SphereManifold* manifold, const b3Sphere& sphere) const;
 
 	void GetChildTriangle(b3TriangleShape* triangle, uint32 childIndex) const;
 	

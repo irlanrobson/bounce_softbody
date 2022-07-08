@@ -50,7 +50,7 @@ b3AABB b3MeshShape::ComputeAABB() const
 }
 
 // This contains the closest point on the mesh to the given sphere.
-struct b3MeshShapeQuerySphereWrapper
+struct b3MeshShapeQueryWrapper
 {
 	bool Report(uint32 nodeId)
 	{
@@ -62,14 +62,13 @@ struct b3MeshShapeQuerySphereWrapper
 
 		// Get the closest point on the triangle to the sphere center in world space.
 		b3SphereManifold manifold;
-		if (triangle.CollideSphere(&manifold, sphere))
+		if (triangle.Collide(&manifold, sphere))
 		{
 			scalar dd = b3DistanceSquared(sphere.vertex, manifold.point);
 			if (dd < dd0)
 			{
 				dd0 = dd;
-				manifold0.point = manifold.point;
-				manifold0.normal = manifold.normal;
+				manifold0 = manifold;
 				triangle0 = index;
 			}
 		}
@@ -85,9 +84,9 @@ struct b3MeshShapeQuerySphereWrapper
 	uint32 triangle0;
 };
 
-bool b3MeshShape::CollideSphere(b3SphereManifold* manifold, const b3Sphere& sphere) const
+bool b3MeshShape::Collide(b3SphereManifold* manifold, const b3Sphere& sphere) const
 {
-	b3MeshShapeQuerySphereWrapper wrapper;
+	b3MeshShapeQueryWrapper wrapper;
 	wrapper.meshShape = this;
 	wrapper.sphere = sphere;
 	wrapper.dd0 = B3_MAX_SCALAR;
@@ -104,12 +103,14 @@ bool b3MeshShape::CollideSphere(b3SphereManifold* manifold, const b3Sphere& sphe
 
 	// Transform the sphere center from world frame to unscaled tree frame.
 	// Take the mesh radius into account.
-	b3Sphere treeSphere;
-	treeSphere.vertex = b3Mul(invScale, b3MulT(m_xf, sphere.vertex));
-	treeSphere.radius = sphere.radius + m_radius;
+	b3Vec3 center = b3Mul(invScale, b3MulT(m_xf, sphere.vertex));
+	scalar radius = sphere.radius + m_radius;
 
+	// Local sphere AABB.
+	b3AABB treeAABB(center, radius);
+	
 	// Run the query.
-	m_mesh->tree.QuerySphere(&wrapper, treeSphere);
+	m_mesh->tree.Query(&wrapper, treeAABB);
 
 	if (wrapper.triangle0 != B3_NULL_TRIANGLE)
 	{

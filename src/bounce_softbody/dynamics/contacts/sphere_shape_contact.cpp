@@ -78,7 +78,7 @@ void b3SphereAndShapeContact::ComputeForces(const b3SparseForceSolverData* data)
 
 	// Evaluate the contact manifold.
 	b3SphereManifold manifold2;
-	if (m_f2->CollideSphere(&manifold2, sphere1) == false)
+	if (m_f2->Collide(&manifold2, sphere1) == false)
 	{
 		return;
 	}

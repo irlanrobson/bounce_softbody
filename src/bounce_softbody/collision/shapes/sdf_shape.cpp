@@ -45,7 +45,7 @@ b3AABB b3SDFShape::ComputeAABB() const
 	return aabb;
 }
 
-bool b3SDFShape::CollideSphere(b3SphereManifold* manifold, const b3Sphere& sphere) const
+bool b3SDFShape::Collide(b3SphereManifold* manifold, const b3Sphere& sphere) const
 {
 	// Convert the sphere center to local space of SDF.
 	b3Vec3 point = b3MulT(m_xf, sphere.vertex);

@@ -30,9 +30,7 @@ b3SphereFixture::b3SphereFixture(const b3SphereFixtureDef& def, b3Body* body) : 
 
 b3AABB b3SphereFixture::ComputeAABB() const
 {
-	b3AABB aabb;
-	aabb.Set(m_p->m_position, m_radius);
-	return aabb;
+	return b3AABB(m_p->m_position, m_radius);
 }
 
 void b3SphereFixture::DestroyContacts()

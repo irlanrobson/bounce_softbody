@@ -22,7 +22,6 @@
 #include <bounce_softbody/common/template/stack.h>
 #include <bounce_softbody/collision/collision.h>
 #include <bounce_softbody/collision/geometry/aabb.h>
-#include <bounce_softbody/collision/geometry/sphere.h>
 
 #define B3_NULL_STATIC_NODE B3_MAX_U32
 
@@ -69,14 +68,8 @@ public:
 	// the given AABB. The client must return false to cancel the query 
 	// or true to continue the query.
 	template<class T>
-	void QueryAABB(T* callback, const b3AABB& aabb) const;
+	void Query(T* callback, const b3AABB& aabb) const;
 
-	// Report the client callback all AABBs that are overlapping with
-	// the given sphere. The client must return false to cancel the query 
-	// or true to continue the query.
-	template<class T>
-	void QuerySphere(T* callback, const b3Sphere& sphere) const;
-	
 	// Report the client callback all AABBs that are overlapping with
 	// the given ray. The client callback must return the new intersection fraction. 
 	// If fraction == 0 then the ray-cast is cancelled immediatly. Otherwise the ray is clipped 
@@ -114,7 +107,7 @@ inline uint32 b3StaticTree::GetIndex(uint32 nodeId) const
 }
 
 template<class T>
-inline void b3StaticTree::QueryAABB(T* callback, const b3AABB& aabb) const
+inline void b3StaticTree::Query(T* callback, const b3AABB& aabb) const
 {
 	if (m_nodeCount == 0)
 	{
@@ -138,48 +131,6 @@ inline void b3StaticTree::QueryAABB(T* callback, const b3AABB& aabb) const
 		const b3StaticNode* node = m_nodes + nodeIndex;
 
 		if (b3TestOverlap(node->aabb, aabb) == true)
-		{
-			if (node->IsLeaf() == true)
-			{
-				if (callback->Report(nodeIndex) == false)
-				{
-					return;
-				}
-			}
-			else
-			{
-				stack.Push(node->child1);
-				stack.Push(node->child2);
-			}
-		}
-	}
-}
-
-template<class T>
-inline void b3StaticTree::QuerySphere(T* callback, const b3Sphere& sphere) const
-{
-	if (m_nodeCount == 0)
-	{
-		return;
-	}
-
-	b3Stack<uint32, 256> stack;
-	stack.Push(m_root);
-
-	while (stack.IsEmpty() == false)
-	{
-		uint32 nodeIndex = stack.Top();
-
-		stack.Pop();
-
-		if (nodeIndex == B3_NULL_STATIC_NODE)
-		{
-			continue;
-		}
-
-		const b3StaticNode* node = m_nodes + nodeIndex;
-
-		if (b3TestOverlap(node->aabb, sphere) == true)
 		{
 			if (node->IsLeaf() == true)
 			{

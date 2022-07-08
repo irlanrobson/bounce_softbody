@@ -16,10 +16,10 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#include <bounce_softbody/collision/geometry/mesh.h>
-
 #ifndef B3_CYLINDER_MESH_H
 #define B3_CYLINDER_MESH_H
+
+#include <bounce_softbody/collision/geometry/mesh.h>
 
 // A (H + 1) x (W + 1) cylinder mesh stored in row-major order.
 // v(i, j) = i * (W + 1) + j

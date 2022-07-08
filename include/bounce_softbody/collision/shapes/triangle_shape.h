@@ -38,7 +38,7 @@ public:
 
 	bool RayCast(b3RayCastOutput* output, const b3RayCastInput& input) const;
 
-	bool CollideSphere(b3SphereManifold* manifold, const b3Sphere& sphere) const;
+	bool Collide(b3SphereManifold* manifold, const b3Sphere& sphere) const;
 	
 	void Draw(b3Draw* draw) const;
 

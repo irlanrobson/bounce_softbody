@@ -49,7 +49,7 @@ b3AABB b3CapsuleShape::ComputeAABB() const
 	return aabb;
 }
 
-bool b3CapsuleShape::CollideSphere(b3SphereManifold* manifold, const b3Sphere& sphere) const
+bool b3CapsuleShape::Collide(b3SphereManifold* manifold, const b3Sphere& sphere) const
 {
 	b3Vec3 Q = sphere.vertex;
 

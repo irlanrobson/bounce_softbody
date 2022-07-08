@@ -36,6 +36,14 @@ struct b3AABB
 		upperBound = center + radius;
 	}
 
+	// Construct this AABB from center point and radius value (half-extent).
+	b3AABB(const b3Vec3& center, scalar radius)
+	{
+		b3Vec3 r(radius, radius, radius);
+		lowerBound = center - r;
+		upperBound = center + r;
+	}
+
 	// Get relative position given a point. 
 	// The point must be inside this AABB.
 	// The closer the point is to lowerBound, closer the result is to (0, 0, 0).
@@ -95,13 +103,6 @@ struct b3AABB
 	{
 		lowerBound = center - r;
 		upperBound = center + r;
-	}
-
-	// Set this AABB from a center point and a radius value.
-	void Set(const b3Vec3& center, scalar radius)
-	{
-		b3Vec3 r(radius, radius, radius);	
-		Set(center, r);
 	}
 
 	// Extend this AABB by a radius value.

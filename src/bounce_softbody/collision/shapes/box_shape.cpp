@@ -60,7 +60,7 @@ b3AABB b3BoxShape::ComputeAABB() const
 	return aabb;
 }
 
-bool b3BoxShape::CollideSphere(b3SphereManifold* manifold, const b3Sphere& sphere) const
+bool b3BoxShape::Collide(b3SphereManifold* manifold, const b3Sphere& sphere) const
 {
 	b3Vec3 e = m_extents;
 

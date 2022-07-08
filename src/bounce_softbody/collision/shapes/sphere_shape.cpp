@@ -47,7 +47,7 @@ b3AABB b3SphereShape::ComputeAABB() const
 	return aabb;
 }
 
-bool b3SphereShape::CollideSphere(b3SphereManifold* manifold, const b3Sphere& sphere) const
+bool b3SphereShape::Collide(b3SphereManifold* manifold, const b3Sphere& sphere) const
 {
 	b3Vec3 center = m_center;
 	scalar radius = m_radius + sphere.radius;

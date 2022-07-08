@@ -94,7 +94,7 @@ public:
 	// the given AABB. The client callback must return true if the query 
 	// must be stopped or false to continue looking for more overlapping pairs.
 	template<class T>
-	void QueryAABB(T* callback, const b3AABB& aabb) const;
+	void Query(T* callback, const b3AABB& aabb) const;
 
 	// Keep reporting the client callback all AABBs that are overlapping with
 	// the given ray. The client callback must return the new intersection fraction.
@@ -163,7 +163,7 @@ inline bool b3DynamicTree::TestOverlap(uint32 proxy1, uint32 proxy2) const
 }
 
 template<class T>
-inline void b3DynamicTree::QueryAABB(T* callback, const b3AABB& aabb) const
+inline void b3DynamicTree::Query(T* callback, const b3AABB& aabb) const
 {
 	b3Stack<uint32, 256> stack;
 	stack.Push(m_root);

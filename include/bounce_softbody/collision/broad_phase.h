@@ -67,7 +67,7 @@ public:
 	
 	// Notify the client callback the AABBs that are overlapping with the passed AABB.
 	template<class T>
-	void QueryAABB(T* callback, const b3AABB& aabb) const;
+	void Query(T* callback, const b3AABB& aabb) const;
 	
 	// Notify the client callback the AABBs that are overlapping the 
 	// passed ray.
@@ -129,9 +129,9 @@ inline uint32 b3BroadPhase::GetProxyCount() const
 }
 
 template<class T>
-inline void b3BroadPhase::QueryAABB(T* callback, const b3AABB& aabb) const 
+inline void b3BroadPhase::Query(T* callback, const b3AABB& aabb) const 
 {
-	return m_tree.QueryAABB(callback, aabb);
+	return m_tree.Query(callback, aabb);
 }
 
 template<class T>

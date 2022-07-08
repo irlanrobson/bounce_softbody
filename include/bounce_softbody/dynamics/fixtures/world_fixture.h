@@ -57,7 +57,7 @@ public:
 
 	// Generate the contact manifold for a given sphere.
 	// Return true if the given sphere is colliding with the child shape, false otherwise.
-	bool CollideSphere(b3SphereManifold* manifold, const b3Sphere& sphere) const;
+	bool Collide(b3SphereManifold* manifold, const b3Sphere& sphere) const;
 
 	// Draw the child shape.
 	void Draw(b3Draw* draw) const;
@@ -122,9 +122,9 @@ inline b3AABB b3WorldFixture::ComputeAABB() const
 	return m_shape->ComputeAABB();
 }
 
-inline bool b3WorldFixture::CollideSphere(b3SphereManifold* manifold, const b3Sphere& sphere) const
+inline bool b3WorldFixture::Collide(b3SphereManifold* manifold, const b3Sphere& sphere) const
 {
-	return m_shape->CollideSphere(manifold, sphere);
+	return m_shape->Collide(manifold, sphere);
 }
 
 inline void b3WorldFixture::Draw(b3Draw* draw) const
