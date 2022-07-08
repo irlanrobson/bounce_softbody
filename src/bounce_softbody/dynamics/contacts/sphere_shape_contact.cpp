@@ -104,7 +104,7 @@ void b3SphereAndShapeContact::ComputeForces(const b3SparseForceSolverData* data)
 	if (B3_CONTACT_STIFFNESS > scalar(0))
 	{
 		// Closest points on the surface of the fixtures.
-		b3Vec3 c1 = x1 - r1 * n2;
+		b3Vec3 c1 = x1 + r1 * n1;
 		b3Vec3 c2 = x2 + r2 * n2;
 
 		// There is no spring rest length.
