@@ -77,7 +77,7 @@ static bool b3IsPointInsideMesh(const b3Mesh* mesh, const b3Vec3& point, scalar 
 	return inCount >= 3;
 }
 
-static scalar b3SignedDistance(const b3Mesh* mesh, const b3Vec3& point, scalar farDistance)
+static scalar b3Distance(const b3Mesh* mesh, const b3Vec3& point, scalar farDistance)
 {
 	scalar closestDistanceSquared = B3_MAX_SCALAR;
 	b3Vec3 closestPoint(0, 0, 0);
@@ -113,12 +113,52 @@ static scalar b3SignedDistance(const b3Mesh* mesh, const b3Vec3& point, scalar f
 	return closestDistance;
 }
 
-void b3SDF::Build(const b3Mesh* mesh, const b3Vec3& cellSize, scalar aabbVolumeExtension)
-{
-	B3_ASSERT(m_mesh == nullptr);
-	m_mesh = mesh;
 
-	b3AABB aabb = m_mesh->ComputeAABB();
+static void b3ComputeDistances(b3SDF* sdf)
+{
+	const b3Mesh* mesh = sdf->mesh;
+	b3ScalarVoxelGrid& voxelGrid = sdf->voxelGrid;
+
+	scalar farDistance = voxelGrid.GetAABB().GetVolume();
+
+	uint32 count = 0;
+	scalar lastProgress = scalar(0);
+
+	const auto updateProgressBar = [&count, &lastProgress, &voxelGrid]()
+	{
+		scalar progress = scalar(100) * (scalar(++count) / scalar(voxelGrid.GetVoxelCount()));
+
+		if ((progress - lastProgress) >= scalar(1))
+		{
+			b3Log("[b3SDF] Computing distances... %.0f%% - %d/%d\n", progress, count, voxelGrid.GetVoxelCount());
+			lastProgress = progress;
+		}
+	};
+
+	for (uint32 xIdx = 0; xIdx < voxelGrid.GetWidth(); ++xIdx)
+	{
+		for (uint32 yIdx = 0; yIdx < voxelGrid.GetHeight(); ++yIdx)
+		{
+			for (uint32 zIdx = 0; zIdx < voxelGrid.GetDepth(); ++zIdx)
+			{
+				b3Index3D voxelIndex = b3Index3D(xIdx, yIdx, zIdx);
+				b3Vec3 voxelPosition = voxelGrid.GetVoxelPosition(voxelIndex);
+				scalar distance = b3Distance(mesh, voxelPosition, farDistance);
+
+				voxelGrid.SetVoxel(voxelIndex, distance);
+
+				updateProgressBar();
+			}
+		}
+	}
+}
+
+void b3BuildSDF(b3SDF* sdf, const b3Mesh* mesh, const b3Vec3& cellSize, scalar aabbVolumeExtension)
+{
+	B3_ASSERT(sdf->mesh == nullptr);
+	sdf->mesh = mesh;
+
+	b3AABB aabb = mesh->ComputeAABB();
 	aabb.Extend(aabbVolumeExtension);
 	
 	b3Vec3 aabbSize = aabb.GetDimensions();
@@ -128,44 +168,8 @@ void b3SDF::Build(const b3Mesh* mesh, const b3Vec3& cellSize, scalar aabbVolumeE
 	uint32 depthInCells = uint32(std::ceil(aabbSize.z / cellSize.z));
 
 	// Create voxel grid.
-	m_voxelGrid.Create(aabb, widthInCells + 1, heightInCells + 1, depthInCells + 1);
+	sdf->voxelGrid.Create(aabb, widthInCells + 1, heightInCells + 1, depthInCells + 1);
 
 	// Compute distances.
-	ComputeDistances();
-}
-
-void b3SDF::ComputeDistances()
-{
-	scalar farDistance = m_voxelGrid.GetAABB().GetVolume();
-
-	uint32 count = 0;
-	scalar lastProgress = scalar(0);
-
-	const auto updateProgressBar = [&count, &lastProgress, this]() 
-	{
-		scalar progress = scalar(100) * (scalar(++count) / scalar(m_voxelGrid.GetVoxelCount()));
-
-		if ((progress - lastProgress) >= scalar(1)) 
-		{
-			b3Log("[b3SDF] Computing distances... %.0f%% - %d/%d\n", progress, count, m_voxelGrid.GetVoxelCount());
-			lastProgress = progress;
-		}
-	};
-
-	for (uint32 xIdx = 0; xIdx < m_voxelGrid.GetWidth(); ++xIdx) 
-	{
-		for (uint32 yIdx = 0; yIdx < m_voxelGrid.GetHeight(); ++yIdx) 
-		{
-			for (uint32 zIdx = 0; zIdx < m_voxelGrid.GetDepth(); ++zIdx) 
-			{
-				b3Index3D voxelIndex = b3Index3D(xIdx, yIdx, zIdx);
-				b3Vec3 voxelPosition = m_voxelGrid.GetVoxelPosition(voxelIndex);
-				scalar signedDistance = b3SignedDistance(m_mesh, voxelPosition, farDistance);
-
-				m_voxelGrid.SetVoxel(voxelIndex, signedDistance);
-
-				updateProgressBar();
-			}
-		}
-	}
+	b3ComputeDistances(sdf);
 }

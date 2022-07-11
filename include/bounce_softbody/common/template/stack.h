@@ -30,53 +30,53 @@ class b3Stack
 public:
 	b3Stack()
 	{
+		m_stack = m_array;
 		m_capacity = N;
-		m_elements = m_stackElements;
 		m_count = 0;
 	}
 
 	~b3Stack()
 	{
-		if (m_elements != m_stackElements)
+		if (m_stack != m_array)
 		{
-			b3Free(m_elements);
+			b3Free(m_stack);
+			m_stack = nullptr;
 		}
-		m_elements = nullptr;
 	}
 
 	const T& Top() const
 	{
-		B3_ASSERT(m_count);
-		return m_elements[m_count - 1];
+		B3_ASSERT(m_count > 0);
+		return m_stack[m_count - 1];
 	}
 
 	T& Top()
 	{
-		B3_ASSERT(m_count);
-		return m_elements[m_count - 1];
+		B3_ASSERT(m_count > 0);
+		return m_stack[m_count - 1];
 	}
 
 	void Push(const T& ele)
 	{
 		if (m_count == m_capacity)
 		{
-			T* oldElements = m_elements;
+			T* old = m_stack;
 			m_capacity *= 2;
-			m_elements = (T*)b3Alloc(m_capacity * sizeof(T));
-			memcpy(m_elements, oldElements, m_count * sizeof(T));
-			if (oldElements != m_stackElements)
+			m_stack = (T*)b3Alloc(m_capacity * sizeof(T));
+			memcpy(m_stack, old, m_count * sizeof(T));
+			if (old != m_array)
 			{
-				b3Free(oldElements);
+				b3Free(old);
 			}
 		}
 		B3_ASSERT(m_count < m_capacity);
-		m_elements[m_count] = ele;
+		m_stack[m_count] = ele;
 		++m_count;
 	}
 
 	void Pop()
 	{
-		B3_ASSERT(m_count);
+		B3_ASSERT(m_count > 0);
 		--m_count;
 	}
 
@@ -90,10 +90,10 @@ public:
 		return m_count == 0;
 	}
 private:
+	T* m_stack;
+	T m_array[N];
 	uint32 m_capacity;
-	T* m_elements;
 	uint32 m_count;
-	T m_stackElements[N];
 };
 
 #endif

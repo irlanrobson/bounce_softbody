@@ -59,6 +59,8 @@ struct b3Mesh
 	b3Triangle* triangles;
 	b3StaticTree tree;
 
+	~b3Mesh();
+
 	// Build the AABB tree. 
 	void BuildTree();
 

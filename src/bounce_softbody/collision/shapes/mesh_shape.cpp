@@ -52,9 +52,9 @@ b3AABB b3MeshShape::ComputeAABB() const
 // This contains the closest point on the mesh to the given sphere.
 struct b3MeshShapeQueryWrapper
 {
-	bool Report(uint32 nodeId)
+	bool Report(uint32 nodeIndex)
 	{
-		uint32 index = meshShape->m_mesh->tree.GetIndex(nodeId);
+		uint32 index = meshShape->m_mesh->tree.GetIndex(nodeIndex);
 		
 		// Get the child triangle in world space.
 		b3TriangleShape triangle;
@@ -69,7 +69,7 @@ struct b3MeshShapeQueryWrapper
 			{
 				dd0 = dd;
 				manifold0 = manifold;
-				triangle0 = index;
+				index0 = index;
 			}
 		}
 
@@ -81,7 +81,7 @@ struct b3MeshShapeQueryWrapper
 	b3Sphere sphere;
 	scalar dd0;
 	b3SphereManifold manifold0;
-	uint32 triangle0;
+	uint32 index0;
 };
 
 bool b3MeshShape::Collide(b3SphereManifold* manifold, const b3Sphere& sphere) const
@@ -90,7 +90,7 @@ bool b3MeshShape::Collide(b3SphereManifold* manifold, const b3Sphere& sphere) co
 	wrapper.meshShape = this;
 	wrapper.sphere = sphere;
 	wrapper.dd0 = B3_MAX_SCALAR;
-	wrapper.triangle0 = B3_NULL_TRIANGLE;
+	wrapper.index0 = B3_NULL_TRIANGLE;
 
 	B3_ASSERT(m_scale.x != scalar(0));
 	B3_ASSERT(m_scale.y != scalar(0));
@@ -112,7 +112,7 @@ bool b3MeshShape::Collide(b3SphereManifold* manifold, const b3Sphere& sphere) co
 	// Run the query.
 	m_mesh->tree.Query(&wrapper, treeAABB);
 
-	if (wrapper.triangle0 != B3_NULL_TRIANGLE)
+	if (wrapper.index0 != B3_NULL_TRIANGLE)
 	{
 		manifold->point = wrapper.manifold0.point;
 		manifold->normal = wrapper.manifold0.normal;

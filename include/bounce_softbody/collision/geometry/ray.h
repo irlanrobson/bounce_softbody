@@ -36,8 +36,8 @@ struct b3Ray
 	b3Ray(const b3Vec3& A, const b3Vec3& B) 
 	{
 		origin = A;
-		direction = b3Normalize(B - A);
-		length = b3Distance(A, B);
+		direction = B - A;
+		length = direction.Normalize();
 	}
 
 	// Return the begin point of this ray.

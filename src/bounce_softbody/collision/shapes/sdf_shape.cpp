@@ -73,7 +73,7 @@ bool b3SDFShape::Collide(b3SphereManifold* manifold, const b3Sphere& sphere) con
 
 void b3SDFShape::Draw(b3Draw* draw) const
 {
-	const b3Mesh* mesh = m_sdf->GetMesh();
+	const b3Mesh* mesh = m_sdf->mesh;
 	for (uint32 i = 0; i < mesh->triangleCount; ++i)
 	{
 		b3Triangle* triangle = mesh->triangles + i;
@@ -94,7 +94,7 @@ void b3SDFShape::Draw(b3Draw* draw) const
 	b3AABB aabb = ComputeAABB();
 	draw->DrawAABB(aabb, b3Color_pink);
 	
-	const b3ScalarVoxelGrid& voxelGrid = m_sdf->GetVoxelGrid();
+	const b3ScalarVoxelGrid& voxelGrid = m_sdf->voxelGrid;
 	for (uint32 i = 0; i < voxelGrid.GetWidthInCells(); ++i)
 	{
 		for (uint32 j = 0; j < voxelGrid.GetHeightInCells(); ++j)

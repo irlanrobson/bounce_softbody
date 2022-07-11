@@ -16,19 +16,18 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef SPHERE_MESH_SDF_CONTACT_H
-#define SPHERE_MESH_SDF_CONTACT_H
+#ifndef CYLINDER_MESH_SDF_CONTACT_H
+#define CYLINDER_MESH_SDF_CONTACT_H
 
-class SphereMeshSDFContact : public Body
+class CylinderMeshSDFContact : public Body
 {
 public:
-	SphereMeshSDFContact()
+	CylinderMeshSDFContact()
 	{
-		m_sphereMesh.Scale(b3Vec3(3.0f, 3.0f, 3.0f));
-		
-		m_sdf.Build(&m_sphereMesh, b3Vec3(1.0f, 1.0f, 1.0f), 1.0f);
+		m_cylinderMesh.Scale(b3Vec3(2.0f, 5.0f, 2.0f));
+		b3BuildSDF(&m_sdf, &m_cylinderMesh, b3Vec3(1.0f, 1.0f, 1.0f), 1.0f);
 
-		m_clothMesh.Translate(b3Vec3(0.0f, 10.0f, 0.0f));
+		m_clothMesh.Translate(b3Vec3(0.0f, 5.0f, 0.0f));
 
 		ClothDef def;
 		def.mesh = &m_clothMesh;
@@ -39,7 +38,7 @@ public:
 		b3SDFShape sdfShape;
 		sdfShape.m_sdf = &m_sdf;
 		sdfShape.m_radius = 0.2f;
-		sdfShape.m_xf.rotation = b3QuatRotationY(0.5f * B3_PI);
+		sdfShape.m_xf.rotation = b3QuatRotationX(0.5f * B3_PI);
 
 		b3WorldFixtureDef fixtureDef;
 		fixtureDef.shape = &sdfShape;
@@ -54,11 +53,11 @@ public:
 
 	static Test* Create()
 	{
-		return new SphereMeshSDFContact;
+		return new CylinderMeshSDFContact;
 	}
 
 	GridClothMesh<10, 10> m_clothMesh;
-	b3SphereMesh<10, 10> m_sphereMesh;
+	b3CylinderMesh<10, 10> m_cylinderMesh;
 	b3SDF m_sdf;
 };
 

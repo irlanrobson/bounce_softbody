@@ -25,27 +25,10 @@ struct b3Mesh;
 
 // For a given triangle mesh, implements the abstraction called "distance field" (aka "distance volume" or "distance function").
 // It provides very fast triangle mesh distance queries for 3D points. It returns negative distances if the point is inside the mesh volume.
-// This class also knows how to build the distance field for a triangle mesh.
-class b3SDF
+struct b3SDF
 {
-public:
-	// Default ctor.
-	b3SDF() = default;
-	
-	// Default dtor.
-	~b3SDF() = default;
-
-	// Build the signed distance field from a given mesh and cell size. 
-	// You can also provide an extension value that tells how much the mesh AABB should be extended by. 
-	// The mesh is assumed to be healthy (i.e. have non-degenerate triangles). This code doesn't check mesh consistency. 
-	// Currently this is very ineffective. Consider saving an instance of this object after building it. 
-	void Build(const b3Mesh* mesh, const b3Vec3& cellSize, scalar aabbVolumeExtension = scalar(1));
-
-	// Get the triangle mesh.
-	const b3Mesh* GetMesh() const { return m_mesh; }
-
-	// Get the voxel grid.
-	const b3ScalarVoxelGrid& GetVoxelGrid() const { return m_voxelGrid; }
+	const b3Mesh* mesh = nullptr;
+	b3ScalarVoxelGrid voxelGrid;
 
 	// Get the AABB of the voxel grid.
 	const b3AABB& GetAABB() const;
@@ -62,31 +45,31 @@ public:
 	// The point must be inside the voxel grid. Check if the point is inside the voxel grid 
 	// using Contains().
 	b3Vec3 Normal(const b3Vec3& point) const;
-protected:
-	void ComputeDistances();
-
-	const b3Mesh* m_mesh = nullptr;
-	b3ScalarVoxelGrid m_voxelGrid;
 };
+
+// Build the signed distance field from a given mesh, cell size, and an extension value that tells how much the mesh AABB should be extended by. 
+// The mesh is assumed to be consistent (i.e. have non-degenerate triangles). This code doesn't check mesh consistency. 
+// Currently this is very ineffective. Consider saving an instance of the SDF object after building it. 
+void b3BuildSDF(b3SDF* sdf, const b3Mesh* mesh, const b3Vec3& cellSize, scalar aabbVolumeExtension = scalar(1));
 
 inline const b3AABB& b3SDF::GetAABB() const 
 { 
-	return m_voxelGrid.GetAABB(); 
+	return voxelGrid.GetAABB(); 
 }
 
 inline bool b3SDF::Contains(const b3Vec3& point) const
 {
-	return m_voxelGrid.Contains(point);
+	return voxelGrid.Contains(point);
 }
 
 inline scalar b3SDF::Distance(const b3Vec3& point) const
 {
-	return m_voxelGrid.Sample(point);
+	return voxelGrid.Sample(point);
 }
 
 inline b3Vec3 b3SDF::Normal(const b3Vec3& point) const
 {
-	b3Vec3 gradient = m_voxelGrid.SampleGradient(point);
+	b3Vec3 gradient = voxelGrid.SampleGradient(point);
 	return b3Normalize(gradient);
 }
 #endif

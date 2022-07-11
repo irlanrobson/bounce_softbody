@@ -29,52 +29,52 @@ public:
 	const T& operator[](uint32 i) const
 	{
 		B3_ASSERT(i < m_count);
-		return m_elements[i];
+		return m_array[i];
 	}
 
 	T& operator[](uint32 i)
 	{
 		B3_ASSERT(i < m_count);
-		return m_elements[i];
+		return m_array[i];
 	}
 
 	const T* Get(uint32 i) const
 	{
 		B3_ASSERT(i < m_count);
-		return m_elements + i;
+		return m_array + i;
 	}
 
 	T* Get(uint32 i)
 	{
 		B3_ASSERT(i < m_count);
-		return m_elements + i;
+		return m_array + i;
 	}
 
 	const T* Begin() const
 	{
-		return m_elements;
+		return m_array;
 	}
 
 	T* Begin()
 	{
-		return m_elements;
+		return m_array;
 	}
 
 	void PushBack(const T& ele)
 	{
 		if (m_count == m_capacity)
 		{
-			T* oldElements = m_elements;
+			T* old = m_array;
 			m_capacity *= 2;
-			m_elements = (T*)b3Alloc(m_capacity * sizeof(T));
-			memcpy(m_elements, oldElements, m_count * sizeof(T));
-			if (oldElements != m_localElements)
+			m_array = (T*)b3Alloc(m_capacity * sizeof(T));
+			memcpy(m_array, old, m_count * sizeof(T));
+			if (old != m_memory)
 			{
-				b3Free(oldElements);
+				b3Free(old);
 			}
 		}
 		B3_ASSERT(m_count < m_capacity);
-		m_elements[m_count] = ele;
+		m_array[m_count] = ele;
 		++m_count;
 	}
 
@@ -87,13 +87,13 @@ public:
 	const T& Back() const
 	{
 		B3_ASSERT(m_count > 0);
-		return m_elements[m_count - 1];
+		return m_array[m_count - 1];
 	}
 
 	T& Back()
 	{
 		B3_ASSERT(m_count > 0);
-		return m_elements[m_count - 1];
+		return m_array[m_count - 1];
 	}
 
 	uint32 Capacity() const
@@ -111,29 +111,17 @@ public:
 		return m_count == 0;
 	}
 
-	void Remove(uint32 index)
-	{
-		B3_ASSERT(m_count > 0);
-		B3_ASSERT(index < m_count);
-		--m_count;
-		// Swap current element with its next.
-		for (uint32 i = index; i < m_count; ++i)
-		{
-			m_elements[i] = m_elements[i + 1];
-		}
-	}
-	
 	void Reserve(uint32 size)
 	{
 		if (m_capacity < size)
 		{
-			T* oldElements = m_elements;
+			T* old = m_array;
 			m_capacity = 2 * size;
-			m_elements = (T*)b3Alloc(m_capacity * sizeof(T));
-			memcpy(m_elements, oldElements, m_count * sizeof(T));
-			if (oldElements != m_localElements)
+			m_array = (T*)b3Alloc(m_capacity * sizeof(T));
+			memcpy(m_array, old, m_count * sizeof(T));
+			if (old != m_memory)
 			{
-				b3Free(oldElements);
+				b3Free(old);
 			}
 		}
 
@@ -142,24 +130,13 @@ public:
 
 	void Resize(uint32 size)
 	{
-		if (m_capacity < size)
-		{
-			T* oldElements = m_elements;
-			m_capacity = 2 * size;
-			m_elements = (T*)b3Alloc(m_capacity * sizeof(T));
-			memcpy(m_elements, oldElements, m_count * sizeof(T));
-			if (oldElements != m_localElements)
-			{
-				b3Free(oldElements);
-			}
-		}
-		B3_ASSERT(m_capacity >= size);
+		Reserve(size);
 		m_count = size;
 	}
 
 	void Copy(const b3Array<T>& other)
 	{
-		if (m_elements == other.m_elements)
+		if (m_array == other.m_array)
 		{
 			return;
 		}
@@ -167,18 +144,18 @@ public:
 		// Ensure sufficient capacity for copy.
 		if (m_capacity < other.m_count)
 		{
-			if (m_elements != m_localElements)
+			if (m_array != m_memory)
 			{
-				b3Free(m_elements);
+				b3Free(m_array);
 			}
 			m_capacity = other.m_capacity;
-			m_elements = (T*)b3Alloc(m_capacity * sizeof(T));
+			m_array = (T*)b3Alloc(m_capacity * sizeof(T));
 		}
 		
 		// Copy.
 		B3_ASSERT(m_capacity >= other.m_count);
 		m_count = other.m_count;
-		memcpy(m_elements, other.m_elements, other.m_count * sizeof(T));
+		memcpy(m_array, other.m_array, other.m_count * sizeof(T));
 	}
 
 	void operator=(const b3Array<T>& other)
@@ -186,20 +163,20 @@ public:
 		Copy(other);
 	}
 protected:
-	b3Array(T* elements, uint32 N)
+	b3Array(T* memory, uint32 N)
 	{
 		B3_ASSERT(N > 0);
-		m_localElements = elements;
+		m_memory = memory;
 		m_capacity = N;
-		m_elements = m_localElements;
+		m_array = m_memory;
 		m_count = 0;
 	}
 
 	b3Array(const b3Array<T>& other)
 	{
-		m_localElements = nullptr;
+		m_memory = nullptr;
 		m_capacity = 0;
-		m_elements = nullptr;
+		m_array = nullptr;
 		m_count = 0;
 
 		Copy(other);
@@ -207,46 +184,38 @@ protected:
 
 	~b3Array()
 	{
-		if (m_elements != m_localElements)
+		if (m_array != m_memory)
 		{
-			b3Free(m_elements);
+			b3Free(m_array);
+			m_array = nullptr;
 		}
 	}
 
+	T* m_array;
+	T* m_memory;
 	uint32 m_capacity;
 	uint32 m_count;
-	T* m_elements;
-	T* m_localElements;
 };
 
 template <typename T, uint32 N>
 class b3StackArray : public b3Array<T>
 {
 public :
-	b3StackArray<T, N>() : b3Array<T>(m_stackElements, N)
-	{
-	}
-
-	b3StackArray<T, N>(const b3StackArray<T, N>& other) : b3Array<T>(other)
-	{
-	}
-	
-	b3StackArray<T, N>(const b3Array<T>& other) : b3Array<T>(other)
-	{
-	}
+	b3StackArray<T, N>() : b3Array<T>(m_stack, N) { }
+	b3StackArray<T, N>(const b3StackArray<T, N>& other) : b3Array<T>(other) { }
+	b3StackArray<T, N>(const b3Array<T>& other) : b3Array<T>(other) { }
 
 	void operator=(const b3StackArray<T, N>& other)
 	{
-		Copy((const b3Array<T>& )other);
-	}
-	
-	void operator=(const b3Array<T>& other)
-	{
-		Copy(other);
+		b3Array<T>::Copy((const b3Array<T>&)other);
 	}
 
+	void operator=(const b3Array<T>& other)
+	{
+		b3Array<T>::Copy(other);
+	}
 protected:
-	T m_stackElements[N];
+	T m_stack[N];
 };
 
 #endif

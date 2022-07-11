@@ -18,6 +18,11 @@
 
 #include <bounce_softbody/collision/geometry/mesh.h>
 
+b3Mesh::~b3Mesh()
+{
+	b3DestroyTree(&tree);
+}
+
 void b3Mesh::BuildTree()
 {
 	// This function must be called once.
@@ -27,8 +32,8 @@ void b3Mesh::BuildTree()
 		aabbs[i] = GetTriangleAABB(i);
 	}
 
-	// Build the tree. 
-	tree.Build(aabbs, triangleCount);
+	// Build tree.
+	b3BuildTree(&tree, aabbs, triangleCount);
 
 	b3Free(aabbs);
 }

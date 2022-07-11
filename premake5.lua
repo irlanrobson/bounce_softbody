@@ -4,13 +4,11 @@
 
 -- variable paths for the case files are moved
 solution_name = "bounce_softbody"
-working_dir = "."
 solution_dir = "build/"
 external_dir = "external/"
+examples_dir = "examples/"
 bounce_softbody_inc_dir = "include/"
 bounce_softbody_src_dir = "src/"
-tests_inc_dir = "tests/"
-tests_src_dir = "tests/"
 obj_dir = "/obj/"
 bin_dir = "/bin/"
 
@@ -171,15 +169,15 @@ workspace(solution_name)
 				external_dir, 
 				external_dir .. "/glfw/include", 
 				external_dir .. "/glad/include", 
-				working_dir .. "/testbed", 
+				examples_dir .. "/testbed", 
 				bounce_softbody_inc_dir
 		}
 		
 		files 
 		{ 
-			"testbed/**.h",
-			"testbed/**.c",
-			"testbed/**.cpp",
+			examples_dir .. "testbed/**.h",
+			examples_dir .. "testbed/**.c",
+			examples_dir .. "testbed/**.cpp",
 		}
 		
 		filter "system:windows" 

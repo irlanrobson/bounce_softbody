@@ -49,20 +49,20 @@ struct b3StaticNode
 };
 
 // AABB tree for static AABBs.
-class b3StaticTree
+struct b3StaticTree
 {
-public:
-	b3StaticTree();
-	~b3StaticTree();
+	b3StaticNode* nodes = nullptr;
+	uint32 nodeCount = 0;
+	uint32 root = B3_NULL_STATIC_NODE;
 
-	// Build this tree from an array of AABBs.
-	void Build(const b3AABB* aabbs, uint32 count);
+	// Get the index of the root node of this tree.
+	uint32 GetRoot() const;
 
 	// Get the AABB of a given node.
-	const b3AABB& GetAABB(uint32 nodeId) const;
+	const b3AABB& GetAABB(uint32 index) const;
 
-	// Get the user index associated with a given node.
-	uint32 GetIndex(uint32 nodeId) const;
+	// Get the index associated with a given node.
+	uint32 GetIndex(uint32 index) const;
 
 	// Report the client callback all AABBs that are overlapping with
 	// the given AABB. The client must return false to cancel the query 
@@ -79,48 +79,46 @@ public:
 
 	// Draw this tree.
 	void Draw(b3Draw* draw) const;
-private:
-	// Build a node. Return the node index.
-	uint32 BuildNode(uint32 parentId, const b3AABB* aabbs, uint32* indices, uint32 count);
-
-	b3StaticNode* m_nodes;
-	uint32 m_leafCapacity;
-	uint32 m_leafCount;
-	uint32 m_internalCapacity;
-	uint32 m_internalCount;
-	uint32 m_nodeCapacity;
-	uint32 m_nodeCount;
-	uint32 m_root;
 };
 
-inline const b3AABB& b3StaticTree::GetAABB(uint32 nodeId) const
+// Build a tree from an array of AABBs.
+void b3BuildTree(b3StaticTree* tree, const b3AABB* aabbs, uint32 count);
+
+// If you called BuildTree() then you must call this function for destroying the tree.
+void b3DestroyTree(b3StaticTree* tree);
+
+inline uint32 b3StaticTree::GetRoot() const
 {
-	B3_ASSERT(nodeId < m_nodeCount);
-	return m_nodes[nodeId].aabb;
+	return root;
 }
 
-inline uint32 b3StaticTree::GetIndex(uint32 nodeId) const
+inline const b3AABB& b3StaticTree::GetAABB(uint32 index) const
 {
-	B3_ASSERT(nodeId < m_nodeCount);
-	B3_ASSERT(m_nodes[nodeId].IsLeaf());
-	return m_nodes[nodeId].index;
+	B3_ASSERT(index < nodeCount);
+	return nodes[index].aabb;
+}
+
+inline uint32 b3StaticTree::GetIndex(uint32 index) const
+{
+	B3_ASSERT(index < nodeCount);
+	B3_ASSERT(nodes[index].IsLeaf());
+	return nodes[index].index;
 }
 
 template<class T>
 inline void b3StaticTree::Query(T* callback, const b3AABB& aabb) const
 {
-	if (m_nodeCount == 0)
+	if (nodeCount == 0)
 	{
 		return;
 	}
 
 	b3Stack<uint32, 256> stack;
-	stack.Push(m_root);
+	stack.Push(root);
 
 	while (stack.IsEmpty() == false)
 	{
 		uint32 nodeIndex = stack.Top();
-
 		stack.Pop();
 
 		if (nodeIndex == B3_NULL_STATIC_NODE)
@@ -128,7 +126,7 @@ inline void b3StaticTree::Query(T* callback, const b3AABB& aabb) const
 			continue;
 		}
 
-		const b3StaticNode* node = m_nodes + nodeIndex;
+		const b3StaticNode* node = nodes + nodeIndex;
 
 		if (b3TestOverlap(node->aabb, aabb) == true)
 		{
@@ -151,7 +149,7 @@ inline void b3StaticTree::Query(T* callback, const b3AABB& aabb) const
 template<class T>
 inline void b3StaticTree::RayCast(T* callback, const b3RayCastInput& input) const
 {
-	if (m_nodeCount == 0)
+	if (nodeCount == 0)
 	{
 		return;
 	}
@@ -178,12 +176,11 @@ inline void b3StaticTree::RayCast(T* callback, const b3RayCastInput& input) cons
 	b3Vec3 e3 = b3Vec3_z;
 
 	b3Stack<uint32, 256> stack;
-	stack.Push(m_root);
+	stack.Push(root);
 
 	while (stack.IsEmpty() == false)
 	{
 		uint32 nodeIndex = stack.Top();
-		
 		stack.Pop();
 
 		if (nodeIndex == B3_NULL_STATIC_NODE)
@@ -191,7 +188,7 @@ inline void b3StaticTree::RayCast(T* callback, const b3RayCastInput& input) cons
 			continue;
 		}
 
-		const b3StaticNode* node = m_nodes + nodeIndex;
+		const b3StaticNode* node = nodes + nodeIndex;
 
 		if (b3TestOverlap(segmentAABB, node->aabb) == false)
 		{

@@ -20,21 +20,40 @@
 #include <bounce_softbody/common/draw.h>
 #include <algorithm>
 
-b3StaticTree::b3StaticTree()
+void b3StaticTree::Draw(b3Draw* draw) const
 {
-	m_root = B3_NULL_STATIC_NODE;
-	m_nodes = nullptr;
-	m_leafCapacity = 0;
-	m_leafCount = 0;
-	m_internalCapacity = 0;
-	m_internalCount = 0;
-	m_nodeCapacity = 0;
-	m_nodeCount = 0;
-}
+	if (nodeCount == 0)
+	{
+		return;
+	}
 
-b3StaticTree::~b3StaticTree()
-{
-	b3Free(m_nodes);
+	b3Stack<uint32, 256> stack;
+	stack.Push(root);
+
+	while (!stack.IsEmpty())
+	{
+		uint32 nodeIndex = stack.Top();
+		stack.Pop();
+
+		if (nodeIndex == B3_NULL_STATIC_NODE)
+		{
+			continue;
+		}
+
+		const b3StaticNode* node = nodes + nodeIndex;
+		
+		if (node->IsLeaf())
+		{
+			draw->DrawAABB(node->aabb, b3Color_red);
+		}
+		else
+		{
+			draw->DrawAABB(node->aabb, b3Color_green);
+
+			stack.Push(node->child1);
+			stack.Push(node->child2);
+		}
+	}
 }
 
 struct b3SortPredicate
@@ -91,31 +110,29 @@ static uint32 b3Partition(const b3AABB& aabb, const b3AABB* aabbs, uint32* indic
 	return k;
 }
 
-uint32 b3StaticTree::BuildNode(uint32 parentId, const b3AABB* aabbs, uint32* indices, uint32 count)
+static uint32 b3BuildNode(b3StaticTree* tree, 
+	uint32 parentIndex, const b3AABB* aabbs, uint32* indices, uint32 count,
+	uint32& nodeCapacity)
 {
 	B3_ASSERT(count > 0);
 
-	B3_ASSERT(m_nodeCount < m_nodeCapacity);
-	uint32 nodeId = m_nodeCount;
-	++m_nodeCount;
+	B3_ASSERT(tree->nodeCount < nodeCapacity);
+	uint32 nodeIndex = tree->nodeCount;
+	++tree->nodeCount;
 
-	b3StaticNode* node = m_nodes + nodeId;
-	node->parent = parentId;
+	b3StaticNode* node = tree->nodes + nodeIndex;
+	node->parent = parentIndex;
 
-	if (count <= 1)
+	if (count == 1)
 	{
-		B3_ASSERT(m_leafCount < m_leafCapacity);
-		++m_leafCount;
-		
-		// Set node as leaf
+		// Node is leaf
 		node->aabb = aabbs[indices[0]];
 		node->child1 = B3_NULL_STATIC_NODE;
 		node->index = indices[0];
 	}
 	else
 	{
-		B3_ASSERT(m_internalCount < m_internalCapacity);
-		++m_internalCount;
+		// Node is internal
 
 		// Compute node AABB
 		b3AABB aabb = aabbs[indices[0]];
@@ -130,73 +147,40 @@ uint32 b3StaticTree::BuildNode(uint32 parentId, const b3AABB* aabbs, uint32* ind
 		uint32 k = b3Partition(aabb, aabbs, indices, count);
 
 		// Build children
-		node->child1 = BuildNode(nodeId, aabbs, indices, k);
-		node->child2 = BuildNode(nodeId, aabbs, indices + k, count - k);
+		node->child1 = b3BuildNode(tree, nodeIndex, aabbs, indices, k, nodeCapacity);
+		node->child2 = b3BuildNode(tree, nodeIndex, aabbs, indices + k, count - k, nodeCapacity);
 	}
 
-	return nodeId;
+	return nodeIndex;
 }
 
-void b3StaticTree::Build(const b3AABB* aabbs, uint32 count)
+void b3BuildTree(b3StaticTree* tree, const b3AABB* aabbs, uint32 count)
 {
-	// This function should be called once.
-	B3_ASSERT(m_nodes == nullptr && m_nodeCount == 0);
+	// This function should be called only once for each tree.
+	B3_ASSERT(tree->nodes == nullptr && tree->nodeCount == 0);
 	B3_ASSERT(count > 0);
 
 	// Leafs = n, Internals = n - 1, Total = 2n - 1, if we assume
 	// each leaf node contains exactly 1 object.
-	m_leafCapacity = count;
-	m_internalCapacity = count - 1;
-	m_nodeCapacity = 2 * count - 1;
-
-	m_nodes = (b3StaticNode*)b3Alloc(m_nodeCapacity * sizeof(b3StaticNode));
+	uint32 nodeCapacity = 2 * count - 1;
+	
+	tree->nodes = (b3StaticNode*)b3Alloc(nodeCapacity * sizeof(b3StaticNode));
 	
 	uint32* indices = (uint32*)b3Alloc(count * sizeof(uint32));
 	for (uint32 i = 0; i < count; ++i)
 	{
 		indices[i] = i;
 	}
-
-	m_root = BuildNode(B3_NULL_STATIC_NODE, aabbs, indices, count);
+	
+	// Build
+	tree->root = b3BuildNode(tree, B3_NULL_STATIC_NODE, aabbs, indices, count, nodeCapacity);
 
 	b3Free(indices);
-
-	B3_ASSERT(m_leafCount == m_leafCapacity);
-	B3_ASSERT(m_internalCount == m_internalCapacity);
-	B3_ASSERT(m_nodeCount == m_nodeCapacity);
+	
+	B3_ASSERT(tree->nodeCount == nodeCapacity);
 }
 
-void b3StaticTree::Draw(b3Draw* draw) const
+void b3DestroyTree(b3StaticTree* tree)
 {
-	if (m_nodeCount == 0)
-	{
-		return;
-	}
-
-	b3Stack<uint32, 256> stack;
-	stack.Push(m_root);
-
-	while (!stack.IsEmpty())
-	{
-		uint32 nodeIndex = stack.Top();
-		stack.Pop();
-
-		if (nodeIndex == B3_NULL_STATIC_NODE)
-		{
-			continue;
-		}
-
-		const b3StaticNode* node = m_nodes + nodeIndex;
-		if (node->IsLeaf())
-		{
-			draw->DrawAABB(node->aabb, b3Color_red);
-		}
-		else
-		{
-			draw->DrawAABB(node->aabb, b3Color_green);
-
-			stack.Push(node->child1);
-			stack.Push(node->child2);
-		}
-	}
+	b3Free(tree->nodes);
 }
