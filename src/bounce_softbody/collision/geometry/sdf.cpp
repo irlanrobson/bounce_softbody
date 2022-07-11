@@ -113,7 +113,6 @@ static scalar b3Distance(const b3Mesh* mesh, const b3Vec3& point, scalar farDist
 	return closestDistance;
 }
 
-
 static void b3ComputeDistances(b3SDF* sdf)
 {
 	const b3Mesh* mesh = sdf->mesh;
