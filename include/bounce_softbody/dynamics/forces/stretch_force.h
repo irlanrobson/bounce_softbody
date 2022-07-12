@@ -71,7 +71,7 @@ struct b3StretchForceDef : public b3ForceDef
 	// Damping stiffness in u direction
 	scalar damping_stiffness_u;
 	
-	// Desired strechiness in u direction in range [0, 1]
+	// Desired strechiness in u direction.
 	scalar b_u;
 
 	// Stretching stiffness in v direction
@@ -80,13 +80,13 @@ struct b3StretchForceDef : public b3ForceDef
 	// Damping stiffness in v direction
 	scalar damping_stiffness_v;
 	
-	// Desired strechiness in v direction in range [0, 1]
+	// Desired strechiness in v direction.
 	scalar b_v;
 };
 
 // Stretch force acting on a triangle.
 // This maintains the triangle edge lengths in the (u, v) 
-// frame of reference at a given desired normalized rest distance 
+// frame of reference at a given desired rest distance 
 // in the direction of the u and v coordinates.
 class b3StretchForce : public b3Force
 {
@@ -118,10 +118,10 @@ public:
 	// Get the damping stiffness in the u direction.
 	scalar GetDampingStiffnessU() const;
 	
-	// Set the normalized rest length in the u direction in the range [0, 1].
+	// Set the rest length in the u direction.
 	void SetBU(scalar b);
 
-	// Get the normalized rest length in the u direction.
+	// Get the rest length in the u direction.
 	scalar GetBU() const;
 	
 	// Set the stiffness in the v direction.
@@ -136,10 +136,10 @@ public:
 	// Get the damping stiffness in the v direction.
 	scalar GetDampingStiffnessV() const;
 	
-	// Set the normalized rest length in the v direction in the range [0, 1].
+	// Set the rest length in the v direction.
 	void SetBV(scalar b);
 
-	// Get the normalized rest length in the v direction.
+	// Get the rest length in the v direction.
 	scalar GetBV() const;
 	
 	// Get the force acting on particle 1.

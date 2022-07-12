@@ -22,16 +22,16 @@
 #include <bounce_softbody/sparse/dense_vec3.h>
 #include <bounce_softbody/sparse/sparse_mat33.h>
 
-void b3SpringForceDef::Initialize(b3Particle* particle1, b3Particle* particle2, scalar structuralStiffness, scalar structuralDampingStiffness)
+void b3SpringForceDef::Initialize(b3Particle* particle1, b3Particle* particle2, scalar ks, scalar kd)
 {
 	type = e_springForce;
 	p1 = particle1;
 	p2 = particle2;
 	b3Vec3 x1 = p1->GetPosition();
 	b3Vec3 x2 = p2->GetPosition();
-	restLength = b3Distance(x1, x2);
-	stiffness = structuralStiffness;
-	dampingStiffness = structuralDampingStiffness;
+	length = b3Distance(x1, x2);
+	stiffness = ks;
+	dampingStiffness = kd;
 }
 
 b3SpringForce::b3SpringForce(const b3SpringForceDef* def)
@@ -40,7 +40,7 @@ b3SpringForce::b3SpringForce(const b3SpringForceDef* def)
 	m_userIndex = def->userIndex;
 	m_p1 = def->p1;
 	m_p2 = def->p2;
-	m_L0 = def->restLength;
+	m_L0 = def->length;
 	m_ks = def->stiffness;
 	m_kd = def->dampingStiffness;
 	m_f1.SetZero();

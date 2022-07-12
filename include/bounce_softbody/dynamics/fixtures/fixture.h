@@ -38,7 +38,7 @@ struct b3FixtureDef
 		radius = scalar(0);
 		friction = scalar(0);
 		density = scalar(0);
-		meshIndex = B3_MAX_U32;
+		userIndex = B3_MAX_U32;
 	}
 
 	// Type.
@@ -53,8 +53,8 @@ struct b3FixtureDef
 	// Density. Set to zero to disable mass contribution.
 	scalar density;
 	
-	// Feature index into mesh.
-	uint32 meshIndex;
+	// User index pointing to anything.
+	uint32 userIndex;
 };
 
 // This is an internal body fixture.
@@ -88,6 +88,12 @@ public:
 
 	// Get the coefficient of friction.
 	scalar GetFriction() const;
+
+	// Set the user index.
+	void SerUserIndex(uint32 userIndex);
+
+	// Get the user index.
+	uint32 GetUserIndex() const;
 protected:
 	friend class b3Body;
 	friend class b3Particle;
@@ -111,8 +117,8 @@ protected:
 	// Density
 	scalar m_density;
 
-	// Feature index into mesh 
-	uint32 m_meshIndex;
+	// User index
+	uint32 m_userIndex;
 };
 
 inline b3Fixture::b3Fixture(const b3FixtureDef& def, b3Body* body)
@@ -121,7 +127,7 @@ inline b3Fixture::b3Fixture(const b3FixtureDef& def, b3Body* body)
 	m_radius = def.radius;
 	m_friction = def.friction;
 	m_density = def.density;
-	m_meshIndex = def.meshIndex;
+	m_userIndex = def.userIndex;
 }
 
 inline b3FixtureType b3Fixture::GetType() const
@@ -170,6 +176,16 @@ inline void b3Fixture::SetDensity(scalar density)
 inline scalar b3Fixture::GetDensity() const
 {
 	return m_density;
+}
+
+inline void b3Fixture::SerUserIndex(uint32 userIndex)
+{
+	m_userIndex = userIndex;
+}
+
+inline uint32 b3Fixture::GetUserIndex() const
+{
+	return m_userIndex;
 }
 
 #endif

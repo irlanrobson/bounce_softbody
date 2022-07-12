@@ -30,13 +30,13 @@ struct b3SpringForceDef : public b3ForceDef
 	b3SpringForceDef()
 	{
 		type = e_springForce;
-		restLength = scalar(0);
+		length = scalar(0);
 		stiffness = scalar(0);
 		dampingStiffness = scalar(0);
 	}
 
 	// Initialize this definition from particles and stiffnesses.
-	void Initialize(b3Particle* particle1, b3Particle* particle2, scalar structuralStiffness, scalar dampingStiffness);
+	void Initialize(b3Particle* particle1, b3Particle* particle2, scalar stiffness, scalar dampingStiffness);
 
 	// Particle 1
 	b3Particle* p1;
@@ -44,8 +44,8 @@ struct b3SpringForceDef : public b3ForceDef
 	// Particle 2
 	b3Particle* p2;
 
-	// Rest length
-	scalar restLength;
+	// Natural spring length
+	scalar length;
 
 	// Spring stiffness
 	scalar stiffness;
@@ -70,10 +70,10 @@ public:
 	b3Particle* GetParticle2() { return m_p2; }
 
 	// Set the spring natural rest length.
-	void SetRestLength(scalar restLength);
+	void SetLength(scalar length);
 
 	// Get the spring natural rest length.
-	scalar GetRestLength() const;
+	scalar GetLength() const;
 
 	// Set the spring stiffness.
 	void SetStiffness(scalar stiffness);
@@ -119,13 +119,13 @@ private:
 	b3Vec3 m_f1, m_f2;
 };
 
-inline void b3SpringForce::SetRestLength(scalar restLength)
+inline void b3SpringForce::SetLength(scalar length)
 {
-	B3_ASSERT(restLength >= scalar(0));
-	m_L0 = restLength;
+	B3_ASSERT(length >= scalar(0));
+	m_L0 = length;
 }
 
-inline scalar b3SpringForce::GetRestLength() const
+inline scalar b3SpringForce::GetLength() const
 {
 	return m_L0;
 }

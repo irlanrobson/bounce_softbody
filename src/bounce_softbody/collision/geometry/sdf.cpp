@@ -77,7 +77,7 @@ static bool b3IsPointInsideMesh(const b3Mesh* mesh, const b3Vec3& point, scalar 
 	return inCount >= 3;
 }
 
-static scalar b3Distance(const b3Mesh* mesh, const b3Vec3& point, scalar farDistance)
+static scalar b3ComputeDistance(const b3Mesh* mesh, const b3Vec3& point, scalar farDistance)
 {
 	scalar closestDistanceSquared = B3_MAX_SCALAR;
 	b3Vec3 closestPoint(0, 0, 0);
@@ -142,7 +142,7 @@ static void b3ComputeDistances(b3SDF* sdf)
 			{
 				b3Index3D voxelIndex = b3Index3D(xIdx, yIdx, zIdx);
 				b3Vec3 voxelPosition = voxelGrid.GetVoxelPosition(voxelIndex);
-				scalar distance = b3Distance(mesh, voxelPosition, farDistance);
+				scalar distance = b3ComputeDistance(mesh, voxelPosition, farDistance);
 
 				voxelGrid.SetVoxel(voxelIndex, distance);
 

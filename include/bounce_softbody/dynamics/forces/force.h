@@ -64,7 +64,7 @@ public:
 	// Get the user index.
 	uint32 GetUserIndex() const { return m_userIndex; }
 
-	// Does this force contain a given particle?
+	// Has this force a given particle?
 	virtual bool HasParticle(const b3Particle* particle) const = 0;
 
 	// Get the next force in the body force list.

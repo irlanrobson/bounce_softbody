@@ -30,22 +30,22 @@ class b3Draw;
 // A node in a static tree. The client does not interact with this directly.
 struct b3StaticNode
 {
-	// Is this node a leaf?
-	bool IsLeaf() const
-	{
-		return child1 == B3_NULL_STATIC_NODE;
-	}
-
 	b3AABB aabb;
 	
 	uint32 parent;
-
+	
 	uint32 child1;
 	union
 	{
 		uint32 child2;
 		uint32 index;
 	};
+
+	// Is this node a leaf?
+	bool IsLeaf() const
+	{
+		return child1 == B3_NULL_STATIC_NODE;
+	}
 };
 
 // AABB tree for static AABBs.

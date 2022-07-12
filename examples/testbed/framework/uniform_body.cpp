@@ -46,7 +46,7 @@ UniformBody::UniformBody(const ClothDef& def)
 		sd.p = p;
 		sd.radius = def.thickness;
 		sd.friction = def.friction;
-		sd.meshIndex = i;
+		sd.userIndex = i;
 		
 		CreateSphere(sd);
 	}
@@ -78,7 +78,7 @@ UniformBody::UniformBody(const ClothDef& def)
 		td.density = def.density;
 		td.radius = def.thickness;
 		td.friction = def.friction;
-		td.meshIndex = i;
+		td.userIndex = i;
 
 		CreateTriangle(td);
 
@@ -146,7 +146,7 @@ UniformBody::UniformBody(const TetDef& def)
 		sd.p = p;
 		sd.radius = def.thickness;
 		sd.friction = def.friction;
-		sd.meshIndex = i;
+		sd.userIndex = i;
 
 		CreateSphere(sd);
 	}
@@ -173,7 +173,7 @@ UniformBody::UniformBody(const TetDef& def)
 		td.v3 = p3->GetPosition();
 		td.radius = def.thickness;
 		td.friction = def.friction;
-		td.meshIndex = i;
+		td.userIndex = i;
 
 		// Zero mass contribution
 		td.density = scalar(0);
@@ -213,7 +213,7 @@ UniformBody::UniformBody(const TetDef& def)
 		td.density = def.density;
 		td.radius = def.thickness;
 		td.friction = def.friction;
-		td.meshIndex = i;
+		td.userIndex = i;
 
 		CreateTetrahedron(td);
 

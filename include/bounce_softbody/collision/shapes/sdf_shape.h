@@ -21,7 +21,7 @@
 
 #include <bounce_softbody/collision/shapes/shape.h>
 
-class b3SDF;
+struct b3SDF;
 
 // Signed distance field (SDF) collision shape.
 class b3SDFShape : public b3Shape

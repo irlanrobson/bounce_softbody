@@ -175,9 +175,9 @@ workspace(solution_name)
 		
 		files 
 		{ 
-			examples_dir .. "testbed/**.h",
-			examples_dir .. "testbed/**.c",
-			examples_dir .. "testbed/**.cpp",
+			examples_dir .. "/testbed/**.h",
+			examples_dir .. "/testbed/**.c",
+			examples_dir .. "/testbed/**.cpp",
 		}
 		
 		filter "system:windows" 
