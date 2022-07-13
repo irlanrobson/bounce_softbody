@@ -80,7 +80,6 @@ inline bool BodyDragger::IsDragging() const
 	return m_isDragging;
 }
 
-
 inline b3MouseForce* BodyDragger::GetMouseForce()
 {
 	return m_mouseForce;

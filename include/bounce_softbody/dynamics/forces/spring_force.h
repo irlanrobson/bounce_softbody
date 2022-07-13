@@ -136,7 +136,6 @@ inline void b3SpringForce::SetStiffness(scalar stiffness)
 	m_ks = stiffness;
 }
 
-
 inline scalar b3SpringForce::GetStiffness() const
 {
 	return m_ks;

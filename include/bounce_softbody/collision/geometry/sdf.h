@@ -48,7 +48,7 @@ struct b3SDF
 };
 
 // Build the signed distance field from a given mesh, cell size, and an extension value that tells how much the mesh AABB should be extended by. 
-// The mesh is assumed to be consistent (i.e. have non-degenerate triangles). This code doesn't check mesh consistency. 
+// The mesh is assumed to be consistent. This code doesn't check mesh consistency. 
 // Currently this is very ineffective. Consider saving an instance of the SDF object after building it. 
 void b3BuildSDF(b3SDF* sdf, const b3Mesh* mesh, const b3Vec3& cellSize, scalar aabbVolumeExtension = scalar(1));
 
@@ -72,4 +72,5 @@ inline b3Vec3 b3SDF::Normal(const b3Vec3& point) const
 	b3Vec3 gradient = voxelGrid.SampleGradient(point);
 	return b3Normalize(gradient);
 }
+
 #endif

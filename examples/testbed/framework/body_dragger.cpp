@@ -96,7 +96,7 @@ bool BodyDragger::StartDragging()
 		def.w4 = 1.0f - m_u - m_v;
 		def.stiffness = 100000.0f;
 		def.dampingStiffness = 1000.0f;
-		def.restLength = 0.0f;
+		def.length = 0.0f;
 
 		m_mouseForce = (b3MouseForce*)m_body->CreateForce(def);
 	}

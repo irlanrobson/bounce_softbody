@@ -35,7 +35,7 @@ struct b3MouseForceDef : public b3ForceDef
 		w2 = scalar(0);
 		w3 = scalar(0);
 		w4 = scalar(0);
-		restLength = scalar(0);
+		length = scalar(0);
 		stiffness = scalar(0);
 		dampingStiffness = scalar(0);
 	}
@@ -55,8 +55,8 @@ struct b3MouseForceDef : public b3ForceDef
 	// Reference barycentric coordinates for p1 on triangle (p2, p3, p4)
 	scalar w2, w3, w4;
 
-	// Rest length
-	scalar restLength;
+	// Natural spring length
+	scalar length;
 
 	// Stiffness
 	scalar stiffness;
@@ -91,10 +91,10 @@ public:
 	b3Particle* GetParticle4() { return m_p4; }
 	
 	// Set the natural spring length.
-	void SetRestLength(scalar restLength);
+	void SetLength(scalar restLength);
 
 	// Get the natural spring length.
-	scalar GetRestLength() const;
+	scalar GetLength() const;
 
 	// Set the spring stiffness.
 	void SetStiffness(scalar stiffness);
@@ -155,13 +155,13 @@ private:
 	b3Vec3 m_f1, m_f2, m_f3, m_f4;
 };
 
-inline void b3MouseForce::SetRestLength(scalar restLength)
+inline void b3MouseForce::SetLength(scalar length)
 {
-	B3_ASSERT(restLength >= scalar(0));
-	m_L0 = restLength;
+	B3_ASSERT(length >= scalar(0));
+	m_L0 = length;
 }
 
-inline scalar b3MouseForce::GetRestLength() const
+inline scalar b3MouseForce::GetLength() const
 {
 	return m_L0;
 }

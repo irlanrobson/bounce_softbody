@@ -35,7 +35,7 @@ b3MouseForce::b3MouseForce(const b3MouseForceDef* def)
 	m_w4 = def->w4;
 	m_ks = def->stiffness;
 	m_kd = def->dampingStiffness;
-	m_L0 = def->restLength;
+	m_L0 = def->length;
 	m_f1.SetZero();
 	m_f2.SetZero();
 	m_f3.SetZero();
