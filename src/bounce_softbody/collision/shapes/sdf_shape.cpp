@@ -42,6 +42,7 @@ b3AABB b3SDFShape::ComputeAABB() const
 {
 	b3AABB aabb = m_sdf->GetAABB();
 	aabb.Transform(m_xf);
+	aabb.Extend(m_radius);
 	return aabb;
 }
 
