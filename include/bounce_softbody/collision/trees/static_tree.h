@@ -55,9 +55,6 @@ struct b3StaticTree
 	uint32 nodeCount = 0;
 	uint32 root = B3_NULL_STATIC_NODE;
 
-	// Get the index of the root node of this tree.
-	uint32 GetRoot() const;
-
 	// Get the AABB of a given node.
 	const b3AABB& GetAABB(uint32 index) const;
 
@@ -86,11 +83,6 @@ void b3BuildTree(b3StaticTree* tree, const b3AABB* aabbs, uint32 count);
 
 // If you called BuildTree() then you must call this function for destroying the tree.
 void b3DestroyTree(b3StaticTree* tree);
-
-inline uint32 b3StaticTree::GetRoot() const
-{
-	return root;
-}
 
 inline const b3AABB& b3StaticTree::GetAABB(uint32 index) const
 {

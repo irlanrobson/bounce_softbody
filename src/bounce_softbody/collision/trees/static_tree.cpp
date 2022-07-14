@@ -110,9 +110,8 @@ static uint32 b3Partition(const b3AABB& aabb, const b3AABB* aabbs, uint32* indic
 	return k;
 }
 
-static uint32 b3BuildNode(b3StaticTree* tree, 
-	uint32 parentIndex, const b3AABB* aabbs, uint32* indices, uint32 count,
-	uint32& nodeCapacity)
+static uint32 b3BuildNode(b3StaticTree* tree, uint32 nodeCapacity,
+	uint32 parentIndex, const b3AABB* aabbs, uint32* indices, uint32 count)
 {
 	B3_ASSERT(count > 0);
 
@@ -147,8 +146,8 @@ static uint32 b3BuildNode(b3StaticTree* tree,
 		uint32 k = b3Partition(aabb, aabbs, indices, count);
 
 		// Build children
-		node->child1 = b3BuildNode(tree, nodeIndex, aabbs, indices, k, nodeCapacity);
-		node->child2 = b3BuildNode(tree, nodeIndex, aabbs, indices + k, count - k, nodeCapacity);
+		node->child1 = b3BuildNode(tree, nodeCapacity, nodeIndex, aabbs, indices, k);
+		node->child2 = b3BuildNode(tree, nodeCapacity, nodeIndex, aabbs, indices + k, count - k);
 	}
 
 	return nodeIndex;
@@ -173,7 +172,7 @@ void b3BuildTree(b3StaticTree* tree, const b3AABB* aabbs, uint32 count)
 	}
 	
 	// Build
-	tree->root = b3BuildNode(tree, B3_NULL_STATIC_NODE, aabbs, indices, count, nodeCapacity);
+	tree->root = b3BuildNode(tree, nodeCapacity, B3_NULL_STATIC_NODE, aabbs, indices, count);
 
 	b3Free(indices);
 	

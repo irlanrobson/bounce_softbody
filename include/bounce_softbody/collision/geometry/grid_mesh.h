@@ -23,7 +23,7 @@
 
 // A (H + 1) x (W + 1) grid mesh stored in row-major order.
 // v(i, j) = i * (W + 1) + j
-template<uint32 H = 1, uint32 W = 1>
+template <uint32 H = 1, uint32 W = 1>
 struct b3GridMesh : public b3Mesh
 {
 	b3Vec3 gridVertices[(H + 1) * (W + 1)];
