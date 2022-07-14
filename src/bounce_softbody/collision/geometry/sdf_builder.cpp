@@ -129,7 +129,7 @@ static void b3ComputeDistances(b3SDF* sdf)
 
 		if ((progress - lastProgress) >= scalar(1))
 		{
-			b3Log("[b3SDF] Computing distances... %.0f%% - %d/%d\n", progress, count, voxelGrid.GetVoxelCount());
+			b3Log("[b3BuildSDF] Computing distances... %.0f%% - %d/%d\n", progress, count, voxelGrid.GetVoxelCount());
 			lastProgress = progress;
 		}
 	};
