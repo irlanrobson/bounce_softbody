@@ -24,10 +24,10 @@ class CylinderMeshSDFContact : public Body
 public:
 	CylinderMeshSDFContact()
 	{
-		m_cylinderMesh.Scale(b3Vec3(2.0f, 5.0f, 2.0f));
+		m_cylinderMesh.Scale(b3Vec3(6.0f, 5.0f, 6.0f));
 		b3BuildSDF(&m_sdf, &m_cylinderMesh, b3Vec3(1.0f, 1.0f, 1.0f), 1.0f);
 
-		m_clothMesh.Translate(b3Vec3(0.0f, 5.0f, 0.0f));
+		m_clothMesh.Translate(b3Vec3(0.0f, 10.0f, 0.0f));
 
 		ClothDef def;
 		def.mesh = &m_clothMesh;
@@ -38,7 +38,7 @@ public:
 		b3SDFShape sdfShape;
 		sdfShape.m_sdf = &m_sdf;
 		sdfShape.m_radius = 0.2f;
-		sdfShape.m_xf.rotation = b3QuatRotationX(0.5f * B3_PI);
+		sdfShape.m_invert = true;
 
 		b3WorldFixtureDef fixtureDef;
 		fixtureDef.shape = &sdfShape;

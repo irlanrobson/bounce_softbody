@@ -28,6 +28,7 @@ b3SDFShape::b3SDFShape()
 	m_radius = scalar(0);
 	m_sdf = nullptr;
 	m_xf.SetIdentity();
+	m_invert = false;
 }
 
 b3Shape* b3SDFShape::Clone(b3BlockAllocator* allocator) const
@@ -58,17 +59,28 @@ bool b3SDFShape::Collide(b3SphereManifold* manifold, const b3Sphere& sphere) con
 		return false;
 	}
 
-	scalar distance = m_sdf->Distance(point);
+	scalar distance = m_sdf->Distance(point);	
+	if (m_invert)
+	{
+		distance *= scalar(-1);
+	}
+	
 	if (distance > radius)
 	{
 		return false;
 	}
 	
 	b3Vec3 normal = m_sdf->Normal(point);
-	b3Vec3 surfacePoint = point - distance * normal;
+	if (m_invert)
+	{
+		normal *= scalar(-1);
+	}
 
-	manifold->point = b3Mul(m_xf, surfacePoint);
-	manifold->normal = b3Mul(m_xf.rotation, normal);
+	b3Vec3 surfaceNormal = b3Mul(m_xf.rotation, normal);
+	b3Vec3 surfacePoint = sphere.vertex - distance * surfaceNormal;
+
+	manifold->point = surfacePoint;
+	manifold->normal = surfaceNormal;
 	return true;
 }
 
@@ -88,33 +100,37 @@ void b3SDFShape::Draw(b3Draw* draw) const
 		b3Vec3 N = b3Cross(B - A, C - A);
 		N.Normalize();
 
-		draw->DrawSolidTriangle(N, A, B, C, b3Color_gray);
-		draw->DrawSolidTriangle(-N, A, C, B, b3Color_gray);
+		if (m_invert == false)
+		{
+			draw->DrawSolidTriangle(N, A, B, C, b3Color_gray);
+		}
+
+		b3Vec3 center = (A + B + C) / scalar(3);
+		draw->DrawSegment(center, center + scalar(1) * N, b3Color_pink);
 	}
 	
 	b3AABB aabb = ComputeAABB();
 	draw->DrawAABB(aabb, b3Color_pink);
 	
 	const b3ScalarVoxelGrid& voxelGrid = m_sdf->voxelGrid;
-	for (uint32 i = 0; i < voxelGrid.GetWidthInCells(); ++i)
+	for (uint32 i = 0; i < voxelGrid.GetWidth(); ++i)
 	{
-		for (uint32 j = 0; j < voxelGrid.GetHeightInCells(); ++j)
+		for (uint32 j = 0; j < voxelGrid.GetHeight(); ++j)
 		{
-			for (uint32 k = 0; k < voxelGrid.GetDepthInCells(); ++k)
+			for (uint32 k = 0; k < voxelGrid.GetDepth(); ++k)
 			{
-				b3Index3D cellIndex = b3Index3D(i, j, k);
-				b3AABB cellAABB = voxelGrid.GetCellAABB(cellIndex);
-				b3Vec3 cellCenter = cellAABB.GetCenter();
-				scalar distance = voxelGrid.Sample(cellCenter);
+				b3Index3D voxelIndex = b3Index3D(i, j, k);
+				scalar voxelValue = voxelGrid.GetVoxel(voxelIndex);
+				b3Vec3 voxelPosition = voxelGrid.GetVoxelPosition(voxelIndex);
 
-				b3Vec3 center = b3Mul(m_xf, cellCenter);
-				if (distance <= scalar(0))
+				b3Vec3 position = b3Mul(m_xf, voxelPosition);
+				if (voxelValue <= scalar(0))
 				{
-					draw->DrawPoint(center, scalar(2), b3Color_red, false);
+					draw->DrawPoint(position, scalar(2), b3Color_red, false);
 				}
 				else
 				{
-					draw->DrawPoint(center, scalar(2), b3Color_green, false);
+					//draw->DrawPoint(position, scalar(2), b3Color_green, false);
 				}
 			}
 		}

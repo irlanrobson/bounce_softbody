@@ -42,6 +42,9 @@ public:
 
 	// Transform.
 	b3Transform m_xf;
+
+	// Invert the SDF.
+	bool m_invert;
 };
 
 #endif
