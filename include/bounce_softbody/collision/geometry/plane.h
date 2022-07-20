@@ -69,16 +69,16 @@ inline b3Plane operator*(const b3Transform& T, const b3Plane& plane)
 }
 
 // Compute the distance between a point and a plane.
-inline scalar b3Distance(const b3Vec3& P, const b3Plane& plane)
+inline scalar b3Distance(const b3Vec3& point, const b3Plane& plane)
 {
-	return b3Dot(plane.normal, P) - plane.offset;
+	return b3Dot(plane.normal, point) - plane.offset;
 }
 
 // Project a point onto a normal plane.
-inline b3Vec3 b3ClosestPointOnPlane(const b3Vec3& P, const b3Plane& plane)
+inline b3Vec3 b3ClosestPointOnPlane(const b3Vec3& point, const b3Plane& plane)
 {
-	scalar fraction = b3Distance(P, plane);
-	return P - fraction * plane.normal;
+	scalar distance = b3Distance(point, plane);
+	return point - distance * plane.normal;
 }
 
 #endif
