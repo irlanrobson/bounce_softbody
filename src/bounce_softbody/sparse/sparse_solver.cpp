@@ -21,6 +21,9 @@
 #include <bounce_softbody/sparse/diag_mat33.h>
 #include <bounce_softbody/sparse/dense_vec3.h>
 
+// Conjugated Gradients method. For an introduction to this method see:
+// "An Introduction to the Conjugate Gradient Method Without the Agonizing Pain", by Jonathan Richard Shewchuk.
+
 // Preconditioned Conjugate Gradient algorithm.
 bool b3SparseSolveCG(b3SolveCGOutput* output, const b3SolveCGInput* input)
 {
@@ -76,7 +79,17 @@ bool b3SparseSolveCG(b3SolveCGOutput* output, const b3SolveCGInput* input)
 		scalar alpha = delta_new / b3Dot(c, q);
 
 		x = x + alpha * c;
-		r = r - alpha * q;
+		
+		// Shewchuk, page 8.
+		// Periodically recompute the correct residual.
+		if (iteration % 30 == 0)
+		{
+			r = b - A * x;
+		}
+		else
+		{
+			r = r - alpha * q;
+		}
 
 		b3DenseVec3 s = invP * r;
 
