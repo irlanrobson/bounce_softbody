@@ -24,6 +24,8 @@ class NodeTypes : public Body
 public:
 	NodeTypes()
 	{
+		m_mesh.Translate(b3Vec3(0.0f, 5.0f, 0.0f));
+
 		// Create soft body
 		TetDef def;
 		def.mesh = &m_mesh;
@@ -50,6 +52,16 @@ public:
 		}
 
 		m_bodyDragger = new BodyDragger(&m_ray, m_body);
+		
+		b3BoxShape boxShape;
+		boxShape.m_extents.Set(20.0f, 1.0f, 20.0f);
+		boxShape.m_radius = 0.2f;
+
+		b3WorldFixtureDef fixtureDef;
+		fixtureDef.shape = &boxShape;
+		fixtureDef.friction = 0.5f;
+
+		m_body->CreateFixture(fixtureDef);
 	}
 
 	void Step()

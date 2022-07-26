@@ -16,22 +16,13 @@
 * 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef B3_FRICTION_SOLVER_H
-#define B3_FRICTION_SOLVER_H
+#ifndef B3_CONTACT_H
+#define B3_CONTACT_H
 
-#include <bounce_softbody/common/math/math.h>
-#include <bounce_softbody/dynamics/time_step.h>
+#include <bounce_softbody/common/math/vec3.h>
 
-class b3StackAllocator;
-class b3Particle;
-class b3SphereAndShapeContact;
-
-struct b3FrictionSolverDef
-{
-	b3TimeStep step;
-	uint32 shapeContactCount;
-	b3SphereAndShapeContact** shapeContacts;
-};
+struct b3SparseForceSolverData;
+struct b3TimeStep;
 
 // Mixed friction law.
 inline scalar b3MixFriction(scalar u1, scalar u2)
@@ -39,17 +30,18 @@ inline scalar b3MixFriction(scalar u1, scalar u2)
 	return b3Sqrt(u1 * u2);
 }
 
-class b3FrictionSolver
+// A contact acting on a set of particles.
+class b3Contact
 {
 public:
-	b3FrictionSolver(const b3FrictionSolverDef& def);
-	
-	void Solve();
-protected:
-	b3TimeStep m_step;
-	b3StackAllocator* m_allocator;
-	uint32 m_shapeContactCount;
-	b3SphereAndShapeContact** m_shapeContacts;
+	// Default dtor.
+	virtual ~b3Contact() { }
+
+	// Compute force solver data.
+	virtual void ComputeForces(const b3SparseForceSolverData* data) = 0;
+
+	// Solve friction constraints.
+	virtual void ApplyFriction(const b3TimeStep& step, const b3Vec3& gravity) = 0;
 };
 
 #endif

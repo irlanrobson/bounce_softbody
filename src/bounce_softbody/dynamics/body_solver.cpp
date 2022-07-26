@@ -18,34 +18,34 @@
 
 #include <bounce_softbody/dynamics/body_solver.h>
 #include <bounce_softbody/dynamics/force_solver.h>
-#include <bounce_softbody/dynamics/friction_solver.h>
-#include <bounce_softbody/dynamics/body.h>
 #include <bounce_softbody/dynamics/time_step.h>
 #include <bounce_softbody/dynamics/particle.h>
+#include <bounce_softbody/dynamics/forces/force.h>
+#include <bounce_softbody/dynamics/contacts/contact.h>
 #include <bounce_softbody/common/memory/stack_allocator.h>
 
 b3BodySolver::b3BodySolver(const b3BodySolverDef& def)
 {
-	m_stack = def.stack;
+	m_allocator = def.allocator;
 
 	m_particleCapacity = def.particleCapacity;
 	m_particleCount = 0;
-	m_particles = (b3Particle**)m_stack->Allocate(m_particleCapacity * sizeof(b3Particle*));
+	m_particles = (b3Particle**)m_allocator->Allocate(m_particleCapacity * sizeof(b3Particle*));
 
 	m_forceCapacity = def.forceCapacity;
 	m_forceCount = 0;
-	m_forces = (b3Force**)m_stack->Allocate(m_forceCapacity * sizeof(b3Force*));;
+	m_forces = (b3Force**)m_allocator->Allocate(m_forceCapacity * sizeof(b3Force*));;
 
-	m_shapeContactCapacity = def.shapeContactCapacity;
-	m_shapeContactCount = 0;
-	m_shapeContacts = (b3SphereAndShapeContact**)m_stack->Allocate(m_shapeContactCapacity * sizeof(b3SphereAndShapeContact*));
+	m_contactCapacity = def.contactCapacity;
+	m_contactCount = 0;
+	m_contacts = (b3Contact**)m_allocator->Allocate(m_contactCapacity * sizeof(b3Contact*));
 }
 
 b3BodySolver::~b3BodySolver()
 {
-	m_stack->Free(m_shapeContacts);
-	m_stack->Free(m_forces);
-	m_stack->Free(m_particles);
+	m_allocator->Free(m_contacts);
+	m_allocator->Free(m_forces);
+	m_allocator->Free(m_particles);
 }
 
 void b3BodySolver::Add(b3Particle* p)
@@ -59,9 +59,9 @@ void b3BodySolver::Add(b3Force* f)
 	m_forces[m_forceCount++] = f;
 }
 
-void b3BodySolver::Add(b3SphereAndShapeContact* c)
+void b3BodySolver::Add(b3Contact* c)
 {
-	m_shapeContacts[m_shapeContactCount++] = c;
+	m_contacts[m_contactCount++] = c;
 }
 
 void b3BodySolver::Solve(const b3TimeStep& step, const b3Vec3& gravity)
@@ -70,13 +70,13 @@ void b3BodySolver::Solve(const b3TimeStep& step, const b3Vec3& gravity)
 		// Solve internal dynamics.
 		b3ForceSolverDef forceSolverDef;
 		forceSolverDef.step = step;
-		forceSolverDef.stack = m_stack;
+		forceSolverDef.allocator = m_allocator;
 		forceSolverDef.particleCount = m_particleCount;
 		forceSolverDef.particles = m_particles;
 		forceSolverDef.forceCount = m_forceCount;
 		forceSolverDef.forces = m_forces;
-		forceSolverDef.shapeContactCount = m_shapeContactCount;
-		forceSolverDef.shapeContacts = m_shapeContacts;
+		forceSolverDef.contactCount = m_contactCount;
+		forceSolverDef.contacts = m_contacts;
 
 		b3ForceSolver forceSolver(forceSolverDef);
 
@@ -85,13 +85,9 @@ void b3BodySolver::Solve(const b3TimeStep& step, const b3Vec3& gravity)
 
 	{
 		// Solve friction constraints.
-		b3FrictionSolverDef frictionSolverDef;
-		frictionSolverDef.step = step;
-		frictionSolverDef.shapeContactCount = m_shapeContactCount;
-		frictionSolverDef.shapeContacts = m_shapeContacts;
-		
-		b3FrictionSolver frictionSolver(frictionSolverDef);
-
-		frictionSolver.Solve();
+		for (uint32 i = 0; i < m_contactCount; ++i)
+		{
+			m_contacts[i]->ApplyFriction(step, gravity);
+		}
 	}
 }

@@ -49,6 +49,9 @@ struct b3TriangleFixtureDef : public b3FixtureDef
 class b3TriangleFixture : public b3Fixture
 {
 public:
+	// Compute AABB
+	b3AABB ComputeAABB() const;
+	
 	// Return the particle 1.
 	b3Particle* GetParticle1() { return m_p1; }
 	const b3Particle* GetParticle1() const { return m_p1; }
@@ -74,9 +77,6 @@ private:
 
 	b3TriangleFixture(const b3TriangleFixtureDef& def, b3Body* body);
 	
-	// Compute AABB
-	b3AABB ComputeAABB() const;
-
 	// Synchronize AABB
 	void Synchronize(const b3Vec3& displacement);
 

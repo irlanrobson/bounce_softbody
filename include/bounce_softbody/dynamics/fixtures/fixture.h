@@ -36,23 +36,23 @@ struct b3FixtureDef
 	b3FixtureDef()
 	{
 		radius = scalar(0);
-		friction = scalar(0);
 		density = scalar(0);
+		friction = scalar(0);
 		userIndex = B3_MAX_U32;
 	}
 
-	// Type.
+	// Shape type.
 	b3FixtureType type;
 	
-	// Radius.
+	// Shape radius.
 	scalar radius;
+
+	// Density. Set to zero to disable mass contribution.
+	scalar density;
 
 	// Coefficient of friction.
 	scalar friction;
 
-	// Density. Set to zero to disable mass contribution.
-	scalar density;
-	
 	// User index pointing to anything.
 	uint32 userIndex;
 };
@@ -64,14 +64,10 @@ public:
 	// Get the shape type.
 	b3FixtureType GetType() const;
 	
-	// Get the body.
-	b3Body* GetBody();
-	const b3Body* GetBody() const;
-
-	// Set the fixture radius.
+	// Set the shape radius.
 	void SetRadius(scalar radius);
 
-	// Get the fixture radius.
+	// Get the shape radius.
 	scalar GetRadius() const;
 
 	// Set the fixture density. This will not automatically adjust the mass 
@@ -83,17 +79,20 @@ public:
 
 	// Set the coefficient of friction. 
 	// This represents both static and dynamic friction.
-	// This will not change the friction of existing contacts.
 	void SetFriction(scalar friction);
 
 	// Get the coefficient of friction.
 	scalar GetFriction() const;
 
 	// Set the user index.
-	void SerUserIndex(uint32 userIndex);
+	void SetUserIndex(uint32 userIndex);
 
 	// Get the user index.
 	uint32 GetUserIndex() const;
+
+	// Get the body.
+	b3Body* GetBody();
+	const b3Body* GetBody() const;
 protected:
 	friend class b3Body;
 	friend class b3Particle;
@@ -105,44 +104,34 @@ protected:
 	// Type
 	b3FixtureType m_type;
 
-	// Body
-	b3Body* m_body;
-
 	// Radius
 	scalar m_radius;
-
-	// Coefficient of friction
-	scalar m_friction;
 
 	// Density
 	scalar m_density;
 
+	// Coefficient of friction
+	scalar m_friction;
+
 	// User index
 	uint32 m_userIndex;
+
+	// Parent body
+	b3Body* m_body;
 };
 
 inline b3Fixture::b3Fixture(const b3FixtureDef& def, b3Body* body)
 {
-	m_body = body;
 	m_radius = def.radius;
-	m_friction = def.friction;
 	m_density = def.density;
+	m_friction = def.friction;
 	m_userIndex = def.userIndex;
+	m_body = body;
 }
 
 inline b3FixtureType b3Fixture::GetType() const
 {
 	return m_type;
-}
-
-inline b3Body* b3Fixture::GetBody()
-{
-	return m_body;
-}
-
-inline const b3Body* b3Fixture::GetBody() const
-{
-	return m_body;
 }
 
 inline void b3Fixture::SetRadius(scalar radius)
@@ -156,17 +145,6 @@ inline scalar b3Fixture::GetRadius() const
 	return m_radius;
 }
 
-inline void b3Fixture::SetFriction(scalar friction)
-{
-	B3_ASSERT(friction >= scalar(0));
-	m_friction = friction;
-}
-
-inline scalar b3Fixture::GetFriction() const
-{
-	return m_friction;
-}
-
 inline void b3Fixture::SetDensity(scalar density)
 {
 	B3_ASSERT(density >= scalar(0));
@@ -178,7 +156,18 @@ inline scalar b3Fixture::GetDensity() const
 	return m_density;
 }
 
-inline void b3Fixture::SerUserIndex(uint32 userIndex)
+inline void b3Fixture::SetFriction(scalar friction)
+{
+	B3_ASSERT(friction >= scalar(0));
+	m_friction = friction;
+}
+
+inline scalar b3Fixture::GetFriction() const
+{
+	return m_friction;
+}
+
+inline void b3Fixture::SetUserIndex(uint32 userIndex)
 {
 	m_userIndex = userIndex;
 }
@@ -186,6 +175,16 @@ inline void b3Fixture::SerUserIndex(uint32 userIndex)
 inline uint32 b3Fixture::GetUserIndex() const
 {
 	return m_userIndex;
+}
+
+inline b3Body* b3Fixture::GetBody()
+{
+	return m_body;
+}
+
+inline const b3Body* b3Fixture::GetBody() const
+{
+	return m_body;
 }
 
 #endif

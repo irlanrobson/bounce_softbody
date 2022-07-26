@@ -19,7 +19,7 @@
 #include <bounce_softbody/dynamics/force_solver.h>
 #include <bounce_softbody/dynamics/particle.h>
 #include <bounce_softbody/dynamics/forces/force.h>
-#include <bounce_softbody/dynamics/contacts/sphere_shape_contact.h>
+#include <bounce_softbody/dynamics/contacts/contact.h>
 #include <bounce_softbody/sparse/sparse_force_solver.h>
 #include <bounce_softbody/sparse/dense_vec3.h>
 #include <bounce_softbody/sparse/diag_mat33.h>
@@ -36,7 +36,7 @@ uint32 b3_forceSolverMaxSubIterations = 0;
 b3ForceSolver::b3ForceSolver(const b3ForceSolverDef& def)
 {
 	m_step = def.step;
-	m_stack = def.stack;
+	m_allocator = def.allocator;
 
 	m_particleCount = def.particleCount;
 	m_particles = def.particles;
@@ -44,8 +44,8 @@ b3ForceSolver::b3ForceSolver(const b3ForceSolverDef& def)
 	m_forceCount = def.forceCount;
 	m_forces = def.forces;
 
-	m_shapeContactCount = def.shapeContactCount;
-	m_shapeContacts = def.shapeContacts;
+	m_contactCount = def.contactCount;
+	m_contacts = def.contacts;
 }
 
 b3ForceSolver::~b3ForceSolver()
@@ -55,23 +55,7 @@ b3ForceSolver::~b3ForceSolver()
 class b3ForceModel : public b3SparseForceModel
 {
 public:
-	void ComputeForces(const b3SparseForceSolverData* data)
-	{
-		for (uint32 i = 0; i < m_particleCount; ++i)
-		{
-			m_particles[i]->ComputeForces(data);
-		}
-		
-		for (uint32 i = 0; i < m_forceCount; ++i)
-		{
-			m_forces[i]->ComputeForces(data);
-		}
-
-		for (uint32 i = 0; i < m_shapeContactCount; ++i)
-		{
-			m_shapeContacts[i]->ComputeForces(data);
-		}
-	}
+	void ComputeForces(const b3SparseForceSolverData* data);
 
 	uint32 m_particleCount;
 	b3Particle** m_particles;
@@ -79,9 +63,27 @@ public:
 	uint32 m_forceCount;
 	b3Force** m_forces;
 
-	uint32 m_shapeContactCount;
-	b3SphereAndShapeContact** m_shapeContacts;
+	uint32 m_contactCount;
+	b3Contact** m_contacts;
 };
+
+void b3ForceModel::ComputeForces(const b3SparseForceSolverData* data)
+{
+	for (uint32 i = 0; i < m_particleCount; ++i)
+	{
+		m_particles[i]->ComputeForces(data);
+	}
+
+	for (uint32 i = 0; i < m_forceCount; ++i)
+	{
+		m_forces[i]->ComputeForces(data);
+	}
+
+	for (uint32 i = 0; i < m_contactCount; ++i)
+	{
+		m_contacts[i]->ComputeForces(data);
+	}
+}
 
 void b3ForceSolver::Solve(const b3Vec3& gravity)
 {
@@ -133,8 +135,8 @@ void b3ForceSolver::Solve(const b3Vec3& gravity)
 	forceModel.m_particles = m_particles;
 	forceModel.m_forceCount = m_forceCount;
 	forceModel.m_forces = m_forces;
-	forceModel.m_shapeContactCount = m_shapeContactCount;
-	forceModel.m_shapeContacts = m_shapeContacts;
+	forceModel.m_contactCount = m_contactCount;
+	forceModel.m_contacts = m_contacts;
 
 	// Prepare input.
 	b3SolveBEInput solverInput;

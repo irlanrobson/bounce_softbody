@@ -25,16 +25,16 @@ class b3StackAllocator;
 
 class b3Particle;
 class b3Force;
-class b3SphereAndShapeContact;
+class b3Contact;
 
 struct b3TimeStep;
 
 struct b3BodySolverDef
 {
-	b3StackAllocator* stack;
+	b3StackAllocator* allocator;
 	uint32 particleCapacity;
 	uint32 forceCapacity;
-	uint32 shapeContactCapacity;
+	uint32 contactCapacity;
 };
 
 class b3BodySolver
@@ -45,11 +45,11 @@ public:
 	
 	void Add(b3Particle* p);
 	void Add(b3Force* f);
-	void Add(b3SphereAndShapeContact* c);
+	void Add(b3Contact* c);
 	
 	void Solve(const b3TimeStep& step, const b3Vec3& gravity);
 private:
-	b3StackAllocator* m_stack;
+	b3StackAllocator* m_allocator;
 
 	uint32 m_particleCapacity;
 	uint32 m_particleCount;
@@ -59,9 +59,9 @@ private:
 	uint32 m_forceCount;
 	b3Force** m_forces;
 
-	uint32 m_shapeContactCapacity;
-	uint32 m_shapeContactCount;
-	b3SphereAndShapeContact** m_shapeContacts;
+	uint32 m_contactCapacity;
+	uint32 m_contactCount;
+	b3Contact** m_contacts;
 };
 
 #endif

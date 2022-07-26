@@ -19,10 +19,14 @@
 #ifndef B3_CONTACT_MANAGER_H
 #define B3_CONTACT_MANAGER_H
 
-#include <bounce_softbody/dynamics/contacts/sphere_shape_contact.h>
+#include <bounce_softbody/common/settings.h>
 
 class b3Body;
 class b3BlockAllocator;
+
+class b3SphereFixture;
+class b3WorldFixture;
+class b3SphereAndShapeContact;
 
 // Contact delegator for b3Body.
 class b3ContactManager
@@ -38,8 +42,8 @@ public:
 
 	b3Body* m_body;
 	b3BlockAllocator* m_allocator;
-	b3SphereAndShapeContact* m_shapeContactList;
-	uint32 m_shapeContactCount;
+	b3SphereAndShapeContact* m_contactList;
+	uint32 m_contactCount;
 };
 
 #endif

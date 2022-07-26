@@ -19,6 +19,7 @@
 #include <bounce_softbody/dynamics/fixtures/sphere_fixture.h>
 #include <bounce_softbody/dynamics/particle.h>
 #include <bounce_softbody/dynamics/body.h>
+#include <bounce_softbody/dynamics/contacts/sphere_shape_contact.h>
 
 b3SphereFixture::b3SphereFixture(const b3SphereFixtureDef& def, b3Body* body) : b3Fixture(def, body)
 {
@@ -35,13 +36,13 @@ b3AABB b3SphereFixture::ComputeAABB() const
 
 void b3SphereFixture::DestroyContacts()
 {
-	b3SphereAndShapeContact* c = m_body->m_contactManager.m_shapeContactList;
+	b3SphereAndShapeContact* c = m_body->m_contactManager.m_contactList;
 	while (c)
 	{
 		b3SphereAndShapeContact* c0 = c;
 		c = c->m_next;
 
-		if (c0->m_f1 == this)
+		if (c0->m_fixture1 == this)
 		{
 			m_body->m_contactManager.Destroy(c0);
 			continue;

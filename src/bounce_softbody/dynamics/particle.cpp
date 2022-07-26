@@ -19,6 +19,7 @@
 #include <bounce_softbody/dynamics/particle.h>
 #include <bounce_softbody/dynamics/body.h>
 #include <bounce_softbody/dynamics/forces/force.h>
+#include <bounce_softbody/dynamics/contacts/sphere_shape_contact.h>
 #include <bounce_softbody/dynamics/fixtures/sphere_fixture.h>
 #include <bounce_softbody/dynamics/fixtures/triangle_fixture.h>
 #include <bounce_softbody/dynamics/fixtures/tetrahedron_fixture.h>
@@ -151,10 +152,10 @@ void b3Particle::DestroyForces()
 void b3Particle::DestroyContacts()
 {
 	// Destroy shape contacts
-	b3SphereAndShapeContact* c = m_body->m_contactManager.m_shapeContactList;
+	b3SphereAndShapeContact* c = m_body->m_contactManager.m_contactList;
 	while (c)
 	{
-		if (c->m_f1->m_p == this)
+		if (c->m_fixture1->m_p == this)
 		{
 			b3SphereAndShapeContact* quack = c;
 			c = c->m_next;

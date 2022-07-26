@@ -25,6 +25,7 @@
 #include <bounce_softbody/dynamics/fixtures/triangle_fixture.h>
 #include <bounce_softbody/dynamics/fixtures/tetrahedron_fixture.h>
 #include <bounce_softbody/dynamics/fixtures/world_fixture.h>
+#include <bounce_softbody/dynamics/contacts/sphere_shape_contact.h>
 #include <bounce_softbody/common/draw.h>
 
 b3Body::b3Body()
@@ -522,10 +523,10 @@ bool b3Body::RayCastSingle(b3BodyRayCastSingleOutput* output, const b3Vec3& p1, 
 void b3Body::Solve(const b3TimeStep& step)
 {
 	b3BodySolverDef solverDef;
-	solverDef.stack = &m_stackAllocator;
+	solverDef.allocator = &m_stackAllocator;
 	solverDef.particleCapacity = m_particleCount;
 	solverDef.forceCapacity = m_forceCount;
-	solverDef.shapeContactCapacity = m_contactManager.m_shapeContactCount;
+	solverDef.contactCapacity = m_contactManager.m_contactCount;
 	
 	b3BodySolver solver(solverDef);
 
@@ -539,7 +540,7 @@ void b3Body::Solve(const b3TimeStep& step)
 		solver.Add(f);
 	}
 
-	for (b3SphereAndShapeContact* c = m_contactManager.m_shapeContactList; c; c = c->m_next)
+	for (b3SphereAndShapeContact* c = m_contactManager.m_contactList; c; c = c->m_next)
 	{
 		solver.Add(c);
 	}

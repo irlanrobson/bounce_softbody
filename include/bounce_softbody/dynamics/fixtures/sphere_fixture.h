@@ -40,6 +40,9 @@ struct b3SphereFixtureDef : public b3FixtureDef
 class b3SphereFixture : public b3Fixture
 {
 public:
+	// Compute AABB
+	b3AABB ComputeAABB() const;
+	
 	// Return the particle.
 	b3Particle* GetParticle() { return m_p; }
 	const b3Particle* GetParticle() const { return m_p; }
@@ -57,9 +60,6 @@ private:
 	
 	b3SphereFixture(const b3SphereFixtureDef& def, b3Body* body);
 	
-	// Compute AABB
-	b3AABB ComputeAABB() const;
-
 	// Destroy contacts
 	void DestroyContacts();
 

@@ -545,11 +545,6 @@ struct GridTetMesh : public BodyMesh
 		assert(tetrahedronCount == 5 * H * W * D);
 	}
 
-	~GridTetMesh()
-	{
-		
-	}
-	
 	int GetRowVertexCount() const
 	{
 		return H + 1;

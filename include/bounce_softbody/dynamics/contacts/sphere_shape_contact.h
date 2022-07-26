@@ -19,16 +19,15 @@
 #ifndef B3_SPHERE_AND_SHAPE_CONTACT_H
 #define B3_SPHERE_AND_SHAPE_CONTACT_H
 
-#include <bounce_softbody/common/math/vec3.h>
+#include <bounce_softbody/dynamics/contacts/contact.h>
+#include <bounce_softbody/collision/shapes/shape.h>
 
-class b3BlockAllocator;
 class b3SphereFixture;
 class b3WorldFixture;
-
-struct b3SparseForceSolverData;
+class b3BlockAllocator;
 
 // A contact between a sphere and a shape.
-class b3SphereAndShapeContact
+class b3SphereAndShapeContact : public b3Contact
 {
 public:
 	static b3SphereAndShapeContact* Create(b3SphereFixture* fixture1, b3WorldFixture* fixture2, b3BlockAllocator* allocator);
@@ -36,17 +35,21 @@ public:
 
 	b3SphereAndShapeContact(b3SphereFixture* fixture1, b3WorldFixture* fixture2);
 
-	void Update();
-	
 	void ComputeForces(const b3SparseForceSolverData* data);
+	
+	void ApplyFriction(const b3TimeStep& step, const b3Vec3& gravity);
 
-	b3SphereFixture* m_f1;
-	b3WorldFixture* m_f2;
-	bool m_active;
-	b3Vec3 m_tangent1, m_tangent2;
-	scalar m_normalForce;
+	void Update();
+
 	b3SphereAndShapeContact* m_prev;
 	b3SphereAndShapeContact* m_next;
+
+	b3SphereFixture* m_fixture1;
+	b3WorldFixture* m_fixture2;
+	
+	b3SphereManifold m_manifold;
+	scalar m_normalForce;
+	bool m_active;
 };
 
 #endif

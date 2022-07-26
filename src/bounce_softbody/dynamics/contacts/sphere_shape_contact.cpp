@@ -20,16 +20,18 @@
 #include <bounce_softbody/dynamics/fixtures/sphere_fixture.h>
 #include <bounce_softbody/dynamics/fixtures/world_fixture.h>
 #include <bounce_softbody/dynamics/particle.h>
+#include <bounce_softbody/dynamics/time_step.h>
 #include <bounce_softbody/collision/geometry/sphere.h>
 #include <bounce_softbody/sparse/sparse_force_solver.h>
 #include <bounce_softbody/sparse/sparse_mat33.h>
 #include <bounce_softbody/sparse/dense_vec3.h>
+#include <bounce_softbody/common/math/vec2.h>
 #include <bounce_softbody/common/memory/block_allocator.h>
 
-b3SphereAndShapeContact* b3SphereAndShapeContact::Create(b3SphereFixture* f1, b3WorldFixture* f2, b3BlockAllocator* allocator)
+b3SphereAndShapeContact* b3SphereAndShapeContact::Create(b3SphereFixture* fixture1, b3WorldFixture* fixture2, b3BlockAllocator* allocator)
 {
 	void* mem = allocator->Allocate(sizeof(b3SphereAndShapeContact));
-	return new(mem) b3SphereAndShapeContact(f1, f2);
+	return new(mem) b3SphereAndShapeContact(fixture1, fixture2);
 }
 
 void b3SphereAndShapeContact::Destroy(b3SphereAndShapeContact* contact, b3BlockAllocator* allocator)
@@ -38,18 +40,12 @@ void b3SphereAndShapeContact::Destroy(b3SphereAndShapeContact* contact, b3BlockA
 	allocator->Free(contact, sizeof(b3SphereAndShapeContact));
 }
 
-b3SphereAndShapeContact::b3SphereAndShapeContact(b3SphereFixture* f1, b3WorldFixture* f2)
+b3SphereAndShapeContact::b3SphereAndShapeContact(b3SphereFixture* fixture1, b3WorldFixture* fixture2)
 {
-	m_f1 = f1;
-	m_f2 = f2;
-	m_normalForce = scalar(0);
-	m_active = false;
 	m_prev = nullptr;
 	m_next = nullptr;
-}
-
-void b3SphereAndShapeContact::Update()
-{
+	m_fixture1 = fixture1;
+	m_fixture2 = fixture2;
 	m_normalForce = scalar(0);
 	m_active = false;
 }
@@ -62,15 +58,15 @@ void b3SphereAndShapeContact::ComputeForces(const b3SparseForceSolverData* data)
 	b3SparseMat33& dfdx = *data->dfdx;
 	b3SparseMat33& dfdv = *data->dfdv;
 
-	b3Particle* p1 = m_f1->m_p;
+	b3Particle* p1 = m_fixture1->m_p;
 
 	uint32 i1 = p1->m_solverId;
 
 	b3Vec3 x1 = x[i1];
 	b3Vec3 v1 = v[i1];
 
-	scalar r1 = m_f1->m_radius;
-	scalar r2 = m_f2->m_shape->m_radius;
+	scalar r1 = m_fixture1->m_radius;
+	scalar r2 = m_fixture2->m_shape->m_radius;
 
 	b3Sphere sphere1;
 	sphere1.vertex = x1;
@@ -78,7 +74,7 @@ void b3SphereAndShapeContact::ComputeForces(const b3SparseForceSolverData* data)
 
 	// Evaluate the contact manifold.
 	b3SphereManifold manifold2;
-	if (m_f2->Collide(&manifold2, sphere1) == false)
+	if (m_fixture2->Collide(&manifold2, sphere1) == false)
 	{
 		return;
 	}
@@ -86,8 +82,7 @@ void b3SphereAndShapeContact::ComputeForces(const b3SparseForceSolverData* data)
 	// The friction solver uses initial tangents.
 	if (m_active == false)
 	{
-		m_tangent1 = b3Perp(manifold2.normal);
-		m_tangent2 = b3Cross(m_tangent1, manifold2.normal);
+		m_manifold = manifold2;
 		m_active = true;
 	}
 
@@ -145,4 +140,56 @@ void b3SphereAndShapeContact::ComputeForces(const b3SparseForceSolverData* data)
 		f[i1] += f1;
 		dfdv(i1, i1) += K11;
 	}
+}
+
+void b3SphereAndShapeContact::ApplyFriction(const b3TimeStep& step, const b3Vec3& gravity)
+{
+	if (m_active == false)
+	{
+		return;
+	}
+
+	b3Vec3 normal = m_manifold.normal;
+	scalar normalForce = m_normalForce;
+
+	b3Vec3 tangent1 = b3Perp(normal);
+	b3Vec3 tangent2 = b3Cross(tangent1, normal);
+
+	b3Particle* p1 = m_fixture1->m_p;
+	
+	b3Vec3 v1 = p1->m_velocity;
+	scalar im1 = p1->m_invMass;
+
+	scalar friction = b3MixFriction(m_fixture1->m_friction, m_fixture2->m_friction);
+
+	// Compute effective mass.
+	scalar tangentMass = im1 > scalar(0) ? scalar(1) / im1 : scalar(0);
+
+	b3Vec2 Cdot;
+	Cdot.x = b3Dot(v1, tangent1);
+	Cdot.y = b3Dot(v1, tangent2);
+
+	b3Vec2 impulse = tangentMass * -Cdot;
+	scalar normalImpulse = step.dt * normalForce;
+
+	scalar maxImpulse = friction * normalImpulse;
+	if (b3Dot(impulse, impulse) > maxImpulse * maxImpulse)
+	{
+		impulse.Normalize();
+		impulse *= maxImpulse;
+	}
+
+	b3Vec3 P1 = impulse.x * tangent1;
+	b3Vec3 P2 = impulse.y * tangent2;
+	b3Vec3 P = P1 + P2;
+
+	v1 += im1 * P;
+
+	p1->m_velocity = v1;
+}
+
+void b3SphereAndShapeContact::Update()
+{
+	m_normalForce = scalar(0);
+	m_active = false;
 }

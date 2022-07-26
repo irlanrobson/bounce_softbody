@@ -18,6 +18,7 @@
 
 #include <bounce_softbody/dynamics/fixtures/world_fixture.h>
 #include <bounce_softbody/dynamics/body.h>
+#include <bounce_softbody/dynamics/contacts/sphere_shape_contact.h>
 #include <bounce_softbody/collision/shapes/sphere_shape.h>
 #include <bounce_softbody/collision/shapes/capsule_shape.h>
 #include <bounce_softbody/collision/shapes/triangle_shape.h>
@@ -100,13 +101,13 @@ void b3WorldFixture::Destroy(b3BlockAllocator* allocator)
 
 void b3WorldFixture::DestroyContacts()
 {
-	b3SphereAndShapeContact* c = m_body->m_contactManager.m_shapeContactList;
+	b3SphereAndShapeContact* c = m_body->m_contactManager.m_contactList;
 	while (c)
 	{
 		b3SphereAndShapeContact* c0 = c;
 		c = c->m_next;
 
-		if (c0->m_f2 == this)
+		if (c0->m_fixture2 == this)
 		{
 			m_body->m_contactManager.Destroy(c0);
 		}
