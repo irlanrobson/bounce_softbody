@@ -189,7 +189,7 @@ void b3MouseForce::ComputeForces(const b3SparseForceSolverData* data)
 
 		if (m_kd > scalar(0))
 		{
-			b3Vec3 vc2 = m_w2 * v2 + m_w3 * v3 + m_w4 * v4;
+			b3Vec3 vc2 = w2 * v2 + w3 * v3 + w4 * v4;
 
 			scalar dCdt = b3Dot(v1 - vc2, n);
 			
