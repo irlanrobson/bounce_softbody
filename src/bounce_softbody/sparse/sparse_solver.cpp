@@ -37,7 +37,6 @@ bool b3SparseSolveCG(b3SolveCGOutput* output, const b3SolveCGInput* input)
 
 	// Jacobi preconditioner
 	// M = diag(A) 
-	b3DiagMat33 M(A.rowCount);
 	b3DiagMat33 invM(A.rowCount);
 	for (uint32 i = 0; i < A.rowCount; ++i)
 	{
@@ -52,7 +51,6 @@ bool b3SparseSolveCG(b3SolveCGOutput* output, const b3SolveCGInput* input)
 		B3_ASSERT(a.z.z > scalar(0));
 		scalar zz = scalar(1) / a.z.z;
 
-		M[i] = b3Mat33Diagonal(a.x.x, a.y.y, a.z.z);
 		invM[i] = b3Mat33Diagonal(xx, yy, zz);
 	}
 
