@@ -288,6 +288,7 @@ static b3Quat b3ExtractRotation(const b3Mat33& A, const b3Quat& q0, uint32 maxIt
 		b3Vec3 torque = b3Cross(R.x, A.x) + b3Cross(R.y, A.y) + b3Cross(R.z, A.z);
 
 		const scalar kTol = scalar(1.0e-9);
+		
 		scalar inv_den = scalar(1) / den + kTol;
 		
 		b3Vec3 omega = inv_den * torque;
