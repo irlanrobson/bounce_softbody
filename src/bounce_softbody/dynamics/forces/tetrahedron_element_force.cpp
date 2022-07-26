@@ -278,20 +278,19 @@ static b3Quat b3ExtractRotation(const b3Mat33& A, const b3Quat& q0, uint32 maxIt
 	{
 		b3Mat33 R = q.GetRotationMatrix();
 
-		scalar s = b3Abs(b3Dot(R.x, A.x) + b3Dot(R.y, A.y) + b3Dot(R.z, A.z));
+		scalar den = b3Abs(b3Dot(R.x, A.x) + b3Dot(R.y, A.y) + b3Dot(R.z, A.z));
 
-		if (s == scalar(0))
+		if (den == scalar(0))
 		{
 			break;
 		}
 
+		b3Vec3 torque = b3Cross(R.x, A.x) + b3Cross(R.y, A.y) + b3Cross(R.z, A.z);
+
 		const scalar kTol = scalar(1.0e-9);
-
-		scalar inv_s = scalar(1) / s + kTol;
-
-		b3Vec3 v = b3Cross(R.x, A.x) + b3Cross(R.y, A.y) + b3Cross(R.z, A.z);
-
-		b3Vec3 omega = inv_s * v;
+		scalar inv_den = scalar(1) / den + kTol;
+		
+		b3Vec3 omega = inv_den * torque;
 
 		scalar w = b3Length(omega);
 
@@ -300,10 +299,10 @@ static b3Quat b3ExtractRotation(const b3Mat33& A, const b3Quat& q0, uint32 maxIt
 			break;
 		}
 
-		b3Quat omega_q;
-		omega_q.SetAxisAngle(omega / w, w);
+		b3Quat qw;
+		qw.SetAxisAngle(omega / w, w);
 
-		q = omega_q * q;
+		q = qw * q;
 		q.Normalize();
 	}
 
