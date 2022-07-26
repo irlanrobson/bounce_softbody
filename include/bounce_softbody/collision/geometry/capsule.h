@@ -34,23 +34,6 @@ struct b3Capsule
 		vertex2 = v2;
 		radius = r;
 	}
-
-	const b3Vec3& GetVertex(uint32 index) const;
-	uint32 GetSupportVertex(const b3Vec3& direction) const;
 };
-
-inline const b3Vec3& b3Capsule::GetVertex(uint32 index) const
-{
-	return (&vertex1)[index];
-}
-
-inline uint32 b3Capsule::GetSupportVertex(const b3Vec3& d) const
-{
-	if (b3Dot(d, vertex1) > b3Dot(d, vertex2))
-	{
-		return 0;
-	}
-	return 1;
-}
 
 #endif

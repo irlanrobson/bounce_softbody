@@ -33,23 +33,6 @@ struct b3Sphere
 		vertex = v;
 		radius = r;
 	}
-
-	~b3Sphere() { }
-
-	const b3Vec3& GetVertex(uint32 index) const;
-	uint32 GetSupportVertex(const b3Vec3& direction) const;
 };
-
-inline const b3Vec3& b3Sphere::GetVertex(uint32 index) const
-{
-    B3_NOT_USED(index);
-	return vertex;
-}
-
-inline uint32 b3Sphere::GetSupportVertex(const b3Vec3& direction) const
-{
-	B3_NOT_USED(direction);
-	return 0;
-}
 
 #endif
