@@ -33,10 +33,12 @@ bool b3SparseSolveCG(b3SolveCGOutput* output, const b3SolveCGInput* input)
 	scalar epsilon = input->tolerance;
 	b3DenseVec3& x = *output->x;
 
+	B3_ASSERT(epsilon > scalar(0) && epsilon < scalar(1));
+
 	// Jacobi preconditioner
-	// P = diag(A) 
-	b3DiagMat33 P(A.rowCount);
-	b3DiagMat33 invP(A.rowCount);
+	// M = diag(A) 
+	b3DiagMat33 M(A.rowCount);
+	b3DiagMat33 invM(A.rowCount);
 	for (uint32 i = 0; i < A.rowCount; ++i)
 	{
 		b3Mat33 a = A(i, i);
@@ -50,16 +52,14 @@ bool b3SparseSolveCG(b3SolveCGOutput* output, const b3SolveCGInput* input)
 		B3_ASSERT(a.z.z > scalar(0));
 		scalar zz = scalar(1) / a.z.z;
 
-		P[i] = b3Mat33Diagonal(a.x.x, a.y.y, a.z.z);
-		invP[i] = b3Mat33Diagonal(xx, yy, zz);
+		M[i] = b3Mat33Diagonal(a.x.x, a.y.y, a.z.z);
+		invM[i] = b3Mat33Diagonal(xx, yy, zz);
 	}
 
-	scalar delta_0 = b3Dot(b, P * b);
-
 	b3DenseVec3 r = b - A * x;
-	b3DenseVec3 c = invP * r;
-
-	scalar delta_new = b3Dot(r, c);
+	b3DenseVec3 d = invM * r;
+	scalar delta_new = b3Dot(r, d);
+	scalar delta_0 = delta_new;
 
 	uint32 iteration = 0;
 	for (;;)
@@ -74,15 +74,15 @@ bool b3SparseSolveCG(b3SolveCGOutput* output, const b3SolveCGInput* input)
 			break;
 		}
 
-		b3DenseVec3 q = A * c;
+		b3DenseVec3 q = A * d;
 
-		scalar alpha = delta_new / b3Dot(c, q);
+		scalar alpha = delta_new / b3Dot(d, q);
 
-		x = x + alpha * c;
+		x = x + alpha * d;
 		
 		// Shewchuk, page 8.
 		// Periodically recompute the correct residual.
-		if (iteration % 30 == 0)
+		if (iteration % 50 == 0)
 		{
 			r = b - A * x;
 		}
@@ -91,7 +91,7 @@ bool b3SparseSolveCG(b3SolveCGOutput* output, const b3SolveCGInput* input)
 			r = r - alpha * q;
 		}
 
-		b3DenseVec3 s = invP * r;
+		b3DenseVec3 s = invM * r;
 
 		scalar delta_old = delta_new;
 
@@ -99,7 +99,7 @@ bool b3SparseSolveCG(b3SolveCGOutput* output, const b3SolveCGInput* input)
 
 		scalar beta = delta_new / delta_old;
 
-		c = s + beta * c;
+		d = s + beta * d;
 
 		++iteration;
 	}
