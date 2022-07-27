@@ -25,8 +25,9 @@ struct GLFWwindow;
 
 class Model;
 
+struct TestArgs;
 class Test;
-typedef Test* (*TestCreate)();
+typedef Test* (*TestCreate)(const TestArgs& args);
 
 struct TestEntry
 {
@@ -65,8 +66,6 @@ struct Settings
 	bool drawGrid;
 };
 
-extern Settings* g_settings;
-
 struct TestSettings
 {
 	TestSettings()
@@ -86,13 +85,10 @@ struct TestSettings
 	bool singlePlay;
 };
 
-extern TestSettings* g_testSettings;
-
 class ViewModel
 {
 public:
 	ViewModel(Model* model, GLFWwindow* window);
-	~ViewModel();
 	
 	void Action_SetTest();
 	void Action_PreviousTest();

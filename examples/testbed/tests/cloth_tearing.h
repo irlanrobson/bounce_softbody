@@ -25,7 +25,7 @@
 class ClothTearing : public Body
 {
 public:
-	ClothTearing()	
+	ClothTearing(const TestArgs& args) : Body(args)
 	{
 		m_body = new UniformBody();
 
@@ -154,7 +154,7 @@ public:
 			b3Particle* p1 = s->GetParticle1();
 			b3Particle* p2 = s->GetParticle2();
 
-			b3DrawSegment(g_debugDrawData, p1->GetPosition(), p2->GetPosition(), b3Color_black);
+			b3DrawSegment(m_debugDrawData, p1->GetPosition(), p2->GetPosition(), b3Color_black);
 		}
 	}
 
@@ -487,9 +487,9 @@ public:
 		DrawSpringForces();
 	}
 
-	static Test* Create()
+	static Test* Create(const TestArgs& args)
 	{
-		return new ClothTearing;
+		return new ClothTearing(args);
 	}
 };
 

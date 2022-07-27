@@ -22,7 +22,7 @@
 class TriangleContact : public Body
 {
 public:
-	TriangleContact()
+	TriangleContact(const TestArgs& args) : Body(args)
 	{
 		m_mesh.Translate(b3Vec3(0.0f, 10.0f, 0.0f));
 
@@ -49,9 +49,9 @@ public:
 		m_bodyDragger = new BodyDragger(&m_ray, m_body);
 	}
 
-	static Test* Create()
+	static Test* Create(const TestArgs& args)
 	{
-		return new TriangleContact;
+		return new TriangleContact(args);
 	}
 
 	GridClothMesh<10, 10> m_mesh;

@@ -22,7 +22,7 @@
 class GridContact : public Body
 {
 public:
-	GridContact()
+	GridContact(const TestArgs& args) : Body(args)
 	{
 		m_gridMesh.BuildTree();
 		m_gridMesh.BuildAdjacency();
@@ -51,9 +51,9 @@ public:
 		m_bodyDragger = new BodyDragger(&m_ray, m_body);
 	}
 
-	static Test* Create()
+	static Test* Create(const TestArgs& args)
 	{
-		return new GridContact;
+		return new GridContact(args);
 	}
 
 	b3GridMesh<5, 5> m_gridMesh;

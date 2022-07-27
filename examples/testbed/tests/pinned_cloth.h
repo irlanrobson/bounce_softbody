@@ -22,7 +22,7 @@
 class PinnedCloth : public Body
 {
 public:
-	PinnedCloth()
+	PinnedCloth(const TestArgs& args) : Body(args)
 	{
 		// Create cloth
 		ClothDef def;
@@ -56,9 +56,9 @@ public:
 		m_bodyDragger = new BodyDragger(&m_ray, m_body);
 	}
 
-	static Test* Create()
+	static Test* Create(const TestArgs& args)
 	{
-		return new PinnedCloth;
+		return new PinnedCloth(args);
 	}
 
 	GridClothMesh<10, 10> m_clothMesh;

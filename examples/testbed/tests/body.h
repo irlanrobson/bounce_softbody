@@ -26,7 +26,7 @@
 class Body : public Test
 {
 public:
-	Body()
+	Body(const TestArgs& args) : Test(args)
 	{
 		m_body = nullptr;
 		m_bodyDragger = nullptr;
@@ -42,9 +42,9 @@ public:
 	{
 		Test::Step();
 
-		m_body->Step(g_testSettings->inv_hertz,
-			g_testSettings->forceIterations,
-			g_testSettings->forceSubIterations);
+		m_body->Step(m_testSettings->inv_hertz,
+			m_testSettings->forceIterations,
+			m_testSettings->forceSubIterations);
 		
 		Draw();
 		
@@ -53,9 +53,9 @@ public:
 			b3Vec3 pA = m_bodyDragger->GetPointA();
 			b3Vec3 pB = m_bodyDragger->GetPointB();
 
-			b3DrawPoint(g_debugDrawData, pA, 4.0f, b3Color_green);
-			b3DrawPoint(g_debugDrawData, pB, 4.0f, b3Color_green);
-			b3DrawSegment(g_debugDrawData, pA, pB, b3Color_white);
+			b3DrawPoint(m_debugDrawData, pA, 4.0f, b3Color_green);
+			b3DrawPoint(m_debugDrawData, pB, 4.0f, b3Color_green);
+			b3DrawSegment(m_debugDrawData, pA, pB, b3Color_white);
 		}
 
 		extern uint32 b3_forceSolverIterations;

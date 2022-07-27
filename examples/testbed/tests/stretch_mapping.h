@@ -58,7 +58,7 @@ static inline b3Color Color(scalar x, scalar a, scalar b)
 class StretchMapping : public Body
 {
 public:
-	StretchMapping()
+	StretchMapping(const TestArgs& args) : Body(args)
 	{
 		// Create cloth
 		ClothDef def;
@@ -119,17 +119,17 @@ public:
 		{
 			if (p->GetType() == e_staticParticle)
 			{
-				b3DrawPoint(g_debugDrawData, p->GetPosition(), 4.0f, b3Color_white);
+				b3DrawPoint(m_debugDrawData, p->GetPosition(), 4.0f, b3Color_white);
 			}
 
 			if (p->GetType() == e_kinematicParticle)
 			{
-				b3DrawPoint(g_debugDrawData, p->GetPosition(), 4.0f, b3Color_blue);
+				b3DrawPoint(m_debugDrawData, p->GetPosition(), 4.0f, b3Color_blue);
 			}
 
 			if (p->GetType() == e_dynamicParticle)
 			{
-				b3DrawPoint(g_debugDrawData, p->GetPosition(), 4.0f, b3Color_green);
+				b3DrawPoint(m_debugDrawData, p->GetPosition(), 4.0f, b3Color_green);
 			}
 		}
 
@@ -145,7 +145,7 @@ public:
 			b3Vec3 v2 = m_body->GetParticle(vi2)->GetPosition();
 			b3Vec3 v3 = m_body->GetParticle(vi3)->GetPosition();
 
-			b3DrawTriangle(g_debugDrawData, v1, v2, v3, b3Color_black);
+			b3DrawTriangle(m_debugDrawData, v1, v2, v3, b3Color_black);
 
 			b3Vec3 c = (v1 + v2 + v3) / 3.0f;
 
@@ -179,7 +179,7 @@ public:
 				b3Vec3 x2 = v2 + r * n1;
 				b3Vec3 x3 = v3 + r * n1;
 
-				b3DrawSolidTriangle(g_debugDrawData, n1, x1, x2, x3, color);
+				b3DrawSolidTriangle(m_debugDrawData, n1, x1, x2, x3, color);
 			}
 
 			{
@@ -189,16 +189,16 @@ public:
 				b3Vec3 x2 = v2 + r * n2;
 				b3Vec3 x3 = v3 + r * n2;
 
-				b3DrawSolidTriangle(g_debugDrawData, n2, x3, x2, x1, color);
+				b3DrawSolidTriangle(m_debugDrawData, n2, x3, x2, x1, color);
 			}
 		}
 
 		free(tension);
 	}
 
-	static Test* Create()
+	static Test* Create(const TestArgs& args)
 	{
-		return new StretchMapping;
+		return new StretchMapping(args);
 	}
 
 	GridClothMesh<10, 10> m_clothMesh;

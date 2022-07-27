@@ -22,7 +22,7 @@
 class SphereContact : public Body
 {
 public:
-	SphereContact()
+	SphereContact(const TestArgs& args) : Body(args)
 	{
 		m_mesh.Translate(b3Vec3(0.0f, 10.0f, 0.0f));
 
@@ -46,9 +46,9 @@ public:
 		m_bodyDragger = new BodyDragger(&m_ray, m_body);
 	}
 
-	static Test* Create()
+	static Test* Create(const TestArgs& args)
 	{
-		return new SphereContact;
+		return new SphereContact(args);
 	}
 
 	GridClothMesh<10, 10> m_mesh;

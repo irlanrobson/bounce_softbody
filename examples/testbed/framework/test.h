@@ -28,24 +28,33 @@
 #include <bounce_softbody/common/graphics/debugdraw.h>
 #include <bounce_softbody/collision/geometry/ray.h>
 
-extern void DrawString(const b3Color& color, const b3Vec2& ps, const char* string, ...);
-extern void DrawString(const b3Color& color, const b3Vec3& pw, const char* string, ...);
+extern void DrawString(const b3Camera* camera, const b3Color& color, const b3Vec2& ps, const char* string, ...);
+extern void DrawString(const b3Camera* camera, const b3Color& color, const b3Vec3& pw, const char* string, ...);
 extern void DrawString(const b3Color& color, const char* string, ...);
 
-extern b3Camera* g_camera;
-extern b3DebugDrawData* g_debugDrawData;
-
 float RandomFloat(float a, float b);
+
+struct TestArgs
+{
+	Settings* settings;
+	TestSettings* testSettings;
+	b3Camera* camera;
+	b3DebugDrawData* debugDrawData;
+};
 
 class Test 
 {
 public:
-	Test()
+	Test(const TestArgs& args)
 	{
-		m_draw.m_debugDrawData = g_debugDrawData;
+		m_settings = args.settings;
+		m_testSettings = args.testSettings;
+		m_camera = args.camera;
+		m_debugDrawData = args.debugDrawData;
+		m_draw.m_debugDrawData = m_debugDrawData;
 		m_ray.origin.SetZero();
 		m_ray.direction.Set(0.0f, 0.0f, -1.0f);
-		m_ray.length = g_camera->GetZFar();
+		m_ray.length = m_camera->GetZFar();
 	}
 	
 	virtual ~Test() { }
@@ -61,8 +70,12 @@ public:
 	virtual void BeginDragging() { }
 	virtual void EndDragging() { }
 protected:
+	Settings* m_settings;
+	TestSettings* m_testSettings;
 	Draw m_draw;
 	b3Ray m_ray;
+	b3Camera* m_camera;
+	b3DebugDrawData* m_debugDrawData;
 };
 
 #endif

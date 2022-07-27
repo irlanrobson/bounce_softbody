@@ -22,7 +22,7 @@
 class SphereMeshSDFContact : public Body
 {
 public:
-	SphereMeshSDFContact()
+	SphereMeshSDFContact(const TestArgs& args) : Body(args)
 	{
 		m_sphereMesh.Scale(b3Vec3(3.0f, 3.0f, 3.0f));
 		b3BuildSDF(&m_sdf, &m_sphereMesh, b3Vec3(1.0f, 1.0f, 1.0f), 1.0f);
@@ -50,9 +50,9 @@ public:
 		m_bodyDragger = new BodyDragger(&m_ray, m_body);
 	}
 
-	static Test* Create()
+	static Test* Create(const TestArgs& args)
 	{
-		return new SphereMeshSDFContact;
+		return new SphereMeshSDFContact(args);
 	}
 
 	GridClothMesh<10, 10> m_clothMesh;

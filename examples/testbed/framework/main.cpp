@@ -208,7 +208,7 @@ int main(int argc, char** args)
 	glfwSetKeyCallback(s_window, KeyButton);
 	//glfwSwapInterval(1);
 
-	s_model = new Model();
+	s_model = new Model;
 	s_viewModel = new ViewModel(s_model, s_window);
 	s_view = new View(s_viewModel, s_window, glslVersion);
 

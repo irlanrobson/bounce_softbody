@@ -22,7 +22,7 @@
 class NodeTypes : public Body
 {
 public:
-	NodeTypes()
+	NodeTypes(const TestArgs& args) : Body(args)
 	{
 		m_mesh.Translate(b3Vec3(0.0f, 5.0f, 0.0f));
 
@@ -161,9 +161,9 @@ public:
 		}
 	}
 
-	static Test* Create()
+	static Test* Create(const TestArgs& args)
 	{
-		return new NodeTypes;
+		return new NodeTypes(args);
 	}
 
 	GridTetMesh<2, 5, 2> m_mesh;

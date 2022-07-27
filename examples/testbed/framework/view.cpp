@@ -32,20 +32,19 @@
 
 static inline bool GetTestName(void* userData, int idx, const char** name)
 {
-	assert(idx < g_settings->testCount);
-	*name = g_settings->tests[idx].name;
+	Settings* settings = (Settings*)userData;
+	assert(idx < settings->testCount);
+	*name = settings->tests[idx].name;
 	return true;
 }
 
-void DrawString(const b3Color& color, const b3Vec2& ps, const char* string, ...)
+void DrawString(const b3Camera* camera, const b3Color& color, const b3Vec2& ps, const char* string, ...)
 {
-	extern b3Camera* g_camera;
-	
 	va_list args;
 	va_start(args, string);
 	ImGui::SetNextWindowBgAlpha(0.0f);
 	ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
-	ImGui::SetNextWindowSize(ImVec2(g_camera->GetWidth(), g_camera->GetHeight()));
+	ImGui::SetNextWindowSize(ImVec2(camera->GetWidth(), camera->GetHeight()));
 	ImGui::Begin("Superlay", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoScrollbar);
 	ImGui::SetCursorPos(ImVec2(ps.x, ps.y));
 	ImGui::TextColoredV(ImVec4(color.r, color.g, color.b, color.a), string, args);
@@ -53,17 +52,15 @@ void DrawString(const b3Color& color, const b3Vec2& ps, const char* string, ...)
 	va_end(args);
 }
 
-void DrawString(const b3Color& color, const b3Vec3& pw, const char* string, ...)
+void DrawString(const b3Camera* camera, const b3Color& color, const b3Vec3& pw, const char* string, ...)
 {
-	extern b3Camera* g_camera;
-
-	b3Vec2 ps = g_camera->ConvertWorldToScreen(pw);
+	b3Vec2 ps = camera->ConvertWorldToScreen(pw);
 	
 	va_list args;
 	va_start(args, string);
 	ImGui::SetNextWindowBgAlpha(0.0f);
 	ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
-	ImGui::SetNextWindowSize(ImVec2(g_camera->GetWidth(), g_camera->GetHeight()));
+	ImGui::SetNextWindowSize(ImVec2(camera->GetWidth(), camera->GetHeight()));
 	ImGui::Begin("Superlay", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoScrollbar);
 	ImGui::SetCursorPos(ImVec2(ps.x, ps.y));
 	ImGui::TextColoredV(ImVec4(color.r, color.g, color.b, color.a), string, args);
@@ -271,7 +268,7 @@ void View::Interface()
 
 		ImGui::Separator();
 		
-		if (ImGui::Combo("##Test", &settings.testID, GetTestName, NULL, settings.testCount, settings.testCount))
+		if (ImGui::Combo("##Test", &settings.testID, GetTestName, &settings, settings.testCount, settings.testCount))
 		{
 			m_viewModel->Action_SetTest();
 		}

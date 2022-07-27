@@ -22,7 +22,7 @@
 class CapsuleContact : public Body
 {
 public:
-	CapsuleContact()
+	CapsuleContact(const TestArgs& args) : Body(args)
 	{
 		m_mesh.Translate(b3Vec3(0.0f, 10.0f, 0.0f));
 
@@ -48,9 +48,9 @@ public:
 		m_bodyDragger = new BodyDragger(&m_ray, m_body);
 	}
 
-	static Test* Create()
+	static Test* Create(const TestArgs& args)
 	{
-		return new CapsuleContact;
+		return new CapsuleContact(args);
 	}
 
 	GridClothMesh<10, 10> m_mesh;

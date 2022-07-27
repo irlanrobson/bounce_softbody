@@ -22,7 +22,7 @@
 class Sheet : public Body
 {
 public:
-	Sheet()
+	Sheet(const TestArgs& args) : Body(args)
 	{
 		// Downscale the block along the y axis
 		b3Vec3 scale(1.0f, 0.5f, 1.0f);
@@ -50,9 +50,9 @@ public:
 		m_bodyDragger = new BodyDragger(&m_ray, m_body);
 	}
 
-	static Test* Create()
+	static Test* Create(const TestArgs& args)
 	{
-		return new Sheet;
+		return new Sheet(args);
 	}
 
 	GridTetMesh<1, 10, 10> m_mesh;

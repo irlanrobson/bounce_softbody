@@ -21,10 +21,9 @@
 #include "view_model.h"
 #include "test.h"
 
-b3Camera* g_camera = nullptr;
-b3DebugDrawData* g_debugDrawData = nullptr;
-
 Model::Model() :
+	m_settings(nullptr),
+	m_testSettings(nullptr),
 	m_points(512),
 	m_lines(512),
 	m_triangles(512),
@@ -47,17 +46,12 @@ Model::Model() :
 	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
 	Action_ResetCamera();
-
-	g_camera = &m_camera;
-	g_debugDrawData = &m_debugDrawData;
 }
 
 Model::~Model()
 {
 	delete m_test;
-	
-	g_camera = nullptr;
-	g_debugDrawData = nullptr;
+	m_test = nullptr;
 }
 
 void Model::Command_Press_Key(int button)
@@ -103,32 +97,38 @@ void Model::Update()
 		
 		delete m_test;
 		
-		m_test = g_settings->tests[g_settings->testID].create();
+		TestArgs args;
+		args.settings = m_settings;
+		args.testSettings = m_testSettings;
+		args.camera = &m_camera;
+		args.debugDrawData = &m_debugDrawData;
+
+		m_test = m_settings->tests[m_settings->testID].create(args);
 		
 		m_setTest = false;
-		g_testSettings->pause = true;
+		m_testSettings->pause = true;
 	}
 
-	if (g_testSettings->pause)
+	if (m_testSettings->pause)
 	{
-		if (g_testSettings->singlePlay)
+		if (m_testSettings->singlePlay)
 		{
-			g_testSettings->inv_hertz = g_testSettings->hertz > 0.0f ? 1.0f / g_testSettings->hertz : 0.0f;
-			g_testSettings->singlePlay = false;
+			m_testSettings->inv_hertz = m_testSettings->hertz > 0.0f ? 1.0f / m_testSettings->hertz : 0.0f;
+			m_testSettings->singlePlay = false;
 		}
 		else
 		{
-			g_testSettings->inv_hertz = 0.0f;
+			m_testSettings->inv_hertz = 0.0f;
 		}
 	}
 	else
 	{
-		g_testSettings->inv_hertz = g_testSettings->hertz > 0.0f ? 1.0f / g_testSettings->hertz : 0.0f;
+		m_testSettings->inv_hertz = m_testSettings->hertz > 0.0f ? 1.0f / m_testSettings->hertz : 0.0f;
 	}
 	
-	m_points.EnableDraw(g_settings->drawPoints);
-	m_lines.EnableDraw(g_settings->drawLines);
-	m_triangles.EnableDraw(g_settings->drawTriangles);
+	m_points.EnableDraw(m_settings->drawPoints);
+	m_lines.EnableDraw(m_settings->drawLines);
+	m_triangles.EnableDraw(m_settings->drawTriangles);
 
 	// Rendering code begins here.
 	glViewport(0, 0, GLsizei(m_camera.GetWidth()), GLsizei(m_camera.GetHeight()));
@@ -142,7 +142,7 @@ void Model::Update()
 	m_linesRenderer.SetMVP(&VP.x.x);
 	m_trianglesRenderer.SetMVP(&VP.x.x);
 
-	if (g_settings->drawGrid)
+	if (m_settings->drawGrid)
 	{
 		b3DrawGrid<20, 20>(&m_debugDrawData, b3Vec3_y, b3Vec3_zero, 20, 20, b3Color(0.4f, 0.4f, 0.4f, 1.0f));
 	}

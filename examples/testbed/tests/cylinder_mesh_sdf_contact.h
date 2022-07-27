@@ -22,7 +22,7 @@
 class CylinderMeshSDFContact : public Body
 {
 public:
-	CylinderMeshSDFContact()
+	CylinderMeshSDFContact(const TestArgs& args) : Body(args)
 	{
 		m_cylinderMesh.Scale(b3Vec3(6.0f, 5.0f, 6.0f));
 		b3BuildSDF(&m_sdf, &m_cylinderMesh, b3Vec3(1.0f, 1.0f, 1.0f), 1.0f);
@@ -51,9 +51,9 @@ public:
 		m_bodyDragger = new BodyDragger(&m_ray, m_body);
 	}
 
-	static Test* Create()
+	static Test* Create(const TestArgs& args)
 	{
-		return new CylinderMeshSDFContact;
+		return new CylinderMeshSDFContact(args);
 	}
 
 	GridClothMesh<10, 10> m_clothMesh;

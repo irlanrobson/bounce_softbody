@@ -28,14 +28,17 @@
 
 class Test;
 
-extern b3Camera* g_camera;
-extern b3DebugDrawData* g_debugDrawData;
+struct Settings;
+struct TestSettings;
 
 class Model
 {
 public:
 	Model();
 	~Model();
+
+	void SetSettings(Settings* settings);
+	void SetTestSettings(TestSettings* testSettings);
 
 	void Action_SetTest();
 	void Action_ResetCamera();
@@ -55,6 +58,8 @@ public:
 
 	void Update();
 private:
+	Settings* m_settings;
+	TestSettings* m_testSettings;
 	b3Camera m_camera;
 	b3DebugPoints m_points;
 	b3DebugLines m_lines;
@@ -66,6 +71,16 @@ private:
 	Test* m_test;
 	bool m_setTest;
 };
+
+inline void Model::SetSettings(Settings* settings)
+{
+	m_settings = settings;
+}
+
+inline void Model::SetTestSettings(TestSettings* testSettings)
+{
+	m_testSettings = testSettings;
+}
 
 inline void Model::Action_SetTest()
 {

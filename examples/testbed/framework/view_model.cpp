@@ -38,12 +38,12 @@
 #include "tests/sheet.h"
 #include "tests/node_types.h"
 
-TestSettings* g_testSettings = nullptr;
-Settings* g_settings = nullptr;
-	
 ViewModel::ViewModel(Model* model, GLFWwindow* window)
 {
 	m_model = model;
+	m_model->SetSettings(&m_settings);
+	m_model->SetTestSettings(&m_testSettings);
+
 	m_window = window;
 	m_ps0.SetZero();
 
@@ -61,15 +61,6 @@ ViewModel::ViewModel(Model* model, GLFWwindow* window)
 	m_settings.RegisterTest("Cloth Element", &ClothElement::Create);
 	m_settings.RegisterTest("Sheet", &Sheet::Create);
 	m_settings.RegisterTest("Node Types", &NodeTypes::Create);
-
-	g_settings = &m_settings;
-	g_testSettings = &m_testSettings;
-}
-
-ViewModel::~ViewModel()
-{
-	g_settings = nullptr;
-	g_testSettings = nullptr;
 }
 
 b3Vec2 ViewModel::GetCursorPosition() const

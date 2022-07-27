@@ -22,7 +22,7 @@
 class ClothElement : public Body
 {
 public:
-	ClothElement()
+	ClothElement(const TestArgs& args) : Body(args)
 	{
 		ClothDef def;
 		def.mesh = &m_mesh;
@@ -41,9 +41,9 @@ public:
 		m_bodyDragger->SetStaticDrag(false);
 	}
 
-	static Test* Create()
+	static Test* Create(const TestArgs& args)
 	{
-		return new ClothElement;
+		return new ClothElement(args);
 	}
 
 	GridClothMesh<10, 10> m_mesh;
