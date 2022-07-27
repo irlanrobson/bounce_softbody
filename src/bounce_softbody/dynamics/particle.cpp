@@ -35,7 +35,7 @@ b3Particle::b3Particle(const b3ParticleDef& def, b3Body* body)
 	m_velocity = def.velocity;
 	m_force.SetZero();
 	m_translation.SetZero();
-	m_massDamping = def.massDamping;
+	m_damping = def.damping;
 
 	if (m_type == e_dynamicParticle)
 	{
@@ -187,14 +187,14 @@ void b3Particle::ComputeForces(const b3SparseForceSolverData* data)
 
 	uint32 i = m_solverId;
 
-	if (m_massDamping > scalar(0))
+	if (m_damping > scalar(0))
 	{
-		b3Vec3 fd = -m_massDamping * m_mass * v[i];
+		b3Vec3 fd = -m_damping * m_mass * v[i];
 
 		// Mass damping force
 		f[i] += fd;
 
 		// Jacobian
-		dfdv(i, i) += b3Mat33Diagonal(-m_massDamping * m_mass);
+		dfdv(i, i) += b3Mat33Diagonal(-m_damping * m_mass);
 	}
 }

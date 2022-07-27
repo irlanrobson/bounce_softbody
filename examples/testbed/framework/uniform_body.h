@@ -21,36 +21,36 @@
 
 #include <bounce_softbody/bounce_softbody.h>
 
-struct BodyMeshTriangle
+struct Triangle
 {
 	int v1, v2, v3;
 };
 
-struct BodyMeshTetrahedron
+struct Tetrahedron
 {
 	int v1, v2, v3, v4;
 };
 
-struct BodyMesh
+struct Mesh
 {
 	int vertexCount;
 	b3Vec3* vertices;
 	int triangleCount;
-	BodyMeshTriangle* triangles;
+	Triangle* triangles;
 	int tetrahedronCount;
-	BodyMeshTetrahedron* tetrahedrons;
+	Tetrahedron* tetrahedrons;
 
 	b3Vec3 GetVertexPosition(int index) const
 	{
 		return vertices[index];
 	}
 
-	BodyMeshTriangle GetTriangle(int index) const
+	Triangle GetTriangle(int index) const
 	{
 		return triangles[index];
 	}
 
-	BodyMeshTetrahedron GetTetrahedron(int index) const
+	Tetrahedron GetTetrahedron(int index) const
 	{
 		return tetrahedrons[index];
 	}
@@ -79,63 +79,35 @@ struct BodyMesh
 
 struct ClothDef
 {
-	ClothDef()
-	{
-		density = scalar(0.1);
-		massDamping = scalar(0);
-		thickness = scalar(0.0);
-		friction = scalar(0.3);
+	const Mesh* mesh = nullptr;
 
-		stretchingStiffness = scalar(1234);
-		stretchStiffnessDamping = scalar(0);
+	scalar damping = scalar(0);
+	scalar radius = scalar(0.0);
+	scalar density = scalar(0.1);
+	scalar friction = scalar(0.3);
 
-		createElements = false;
-		elementYoungModulus = scalar(500);
-		elementShearModulus = scalar(500);
-		elementPoissonRatio = scalar(0.3);
-		elementStiffnessDamping = scalar(0);
-	}
+	scalar stretchingStiffness = scalar(1000);
+	scalar stretchStiffnessDamping = scalar(0);
 
-	scalar density;
-	scalar massDamping;
-	scalar thickness;
-	scalar friction;
-
-	const BodyMesh* mesh;
-
-	scalar stretchingStiffness;
-	scalar stretchStiffnessDamping;
-
-	bool createElements;
-	scalar elementYoungModulus;
-	scalar elementShearModulus;
-	scalar elementPoissonRatio;
-	scalar elementStiffnessDamping;
+	bool createElements = false;
+	scalar elementYoungModulus = scalar(500);
+	scalar elementShearModulus = scalar(500);
+	scalar elementPoissonRatio = scalar(0.3);
+	scalar elementStiffnessDamping = scalar(0);
 };
 
 struct TetDef
 {
-	TetDef()
-	{
-		density = scalar(0.1);
-		massDamping = scalar(0);
-		thickness = scalar(0.02);
-		friction = scalar(0.3);
-		elementYoungModulus = scalar(1000);
-		elementPoissonRatio = scalar(0.3);
-		elementStiffnessDamping = scalar(0);
-	}
+	const Mesh* mesh = nullptr;
+
+	scalar damping = scalar(0);
+	scalar radius = scalar(0.02);
+	scalar density = scalar(0.1);
+	scalar friction = scalar(0.3);
 	
-	scalar density;
-	scalar massDamping;
-	scalar thickness;
-	scalar friction;
-
-	const BodyMesh* mesh;
-
-	scalar elementYoungModulus;
-	scalar elementPoissonRatio;
-	scalar elementStiffnessDamping;
+	scalar elementYoungModulus = scalar(1000);
+	scalar elementPoissonRatio = scalar(0.3);
+	scalar elementStiffnessDamping = scalar(0);
 };
 
 // b3Body wrapper. 
@@ -154,15 +126,15 @@ public:
 		return m_particles[index];
 	}
 private:
-	const BodyMesh* m_mesh;
-	b3Particle** m_particles;
+	const Mesh* m_mesh = nullptr;
+	b3Particle** m_particles = nullptr;
 };
 
 template<int H = 1, int W = 1>
-struct GridClothMesh : public BodyMesh
+struct GridClothMesh : public Mesh
 {
 	b3Vec3 gridVertices[(H + 1) * (W + 1)];
-	BodyMeshTriangle gridTriangles[2 * H * W];
+	Triangle gridTriangles[2 * H * W];
 
 	GridClothMesh()
 	{
@@ -210,12 +182,12 @@ struct GridClothMesh : public BodyMesh
 				int v3 = GetVertex(i + 1, j + 1);
 				int v4 = GetVertex(i, j + 1);
 
-				BodyMeshTriangle* t1 = triangles + triangleCount++;
+				Triangle* t1 = triangles + triangleCount++;
 				t1->v1 = v1;
 				t1->v2 = v2;
 				t1->v3 = v3;
 
-				BodyMeshTriangle* t2 = triangles + triangleCount++;
+				Triangle* t2 = triangles + triangleCount++;
 				t2->v1 = v3;
 				t2->v2 = v4;
 				t2->v3 = v1;
@@ -246,11 +218,11 @@ struct GridClothMesh : public BodyMesh
 };
 
 template<int H = 1, int W = 1, int D = 1>
-struct GridTetMesh : public BodyMesh
+struct GridTetMesh : public Mesh
 {
 	b3Vec3 gridVertices[(H + 1) * (W + 1) * (D + 1)];
-	BodyMeshTriangle gridTriangles[4 * H * W + 4 * H * D + 4 * W * D];
-	BodyMeshTetrahedron gridTetrahedrons[5 * H * W * D];
+	Triangle gridTriangles[4 * H * W + 4 * H * D + 4 * W * D];
+	Tetrahedron gridTetrahedrons[5 * H * W * D];
 	
 	GridTetMesh()
 	{

@@ -18,14 +18,11 @@
 
 #include "uniform_body.h"
 
-UniformBody::UniformBody()
-{
-	m_particles = nullptr;
-}
+UniformBody::UniformBody() { }
 
 UniformBody::UniformBody(const ClothDef& def)
 {
-	const BodyMesh* mesh = def.mesh;
+	const Mesh* mesh = def.mesh;
 	m_mesh = mesh;
 
 	// Create particles
@@ -44,7 +41,7 @@ UniformBody::UniformBody(const ClothDef& def)
 
 		b3SphereFixtureDef sd;
 		sd.p = p;
-		sd.radius = def.thickness;
+		sd.radius = def.radius;
 		sd.friction = def.friction;
 		sd.userIndex = i;
 		
@@ -54,7 +51,7 @@ UniformBody::UniformBody(const ClothDef& def)
 	// Create triangles
 	for (int i = 0; i < mesh->triangleCount; ++i)
 	{
-		BodyMeshTriangle triangle = mesh->GetTriangle(i);
+		Triangle triangle = mesh->GetTriangle(i);
 
 		int vi1 = triangle.v1;
 		int vi2 = triangle.v2;
@@ -76,7 +73,7 @@ UniformBody::UniformBody(const ClothDef& def)
 		td.v2 = v2;
 		td.v3 = v3;
 		td.density = def.density;
-		td.radius = def.thickness;
+		td.radius = def.radius;
 		td.friction = def.friction;
 		td.userIndex = i;
 
@@ -124,7 +121,7 @@ UniformBody::UniformBody(const ClothDef& def)
 
 UniformBody::UniformBody(const TetDef& def)
 {
-	const BodyMesh* mesh = def.mesh;
+	const Mesh* mesh = def.mesh;
 	m_mesh = mesh;
 
 	// Create particles
@@ -144,7 +141,7 @@ UniformBody::UniformBody(const TetDef& def)
 
 		b3SphereFixtureDef sd;
 		sd.p = p;
-		sd.radius = def.thickness;
+		sd.radius = def.radius;
 		sd.friction = def.friction;
 		sd.userIndex = i;
 
@@ -154,7 +151,7 @@ UniformBody::UniformBody(const TetDef& def)
 	// Create triangles
 	for (int i = 0; i < mesh->triangleCount; ++i)
 	{
-		BodyMeshTriangle triangle = mesh->GetTriangle(i);
+		Triangle triangle = mesh->GetTriangle(i);
 
 		int v1 = triangle.v1;
 		int v2 = triangle.v2;
@@ -171,12 +168,10 @@ UniformBody::UniformBody(const TetDef& def)
 		td.v1 = p1->GetPosition();
 		td.v2 = p2->GetPosition();
 		td.v3 = p3->GetPosition();
-		td.radius = def.thickness;
+		td.radius = def.radius;
+		td.density = scalar(0); // Zero mass contribution
 		td.friction = def.friction;
 		td.userIndex = i;
-
-		// Zero mass contribution
-		td.density = scalar(0);
 
 		CreateTriangle(td);
 	}
@@ -184,7 +179,7 @@ UniformBody::UniformBody(const TetDef& def)
 	// Create tetrahedrons
 	for (int i = 0; i < mesh->tetrahedronCount; ++i)
 	{
-		BodyMeshTetrahedron tet = mesh->GetTetrahedron(i);
+		Tetrahedron tet = mesh->GetTetrahedron(i);
 
 		int vi1 = tet.v1;
 		int vi2 = tet.v2;
@@ -211,7 +206,7 @@ UniformBody::UniformBody(const TetDef& def)
 		td.v3 = v3;
 		td.v4 = v4;
 		td.density = def.density;
-		td.radius = def.thickness;
+		td.radius = def.radius;
 		td.friction = def.friction;
 		td.userIndex = i;
 

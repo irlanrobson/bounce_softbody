@@ -43,7 +43,7 @@ struct b3ParticleDef
 		type = e_staticParticle;
 		position.SetZero();
 		velocity.SetZero();
-		massDamping = scalar(0);
+		damping = scalar(0);
 		userIndex = B3_MAX_U32;
 		userData = nullptr;
 	}
@@ -57,8 +57,8 @@ struct b3ParticleDef
 	// Initial velocity of the particle.
 	b3Vec3 velocity;
 
-	// Coefficient of mass damping of the particle.
-	scalar massDamping;
+	// Coefficient of damping of the particle.
+	scalar damping;
 
 	// User index to anything. Typically a vertex.
 	uint32 userIndex;
@@ -106,11 +106,11 @@ public:
 	// Apply a translation.
 	void ApplyTranslation(const b3Vec3& translation);
 
-	// Set the coefficient of mass damping.
-	void SetMassDamping(scalar massDamping);
+	// Set the coefficient of damping.
+	void SetDamping(scalar massDamping);
 
-	// Get the coefficient of mass damping.
-	scalar GetMassDamping() const;
+	// Get the coefficient of damping.
+	scalar GetDamping() const;
 
 	// Set the user data.
 	void SetUserIndex(uint32 userIndex);
@@ -149,7 +149,7 @@ private:
 
 	b3Particle(const b3ParticleDef& def, b3Body* body);
 	
-	// Synchronize fixtures
+	// Synchronize fixtures.
 	void SynchronizeFixtures();
 
 	// Destroy fixtures.
@@ -182,10 +182,10 @@ private:
 	// Mass, inverse mass
 	scalar m_mass, m_invMass;
 
-	// Coefficient of mass damping.
-	scalar m_massDamping;
+	// Coefficient of damping.
+	scalar m_damping;
 
-	// Solver temp identifier
+	// Temporary solver identifier.
 	uint32 m_solverId;
 
 	// User index. 
@@ -194,10 +194,10 @@ private:
 	// User data.
 	void* m_userData;
 
-	// Body
+	// Parent body
 	b3Body* m_body;
 
-	// Links to the body particle list.
+	// Body list pointers.
 	b3Particle* m_prev;
 	b3Particle* m_next;
 };
@@ -262,15 +262,15 @@ inline void b3Particle::ApplyTranslation(const b3Vec3& translation)
 	m_translation += translation;
 }
 
-inline void b3Particle::SetMassDamping(scalar damping)
+inline void b3Particle::SetDamping(scalar damping)
 {
 	B3_ASSERT(damping >= scalar(0));
-	m_massDamping = damping;
+	m_damping = damping;
 }
 
-inline scalar b3Particle::GetMassDamping() const
+inline scalar b3Particle::GetDamping() const
 {
-	return m_massDamping;
+	return m_damping;
 }
 
 inline void b3Particle::SetUserIndex(uint32 userIndex)

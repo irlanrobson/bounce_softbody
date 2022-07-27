@@ -44,7 +44,7 @@ public:
 
 		for (int i = 0; i < m.triangleCount; ++i)
 		{
-			BodyMeshTriangle triangle = m.GetTriangle(i);
+			Triangle triangle = m.GetTriangle(i);
 			
 			int v1 = triangle.v1;
 			int v2 = triangle.v2;

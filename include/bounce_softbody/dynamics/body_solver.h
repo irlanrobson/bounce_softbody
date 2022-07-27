@@ -22,7 +22,6 @@
 #include <bounce_softbody/common/math/vec3.h>
 
 class b3StackAllocator;
-
 class b3Particle;
 class b3Force;
 class b3Contact;

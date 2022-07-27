@@ -30,9 +30,9 @@ struct b3ShearForceDef : public b3ForceDef
 	b3ShearForceDef()
 	{
 		type = e_shearForce;
-		u1 = scalar(1);
+		u1 = scalar(0);
 		v1 = scalar(0);
-		u2 = scalar(-1);
+		u2 = scalar(0);
 		v2 = scalar(0);
 		u3 = scalar(0);
 		v3 = scalar(0);

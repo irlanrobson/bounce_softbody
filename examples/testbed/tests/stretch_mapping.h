@@ -135,7 +135,7 @@ public:
 
 		for (int i = 0; i < m_clothMesh.triangleCount; ++i)
 		{
-			BodyMeshTriangle triangle = m_clothMesh.GetTriangle(i);
+			Triangle triangle = m_clothMesh.GetTriangle(i);
 
 			int vi1 = triangle.v1;
 			int vi2 = triangle.v2;

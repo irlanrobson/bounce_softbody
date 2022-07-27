@@ -35,8 +35,8 @@ struct b3ForceSolverDef
 	b3Particle** particles;
 	uint32 forceCount;
 	b3Force** forces;
-	b3Contact** contacts;
 	uint32 contactCount;
+	b3Contact** contacts;
 };
 
 class b3ForceSolver

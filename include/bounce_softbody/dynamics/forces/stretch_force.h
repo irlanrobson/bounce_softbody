@@ -30,9 +30,9 @@ struct b3StretchForceDef : public b3ForceDef
 	b3StretchForceDef()
 	{
 		type = e_stretchForce;
-		u1 = scalar(1);
+		u1 = scalar(0);
 		v1 = scalar(0);
-		u2 = scalar(-1);
+		u2 = scalar(0);
 		v2 = scalar(0);
 		u3 = scalar(0);
 		v3 = scalar(0);

@@ -28,7 +28,7 @@ public:
 
 		ClothDef def;
 		def.mesh = &m_mesh;
-		def.thickness = 0.2f;
+		def.radius = 0.2f;
 		def.friction = 0.4f;
 		m_body = new UniformBody(def);
 

@@ -32,7 +32,7 @@ public:
 		def.density = 0.2f;
 		def.elementYoungModulus = 1000.0f;
 		def.elementPoissonRatio = 0.33f;
-		def.thickness = 0.2f;
+		def.radius = 0.2f;
 		def.friction = 0.6f;
 
 		m_body = new UniformBody(def);
