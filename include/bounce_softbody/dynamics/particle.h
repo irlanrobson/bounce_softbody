@@ -100,6 +100,9 @@ public:
 	// Apply a force.
 	void ApplyForce(const b3Vec3& force);
 
+	// Apply an impulse.
+	void ApplyImpulse(const b3Vec3& impulse);
+
 	// Get the applied translation.
 	const b3Vec3& GetTranslation() const;
 
@@ -149,20 +152,20 @@ private:
 
 	b3Particle(const b3ParticleDef& def, b3Body* body);
 	
-	// Synchronize fixtures.
+	// Synchronize all fixtures sharing the particle.
 	void SynchronizeFixtures();
 
-	// Destroy fixtures.
+	// Destroy all fixtures sharing the particle.
 	void DestroyFixtures();
 
-	// Destroy forces.
+	// Destroy all forces sharing the particle.
 	void DestroyForces();
 
-	// Destroy contacts.
+	// Destroy all contacts sharing the particle.
 	void DestroyContacts();
 	
-	// Compute forces due to particle.
-	void ComputeForces(const b3SparseForceSolverData* data);
+	// Apply forces and Jacobians due to particle.
+	void ApplyForces(const b3SparseForceSolverData* data);
 
 	// Type
 	b3ParticleType m_type;
@@ -250,6 +253,15 @@ inline void b3Particle::ApplyForce(const b3Vec3& force)
 		return;
 	}
 	m_force += force;
+}
+
+inline void b3Particle::ApplyImpulse(const b3Vec3& impulse)
+{
+	if (m_type != e_dynamicParticle)
+	{
+		return;
+	}
+	m_velocity += m_invMass * impulse;
 }
 
 inline const b3Vec3& b3Particle::GetTranslation() const

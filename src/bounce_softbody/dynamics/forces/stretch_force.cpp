@@ -106,7 +106,7 @@ b3StretchForce::b3StretchForce(const b3StretchForceDef* def)
 	m_alpha = scalar(0.5) * b3Abs(det);
 }
 
-bool b3StretchForce::HasParticle(const b3Particle* particle) const
+bool b3StretchForce::Contains(const b3Particle* particle) const
 {
 	return m_p1 == particle || m_p2 == particle || m_p3 == particle;
 }
@@ -118,7 +118,7 @@ void b3StretchForce::ClearForces()
 	m_f3.SetZero();
 }
 
-void b3StretchForce::ComputeForces(const b3SparseForceSolverData* data)
+void b3StretchForce::ApplyForces(const b3SparseForceSolverData* data)
 {
 	scalar alpha = m_alpha;
 	scalar du1 = m_du1;

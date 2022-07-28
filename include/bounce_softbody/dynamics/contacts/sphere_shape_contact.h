@@ -35,9 +35,9 @@ public:
 
 	b3SphereAndShapeContact(b3SphereFixture* fixture1, b3WorldFixture* fixture2);
 
-	void ComputeForces(const b3SparseForceSolverData* data);
-	
-	void ApplyFriction(const b3TimeStep& step, const b3Vec3& gravity);
+	void ApplyForces(const b3SparseForceSolverData* data) override;
+
+	void ApplyFriction(const b3TimeStep& step, const b3Vec3& gravity) override;
 
 	void Update();
 
@@ -49,7 +49,7 @@ public:
 	
 	b3SphereManifold m_manifold;
 	scalar m_normalForce;
-	bool m_active;
+	bool m_applyFriction;
 };
 
 #endif

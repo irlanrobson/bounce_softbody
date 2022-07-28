@@ -38,7 +38,7 @@ public:
 	virtual ~b3Contact() { }
 
 	// Compute force solver data.
-	virtual void ComputeForces(const b3SparseForceSolverData* data) = 0;
+	virtual void ApplyForces(const b3SparseForceSolverData* data) = 0;
 
 	// Solve friction constraints.
 	virtual void ApplyFriction(const b3TimeStep& step, const b3Vec3& gravity) = 0;

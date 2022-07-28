@@ -211,7 +211,7 @@ b3TetrahedronElementForce::b3TetrahedronElementForce(const b3TetrahedronElementF
 	ResetElementData();
 }
 
-bool b3TetrahedronElementForce::HasParticle(const b3Particle* particle) const
+bool b3TetrahedronElementForce::Contains(const b3Particle* particle) const
 {
 	return m_p1 == particle || m_p2 == particle || m_p3 == particle || m_p4 == particle;
 }
@@ -310,7 +310,7 @@ static b3Quat b3ExtractRotation(const b3Mat33& A, const b3Quat& q0, uint32 maxIt
 	return q;
 }
 
-void b3TetrahedronElementForce::ComputeForces(const b3SparseForceSolverData* data)
+void b3TetrahedronElementForce::ApplyForces(const b3SparseForceSolverData* data)
 {
 	const b3DenseVec3& x = *data->x;
 	const b3DenseVec3& v = *data->v;

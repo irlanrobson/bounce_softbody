@@ -200,7 +200,7 @@ b3TriangleElementForce::b3TriangleElementForce(const b3TriangleElementForceDef* 
 	ResetElementData();
 }
 
-bool b3TriangleElementForce::HasParticle(const b3Particle* particle) const
+bool b3TriangleElementForce::Contains(const b3Particle* particle) const
 {
 	return m_p1 == particle || m_p2 == particle || m_p3 == particle;
 }
@@ -282,7 +282,7 @@ void b3TriangleElementForce::ClearForces()
 {
 }
 
-void b3TriangleElementForce::ComputeForces(const b3SparseForceSolverData* data)
+void b3TriangleElementForce::ApplyForces(const b3SparseForceSolverData* data)
 {
 	const b3DenseVec3& p = *data->x;
 	const b3DenseVec3& v = *data->v;

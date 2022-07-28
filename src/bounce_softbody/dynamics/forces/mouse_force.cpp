@@ -42,7 +42,7 @@ b3MouseForce::b3MouseForce(const b3MouseForceDef* def)
 	m_f4.SetZero();
 }
 
-bool b3MouseForce::HasParticle(const b3Particle* particle) const
+bool b3MouseForce::Contains(const b3Particle* particle) const
 {
 	return m_p1 == particle || m_p2 == particle || m_p3 == particle || m_p4 == particle;
 }
@@ -55,7 +55,7 @@ void b3MouseForce::ClearForces()
 	m_f4.SetZero();
 }
 
-void b3MouseForce::ComputeForces(const b3SparseForceSolverData* data)
+void b3MouseForce::ApplyForces(const b3SparseForceSolverData* data)
 {
 	uint32 i1 = m_p1->m_solverId;
 	uint32 i2 = m_p2->m_solverId;

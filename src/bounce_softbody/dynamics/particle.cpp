@@ -142,7 +142,7 @@ void b3Particle::DestroyForces()
 		b3Force* f0 = f;
 		f = f->m_next;
 
-		if (f0->HasParticle(this))
+		if (f0->Contains(this))
 		{
 			m_body->DestroyForce(f0);
 		}
@@ -179,7 +179,7 @@ void b3Particle::SynchronizeFixtures()
 	}
 }
 
-void b3Particle::ComputeForces(const b3SparseForceSolverData* data)
+void b3Particle::ApplyForces(const b3SparseForceSolverData* data)
 {
 	const b3DenseVec3& v = *data->v;
 	b3DenseVec3& f = *data->f;

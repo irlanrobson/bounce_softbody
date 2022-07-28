@@ -47,10 +47,10 @@ b3SphereAndShapeContact::b3SphereAndShapeContact(b3SphereFixture* fixture1, b3Wo
 	m_fixture1 = fixture1;
 	m_fixture2 = fixture2;
 	m_normalForce = scalar(0);
-	m_active = false;
+	m_applyFriction = false;
 }
 
-void b3SphereAndShapeContact::ComputeForces(const b3SparseForceSolverData* data)
+void b3SphereAndShapeContact::ApplyForces(const b3SparseForceSolverData* data)
 {
 	const b3DenseVec3& x = *data->x;
 	const b3DenseVec3& v = *data->v;
@@ -80,10 +80,10 @@ void b3SphereAndShapeContact::ComputeForces(const b3SparseForceSolverData* data)
 	}
 
 	// The friction solver uses initial tangents.
-	if (m_active == false)
+	if (m_applyFriction == false)
 	{
 		m_manifold = manifold2;
-		m_active = true;
+		m_applyFriction = true;
 	}
 
 	b3Vec3 x2 = manifold2.point;
@@ -144,7 +144,7 @@ void b3SphereAndShapeContact::ComputeForces(const b3SparseForceSolverData* data)
 
 void b3SphereAndShapeContact::ApplyFriction(const b3TimeStep& step, const b3Vec3& gravity)
 {
-	if (m_active == false)
+	if (m_applyFriction == false)
 	{
 		return;
 	}
@@ -191,5 +191,5 @@ void b3SphereAndShapeContact::ApplyFriction(const b3TimeStep& step, const b3Vec3
 void b3SphereAndShapeContact::Update()
 {
 	m_normalForce = scalar(0);
-	m_active = false;
+	m_applyFriction = false;
 }

@@ -47,7 +47,7 @@ b3SpringForce::b3SpringForce(const b3SpringForceDef* def)
 	m_f2.SetZero();
 }
 
-bool b3SpringForce::HasParticle(const b3Particle* particle) const
+bool b3SpringForce::Contains(const b3Particle* particle) const
 {
 	return m_p1 == particle || m_p2 == particle;
 }
@@ -58,7 +58,7 @@ void b3SpringForce::ClearForces()
 	m_f2.SetZero();
 }
 
-void b3SpringForce::ComputeForces(const b3SparseForceSolverData* data)
+void b3SpringForce::ApplyForces(const b3SparseForceSolverData* data)
 {
 	b3DenseVec3& x = *data->x;
 	b3DenseVec3& v = *data->v;

@@ -91,7 +91,7 @@ b3ShearForce::b3ShearForce(const b3ShearForceDef* def)
 	m_alpha = scalar(0.5) * b3Abs(det);
 }
 
-bool b3ShearForce::HasParticle(const b3Particle* particle) const
+bool b3ShearForce::Contains(const b3Particle* particle) const
 {
 	return m_p1 == particle || m_p2 == particle || m_p3 == particle;
 }
@@ -103,7 +103,7 @@ void b3ShearForce::ClearForces()
 	m_f3.SetZero();
 }
 
-void b3ShearForce::ComputeForces(const b3SparseForceSolverData* data)
+void b3ShearForce::ApplyForces(const b3SparseForceSolverData* data)
 {
 	scalar alpha = m_alpha;
 	scalar du1 = m_du1;

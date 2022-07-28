@@ -44,8 +44,8 @@ struct b3SparseForceSolverData
 class b3SparseForceModel
 {
 public:
-	// Compute forces and Jacobians.
-	virtual void ComputeForces(const b3SparseForceSolverData* data) = 0;
+	// Apply forces and Jacobians.
+	virtual void ApplyForces(const b3SparseForceSolverData* data) = 0;
 };
 
 // Input for Backward Euler integrator.

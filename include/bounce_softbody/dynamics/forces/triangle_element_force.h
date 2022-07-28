@@ -80,8 +80,8 @@ struct b3TriangleElementForceDef : public b3ForceDef
 class b3TriangleElementForce : public b3Force
 {
 public:
-	// Has this force a given particle?
-	bool HasParticle(const b3Particle* particle) const;
+	// Does this force contain a given particle?
+	bool Contains(const b3Particle* particle) const;
 	
 	// Get the particle 1.
 	const b3Particle* GetParticle1() const { return m_p1; }
@@ -105,14 +105,11 @@ private:
 
 	b3TriangleElementForce(const b3TriangleElementForceDef* def);
 
-	// Reset element data.
+	// This resets the finite element data.
 	void ResetElementData();
 
-	// Clear forces;
 	void ClearForces();
-	
-	// Compute element forces.
-	void ComputeForces(const b3SparseForceSolverData* data);
+	void ApplyForces(const b3SparseForceSolverData* data);
 
 	// Particle 1
 	b3Particle* m_p1;

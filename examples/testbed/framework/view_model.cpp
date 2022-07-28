@@ -180,8 +180,10 @@ void ViewModel::Event_Move_Cursor(float x, float y)
 	{
 		if (leftDown)
 		{
-			scalar ax = -0.005f * B3_PI * n.x;
-			scalar ay = -0.005f * B3_PI * n.y;
+			const scalar fraction = 0.005f;
+
+			scalar ax = -fraction * scalar(2) * B3_PI * n.x;
+			scalar ay = -fraction * scalar(2) * B3_PI * n.y;
 
 			m_model->Command_RotateCameraY(ax);
 			m_model->Command_RotateCameraX(ay);
@@ -189,8 +191,10 @@ void ViewModel::Event_Move_Cursor(float x, float y)
 
 		if (rightDown)
 		{
-			scalar tx = 0.2f * n.x;
-			scalar ty = -0.2f * n.y;
+			const scalar distance = 0.2f;
+
+			scalar tx = distance * n.x;
+			scalar ty = -distance * n.y;
 
 			m_model->Command_TranslateCameraX(tx);
 			m_model->Command_TranslateCameraY(ty);

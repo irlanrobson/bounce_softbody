@@ -55,7 +55,7 @@ b3ForceSolver::~b3ForceSolver()
 class b3ForceModel : public b3SparseForceModel
 {
 public:
-	void ComputeForces(const b3SparseForceSolverData* data);
+	void ApplyForces(const b3SparseForceSolverData* data);
 
 	uint32 m_particleCount;
 	b3Particle** m_particles;
@@ -67,21 +67,21 @@ public:
 	b3Contact** m_contacts;
 };
 
-void b3ForceModel::ComputeForces(const b3SparseForceSolverData* data)
+void b3ForceModel::ApplyForces(const b3SparseForceSolverData* data)
 {
 	for (uint32 i = 0; i < m_particleCount; ++i)
 	{
-		m_particles[i]->ComputeForces(data);
+		m_particles[i]->ApplyForces(data);
 	}
 
 	for (uint32 i = 0; i < m_forceCount; ++i)
 	{
-		m_forces[i]->ComputeForces(data);
+		m_forces[i]->ApplyForces(data);
 	}
 
 	for (uint32 i = 0; i < m_contactCount; ++i)
 	{
-		m_contacts[i]->ComputeForces(data);
+		m_contacts[i]->ApplyForces(data);
 	}
 }
 

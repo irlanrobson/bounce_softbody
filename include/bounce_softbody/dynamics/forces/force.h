@@ -54,18 +54,18 @@ struct b3ForceDef
 	uint32 userIndex;
 };
 
-// A force acts on a set of particles.
+// Forces acting on a set of particles.
 class b3Force
 {
 public:
 	// Get the force type.
 	b3ForceType GetType() const;
 
+	// Does this force contain a given particle?
+	virtual bool Contains(const b3Particle* particle) const = 0;
+
 	// Get the user index.
 	uint32 GetUserIndex() const { return m_userIndex; }
-
-	// Has this force a given particle?
-	virtual bool HasParticle(const b3Particle* particle) const = 0;
 
 	// Get the next force in the body force list.
 	const b3Force* GetNext() const;
@@ -86,8 +86,8 @@ protected:
 	// Clear internal forces stored for the user.
 	virtual void ClearForces() = 0;
 
-	// Compute forces and Jacobians.
-	virtual void ComputeForces(const b3SparseForceSolverData* data) = 0;
+	// Apply forces and Jacobians.
+	virtual void ApplyForces(const b3SparseForceSolverData* data) = 0;
 
 	// Force type.
 	b3ForceType m_type;

@@ -152,15 +152,15 @@ void b3SparseSolveBE(b3SolveBEOutput* output, const b3SolveBEInput* input)
 		b3SparseMat33 dfdv(dofCount);
 
 		b3SparseForceSolverData solverData;
+		solverData.h = h;
+		solverData.inv_h = inv_h;
 		solverData.x = &x;
 		solverData.v = &v;
 		solverData.f = &fi;
 		solverData.dfdx = &dfdx;
 		solverData.dfdv = &dfdv;
-		solverData.h = h;
-		solverData.inv_h = inv_h;
-
-		forceModel->ComputeForces(&solverData);
+		
+		forceModel->ApplyForces(&solverData);
 
 		b3SparseMat33 A = M - h * dfdv - (h * h) * dfdx;
 		
