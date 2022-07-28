@@ -110,7 +110,7 @@ public:
 	void ApplyTranslation(const b3Vec3& translation);
 
 	// Set the coefficient of damping.
-	void SetDamping(scalar massDamping);
+	void SetDamping(scalar damping);
 
 	// Get the coefficient of damping.
 	scalar GetDamping() const;
